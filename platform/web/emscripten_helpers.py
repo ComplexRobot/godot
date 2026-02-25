@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 from SCons.Util import WhereIs
 
@@ -115,6 +116,29 @@ def create_template_zip(env, js, wasm, side):
 
 def get_template_zip_path(env):
     return "#bin/.web_zip"
+
+
+def erase_dotnet_setup(env, target, source):
+    return env.Command(
+        target=target,
+        source=source,
+        action=erase_dotnet_setup_action,
+    )
+
+
+def erase_dotnet_setup_action(target, source, env):
+    target_path = str(target[0])
+    source_path = str(source[0])
+
+    with open(source_path, encoding='utf-8') as file:
+        text = file.read()
+
+    # erase the string "DOTNET.setup();" accounting for nested parentheses
+    regex = r'DOTNET\.setup\s*\(\s*\{[^{}]*(\{[^{}]*\}[^{}]*)*\}\s*\)\s*;'
+    fixed = re.sub(regex, '', text, 1)
+
+    with open(target_path, 'w', encoding='utf-8') as file:
+        file.write(fixed)
 
 
 def add_js_libraries(env, libraries):

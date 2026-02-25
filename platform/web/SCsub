@@ -113,6 +113,9 @@ sys_env.Depends(build[0], sys_env["JS_PRE"])
 sys_env.Depends(build[0], sys_env["JS_POST"])
 sys_env.Depends(build[0], sys_env["JS_EXTERNS"])
 
+# erase "DOTNET.setup();" call for correct web behavior
+js_fixed = env.NoCache(env.EraseDotnetSetup("#bin/godot${PROGSUFFIX}.fixed.js", build[0]))
+
 engine = [
     "js/engine/features.js",
     "js/engine/preloader.js",
@@ -124,7 +127,7 @@ js_engine = env.CreateEngineFile("#bin/godot${PROGSUFFIX}.engine.js", engine, ex
 env.Depends(js_engine, externs)
 
 wrap_list = [
-    build[0],
+    js_fixed,
     js_engine,
 ]
 js_wrapped = env.NoCache(
