@@ -39,6 +39,7 @@
 #include "scene/gui/item_list.h"
 #include "scene/gui/split_container.h"
 #include "servers/display/display_server.h"
+#include "servers/rendering/rendering_device_binds.h"
 
 /*** SHADER SCRIPT EDITOR ****/
 
@@ -275,7 +276,12 @@ ShaderFileEditor::ShaderFileEditor() {
 		"Fragment",
 		"TessControl",
 		"TessEval",
-		"Compute"
+		"Compute",
+		"Raygen",
+		"AnyHit",
+		"ClosestHit",
+		"Miss",
+		"Intersection",
 	};
 
 	stage_hb = memnew(HFlowContainer);

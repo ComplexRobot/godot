@@ -35,6 +35,7 @@
 #include "core/debugger/engine_debugger.h"
 #include "core/debugger/script_debugger.h"
 #include "core/io/resource_loader.h"
+#include "core/object/class_db.h"
 #include "core/templates/sort_array.h"
 
 ScriptLanguage *ScriptServer::_languages[MAX_LANGUAGES];
@@ -45,7 +46,6 @@ thread_local bool ScriptServer::thread_entered = false;
 
 bool ScriptServer::scripting_enabled = true;
 bool ScriptServer::reload_scripts_on_save = false;
-ScriptEditRequestFunction ScriptServer::edit_request_func = nullptr;
 
 // These need to be the last static variables in this file, since we're exploiting the reverse-order destruction of static variables.
 static bool is_program_exiting = false;
@@ -253,6 +253,13 @@ Error ScriptServer::register_language(ScriptLanguage *p_language) {
 		ERR_FAIL_COND_V_MSG(other_language->get_type() == p_language->get_type(), ERR_ALREADY_EXISTS, vformat("A script language with type '%s' is already registered.", p_language->get_type()));
 	}
 	_languages[_language_count++] = p_language;
+
+	// Make sure the new language is initialized in case languages have already been initialized before
+	// This happens when importing the GDExtension for the first time in the editor
+	if (languages_ready) {
+		p_language->init();
+	}
+
 	return OK;
 }
 

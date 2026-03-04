@@ -30,6 +30,7 @@
 
 #include "csharp_script.h"
 
+#include "core/object/class_db.h"
 #include "godotsharp_dirs.h"
 #include "managed_callable.h"
 #include "mono_gd/gd_mono_cache.h"
@@ -398,10 +399,6 @@ String CSharpLanguage::validate_path(const String &p_path) const {
 	}
 
 	return "";
-}
-
-Script *CSharpLanguage::create_script() const {
-	return memnew(CSharpScript);
 }
 
 bool CSharpLanguage::supports_builtin_mode() const {

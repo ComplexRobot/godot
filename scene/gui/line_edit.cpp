@@ -32,7 +32,9 @@
 #include "line_edit.compat.inc"
 
 #include "core/config/project_settings.h"
+#include "core/input/input.h"
 #include "core/input/input_map.h"
+#include "core/object/class_db.h"
 #include "core/os/keyboard.h"
 #include "core/os/os.h"
 #include "core/string/alt_codes.h"
@@ -40,7 +42,8 @@
 #include "scene/gui/label.h"
 #include "scene/main/window.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/display_server.h"
+#include "servers/display/accessibility_server.h"
+#include "servers/rendering/rendering_server.h"
 #include "servers/text/text_server.h"
 
 #ifdef TOOLS_ENABLED
@@ -659,13 +662,7 @@ void LineEdit::gui_input(const Ref<InputEvent> &p_event) {
 		return;
 	}
 
-	Ref<InputEventKey> k = p_event;
-
-	if (k.is_null()) {
-		return;
-	}
-
-	if (editable && !editing && k->is_action_pressed("ui_text_submit", false)) {
+	if (editable && !editing && p_event->is_action_pressed("ui_text_submit", false)) {
 		edit();
 		emit_signal(SNAME("editing_toggled"), true);
 		accept_event();
@@ -674,7 +671,7 @@ void LineEdit::gui_input(const Ref<InputEvent> &p_event) {
 
 	// Open context menu.
 	if (context_menu_enabled) {
-		if (k->is_action("ui_menu", true)) {
+		if (p_event->is_action("ui_menu", true)) {
 			_update_context_menu();
 			Point2 pos = Point2(get_caret_pixel_pos().x, (get_size().y + theme_cache.font->get_height(theme_cache.font_size)) / 2);
 			menu->set_position(get_screen_transform().xform(pos));
@@ -688,19 +685,19 @@ void LineEdit::gui_input(const Ref<InputEvent> &p_event) {
 	}
 
 	if (is_shortcut_keys_enabled()) {
-		if (k->is_action("ui_copy", true)) {
+		if (p_event->is_action("ui_copy", true)) {
 			copy_text();
 			accept_event();
 			return;
 		}
 
-		if (k->is_action("ui_text_select_all", true)) {
+		if (p_event->is_action("ui_text_select_all", true)) {
 			select();
 			accept_event();
 			return;
 		}
 
-		if (k->is_action("ui_cut", true)) {
+		if (p_event->is_action("ui_cut", true)) {
 			if (editable) {
 				cut_text();
 			} else {
@@ -712,6 +709,12 @@ void LineEdit::gui_input(const Ref<InputEvent> &p_event) {
 	}
 
 	if (!editing) {
+		return;
+	}
+
+	Ref<InputEventKey> k = p_event;
+
+	if (k.is_null()) {
 		return;
 	}
 
@@ -1231,22 +1234,22 @@ void LineEdit::_notification(int p_what) {
 			RID ae = get_accessibility_element();
 			ERR_FAIL_COND(ae.is_null());
 
-			DisplayServer::get_singleton()->accessibility_update_set_role(ae, DisplayServer::AccessibilityRole::ROLE_TEXT_FIELD);
+			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_TEXT_FIELD);
 			bool using_placeholder = text.is_empty() && ime_text.is_empty();
 			if (using_placeholder && !placeholder.is_empty()) {
-				DisplayServer::get_singleton()->accessibility_update_set_placeholder(ae, atr(placeholder));
+				AccessibilityServer::get_singleton()->update_set_placeholder(ae, atr(placeholder));
 			}
 			if (!placeholder.is_empty() && get_accessibility_name().is_empty()) {
-				DisplayServer::get_singleton()->accessibility_update_set_name(ae, atr(placeholder));
+				AccessibilityServer::get_singleton()->update_set_name(ae, atr(placeholder));
 			}
-			DisplayServer::get_singleton()->accessibility_update_set_flag(ae, DisplayServer::AccessibilityFlags::FLAG_READONLY, !editable);
+			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_READONLY, !editable);
 
-			DisplayServer::get_singleton()->accessibility_update_add_action(ae, DisplayServer::AccessibilityAction::ACTION_SET_TEXT_SELECTION, callable_mp(this, &LineEdit::_accessibility_action_set_selection));
-			DisplayServer::get_singleton()->accessibility_update_add_action(ae, DisplayServer::AccessibilityAction::ACTION_REPLACE_SELECTED_TEXT, callable_mp(this, &LineEdit::_accessibility_action_replace_selected));
-			DisplayServer::get_singleton()->accessibility_update_add_action(ae, DisplayServer::AccessibilityAction::ACTION_SET_VALUE, callable_mp(this, &LineEdit::_accessibility_action_set_value));
-			DisplayServer::get_singleton()->accessibility_update_add_action(ae, DisplayServer::AccessibilityAction::ACTION_SHOW_CONTEXT_MENU, callable_mp(this, &LineEdit::_accessibility_action_menu));
+			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SET_TEXT_SELECTION, callable_mp(this, &LineEdit::_accessibility_action_set_selection));
+			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_REPLACE_SELECTED_TEXT, callable_mp(this, &LineEdit::_accessibility_action_replace_selected));
+			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SET_VALUE, callable_mp(this, &LineEdit::_accessibility_action_set_value));
+			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SHOW_CONTEXT_MENU, callable_mp(this, &LineEdit::_accessibility_action_menu));
 			const String &lang = language.is_empty() ? _get_locale() : language;
-			DisplayServer::get_singleton()->accessibility_update_set_language(ae, lang);
+			AccessibilityServer::get_singleton()->update_set_language(ae, lang);
 
 			bool rtl = is_layout_rtl();
 			Ref<StyleBox> style = theme_cache.normal;
@@ -1311,16 +1314,16 @@ void LineEdit::_notification(int p_what) {
 			float text_off_x = x_ofs + scroll_offset;
 
 			if (accessibility_text_root_element.is_null()) {
-				accessibility_text_root_element = DisplayServer::get_singleton()->accessibility_create_sub_text_edit_elements(ae, using_placeholder ? RID() : text_rid, text_height, -1, true);
+				accessibility_text_root_element = AccessibilityServer::get_singleton()->create_sub_text_edit_elements(ae, using_placeholder ? RID() : text_rid, text_height, -1, true);
 			}
 
 			Transform2D text_xform;
 			text_xform.set_origin(Vector2i(text_off_x, y_ofs));
-			DisplayServer::get_singleton()->accessibility_update_set_transform(accessibility_text_root_element, text_xform);
+			AccessibilityServer::get_singleton()->update_set_transform(accessibility_text_root_element, text_xform);
 			if (selection.enabled) {
-				DisplayServer::get_singleton()->accessibility_update_set_text_selection(ae, accessibility_text_root_element, selection.begin, accessibility_text_root_element, selection.end);
+				AccessibilityServer::get_singleton()->update_set_text_selection(ae, accessibility_text_root_element, selection.begin, accessibility_text_root_element, selection.end);
 			} else {
-				DisplayServer::get_singleton()->accessibility_update_set_text_selection(ae, accessibility_text_root_element, caret_column, accessibility_text_root_element, caret_column);
+				AccessibilityServer::get_singleton()->update_set_text_selection(ae, accessibility_text_root_element, caret_column, accessibility_text_root_element, caret_column);
 			}
 		} break;
 
@@ -3121,7 +3124,7 @@ void LineEdit::_shape() {
 	}
 
 	if (accessibility_text_root_element.is_valid()) {
-		DisplayServer::get_singleton()->accessibility_free_element(accessibility_text_root_element);
+		AccessibilityServer::get_singleton()->free_element(accessibility_text_root_element);
 		accessibility_text_root_element = RID();
 	}
 
@@ -3262,29 +3265,29 @@ void LineEdit::_update_context_menu() {
 
 	int idx = -1;
 
-#define MENU_ITEM_ACTION_DISABLED(m_menu, m_id, m_action, m_disabled)                                                  \
-	idx = m_menu->get_item_index(m_id);                                                                                \
-	if (idx >= 0) {                                                                                                    \
+#define MENU_ITEM_ACTION_DISABLED(m_menu, m_id, m_action, m_disabled) \
+	idx = m_menu->get_item_index(m_id); \
+	if (idx >= 0) { \
 		m_menu->set_item_accelerator(idx, shortcut_keys_enabled ? _get_menu_action_accelerator(m_action) : Key::NONE); \
-		m_menu->set_item_disabled(idx, m_disabled);                                                                    \
+		m_menu->set_item_disabled(idx, m_disabled); \
 	}
 
-#define MENU_ITEM_ACTION(m_menu, m_id, m_action)                                                                       \
-	idx = m_menu->get_item_index(m_id);                                                                                \
-	if (idx >= 0) {                                                                                                    \
+#define MENU_ITEM_ACTION(m_menu, m_id, m_action) \
+	idx = m_menu->get_item_index(m_id); \
+	if (idx >= 0) { \
 		m_menu->set_item_accelerator(idx, shortcut_keys_enabled ? _get_menu_action_accelerator(m_action) : Key::NONE); \
 	}
 
 #define MENU_ITEM_DISABLED(m_menu, m_id, m_disabled) \
-	idx = m_menu->get_item_index(m_id);              \
-	if (idx >= 0) {                                  \
-		m_menu->set_item_disabled(idx, m_disabled);  \
+	idx = m_menu->get_item_index(m_id); \
+	if (idx >= 0) { \
+		m_menu->set_item_disabled(idx, m_disabled); \
 	}
 
 #define MENU_ITEM_CHECKED(m_menu, m_id, m_checked) \
-	idx = m_menu->get_item_index(m_id);            \
-	if (idx >= 0) {                                \
-		m_menu->set_item_checked(idx, m_checked);  \
+	idx = m_menu->get_item_index(m_id); \
+	if (idx >= 0) { \
+		m_menu->set_item_checked(idx, m_checked); \
 	}
 
 	if (DisplayServer::get_singleton()->has_feature(DisplayServer::FEATURE_EMOJI_AND_SYMBOL_PICKER)) {
@@ -3523,7 +3526,7 @@ void LineEdit::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "structured_text_bidi_override_options"), "set_structured_text_bidi_override_options", "get_structured_text_bidi_override_options");
 
 	ADD_GROUP("Icon", "");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "right_icon", PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"), "set_right_icon", "get_right_icon");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "right_icon", PROPERTY_HINT_RESOURCE_TYPE, Texture2D::get_class_static()), "set_right_icon", "get_right_icon");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "icon_expand_mode", PROPERTY_HINT_ENUM, "Original,Fit to Text,Fit to LineEdit"), "set_icon_expand_mode", "get_icon_expand_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "right_icon_scale", PROPERTY_HINT_RANGE, "0.1,1.0,0.01"), "set_right_icon_scale", "get_right_icon_scale");
 

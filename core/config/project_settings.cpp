@@ -38,12 +38,13 @@
 #include "core/io/file_access_pack.h"
 #include "core/io/marshalls.h"
 #include "core/io/resource_uid.h"
+#include "core/object/class_db.h"
+#include "core/object/message_queue.h"
 #include "core/object/script_language.h"
 #include "core/templates/rb_set.h"
 #include "core/variant/typed_array.h"
 #include "core/variant/variant_parser.h"
 #include "core/version.h"
-#include "servers/rendering/rendering_server.h"
 
 #ifdef TOOLS_ENABLED
 #include "modules/modules_enabled.gen.h" // For mono.
@@ -635,7 +636,8 @@ void ProjectSettings::_convert_to_last_version(int p_from_version) {
 	} else if (p_from_version <= 6) {
 		// Check if we still have legacy boot splash (removed in 4.6), map it to new project setting, then remove legacy setting.
 		if (has_setting("application/boot_splash/fullsize")) {
-			set_setting("application/boot_splash/stretch_mode", RenderingServer::map_scaling_option_to_stretch_mode(get_setting("application/boot_splash/fullsize")));
+			// See RenderingServerEnums::SplashStretchMode.
+			set_setting("application/boot_splash/stretch_mode", get_setting("application/boot_splash/fullsize") ? 1 : 0);
 			set_setting("application/boot_splash/fullsize", Variant());
 		}
 	}
@@ -1640,7 +1642,7 @@ void ProjectSettings::_bind_methods() {
 
 void ProjectSettings::_add_builtin_input_map() {
 	if (InputMap::get_singleton()) {
-		HashMap<String, List<Ref<InputEvent>>> builtins = InputMap::get_singleton()->get_builtins();
+		HashMap<String, List<Ref<InputEvent>>> builtins(InputMap::get_singleton()->get_builtins());
 
 		for (KeyValue<String, List<Ref<InputEvent>>> &E : builtins) {
 			Array events;
@@ -1703,6 +1705,7 @@ ProjectSettings::ProjectSettings() {
 
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "accessibility/general/accessibility_support", PROPERTY_HINT_ENUM, "Auto (When Screen Reader is Running),Always Active,Disabled"), 0);
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "accessibility/general/updates_per_second", PROPERTY_HINT_RANGE, "1,100,1"), 60);
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "accessibility/general/accessibility_driver", PROPERTY_HINT_ENUM, "accesskit,dummy"), "accesskit");
 
 	// The default window size is tuned to:
 	// - Have a 16:9 aspect ratio,
@@ -1731,6 +1734,8 @@ ProjectSettings::ProjectSettings() {
 
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "display/window/size/window_width_override", PROPERTY_HINT_RANGE, "0,7680,1,or_greater"), 0); // 8K resolution
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "display/window/size/window_height_override", PROPERTY_HINT_RANGE, "0,4320,1,or_greater"), 0); // 8K resolution
+
+	GLOBAL_DEF("display/window/hdr/request_hdr_output", false);
 
 	GLOBAL_DEF("display/window/energy_saving/keep_screen_on", true);
 	GLOBAL_DEF("animation/warnings/check_invalid_track_paths", true);

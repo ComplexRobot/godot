@@ -71,9 +71,12 @@
 #include "servers/audio/audio_driver_dummy.h"
 #include "servers/audio/audio_server.h"
 #include "servers/camera/camera_server.h"
+#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 #include "servers/movie_writer/movie_writer.h"
 #include "servers/register_server_types.h"
+#include "servers/rendering/rendering_device.h"
+#include "servers/rendering/rendering_server.h"
 #include "servers/rendering/rendering_server_default.h"
 #include "servers/text/text_server.h"
 #include "servers/text/text_server_dummy.h"
@@ -173,6 +176,7 @@ static SteamTracker *steam_tracker = nullptr;
 // Initialized in setup2()
 static AudioServer *audio_server = nullptr;
 static CameraServer *camera_server = nullptr;
+static AccessibilityServer *accessibility_server = nullptr;
 static DisplayServer *display_server = nullptr;
 static RenderingServer *rendering_server = nullptr;
 static TextServerManager *tsman = nullptr;
@@ -196,14 +200,13 @@ static bool _start_success = false;
 String display_driver = "";
 String tablet_driver = "";
 String text_driver = "";
-String rendering_driver = "";
-String rendering_method = "";
 static int text_driver_idx = -1;
 static int audio_driver_idx = -1;
 
 // Engine config/tools
 
-static DisplayServer::AccessibilityMode accessibility_mode = DisplayServer::AccessibilityMode::ACCESSIBILITY_AUTO;
+static AccessibilityServerEnums::AccessibilityMode accessibility_mode = AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_AUTO;
+static String accessibility_driver_name;
 static bool accessibility_mode_set = false;
 static bool single_window = false;
 static bool editor = false;
@@ -408,6 +411,7 @@ void finalize_display() {
 	memdelete(rendering_server);
 
 	memdelete(display_server);
+	memdelete(accessibility_server);
 }
 
 void initialize_theme_db() {
@@ -634,6 +638,7 @@ void Main::print_help(const char *p_binary) {
 #endif
 	print_help_option("--wid <window_id>", "Request parented to window.\n");
 	print_help_option("--accessibility <mode>", "Select accessibility mode ['auto' (when screen reader is running, default), 'always', 'disabled'].\n");
+	print_help_option("--accessibility-driver <driver>", "Select accessibility driver ['accesskit', 'dummy'].\n");
 
 	print_help_title("Debug options");
 	print_help_option("-d, --debug", "Debug (local stdout debugger).\n");
@@ -723,7 +728,12 @@ void Main::print_help(const char *p_binary) {
 	OS::get_singleton()->print("\n");
 }
 
-#ifdef TESTS_ENABLED
+#ifndef TESTS_ENABLED
+Error Main::test_setup() {
+	ERR_FAIL_V(ERR_UNAVAILABLE);
+}
+void Main::test_cleanup() {}
+#else
 // The order is the same as in `Main::setup()`, only core and some editor types
 // are initialized here. This also combines `Main::setup2()` initialization.
 Error Main::test_setup() {
@@ -932,7 +942,7 @@ void Main::test_cleanup() {
 
 	OS::get_singleton()->finalize_core();
 }
-#endif
+#endif // TESTS_ENABLED
 
 int Main::test_entrypoint(int argc, char *argv[], bool &tests_need_run) {
 	for (int x = 0; x < argc; x++) {
@@ -1083,6 +1093,10 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	bool delta_smoothing_override = false;
 	bool load_shell_env = false;
 
+	String rendering_driver = "";
+	String rendering_method = "";
+	OS::RenderingSource rendering_driver_source = OS::RenderingSource::RENDERING_SOURCE_DEFAULT;
+	OS::RenderingSource rendering_method_source = OS::RenderingSource::RENDERING_SOURCE_DEFAULT;
 	String default_renderer = "";
 	String default_renderer_mobile = "";
 	String renderer_hints = "";
@@ -1280,6 +1294,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		} else if (arg == "--rendering-driver") {
 			if (N) {
 				rendering_driver = N->get();
+				rendering_driver_source = OS::RenderingSource::RENDERING_SOURCE_COMMANDLINE;
 				N = N->next();
 			} else {
 				OS::get_singleton()->print("Missing rendering driver argument, aborting.\n");
@@ -1354,13 +1369,13 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 			if (N) {
 				String string = N->get();
 				if (string == "auto") {
-					accessibility_mode = DisplayServer::AccessibilityMode::ACCESSIBILITY_AUTO;
+					accessibility_mode = AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_AUTO;
 					accessibility_mode_set = true;
 				} else if (string == "always") {
-					accessibility_mode = DisplayServer::AccessibilityMode::ACCESSIBILITY_ALWAYS;
+					accessibility_mode = AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_ALWAYS;
 					accessibility_mode_set = true;
 				} else if (string == "disabled") {
-					accessibility_mode = DisplayServer::AccessibilityMode::ACCESSIBILITY_DISABLED;
+					accessibility_mode = AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_DISABLED;
 					accessibility_mode_set = true;
 				} else {
 					OS::get_singleton()->print("Accessibility mode argument not recognized, aborting.\n");
@@ -1369,6 +1384,15 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 				N = N->next();
 			} else {
 				OS::get_singleton()->print("Missing accessibility mode argument, aborting.\n");
+				goto error;
+			}
+		} else if (arg == "--accessibility-driver") {
+			if (N) {
+				String string = N->get();
+				accessibility_driver_name = string;
+				N = N->next();
+			} else {
+				OS::get_singleton()->print("Missing accessibility driver argument, aborting.\n");
 				goto error;
 			}
 		} else if (arg == "-t" || arg == "--always-on-top") { // force always-on-top window
@@ -2336,11 +2360,11 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 		Array force_angle_list;
 
-#define FORCE_ANGLE(m_vendor, m_name)       \
-	{                                       \
-		Dictionary device;                  \
-		device["vendor"] = m_vendor;        \
-		device["name"] = m_name;            \
+#define FORCE_ANGLE(m_vendor, m_name) \
+	{ \
+		Dictionary device; \
+		device["vendor"] = m_vendor; \
+		device["name"] = m_name; \
 		force_angle_list.push_back(device); \
 	}
 
@@ -2572,6 +2596,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	// Default to ProjectSettings default if nothing set on the command line.
 	if (rendering_method.is_empty()) {
 		rendering_method = GLOBAL_GET("rendering/renderer/rendering_method");
+		rendering_method_source = OS::RenderingSource::RENDERING_SOURCE_PROJECT_SETTING;
 	}
 
 	if (rendering_driver.is_empty()) {
@@ -2579,16 +2604,18 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 			rendering_driver = "dummy";
 		} else if (rendering_method == "gl_compatibility") {
 			rendering_driver = GLOBAL_GET("rendering/gl_compatibility/driver");
+			rendering_driver_source = OS::RenderingSource::RENDERING_SOURCE_PROJECT_SETTING;
 		} else {
 			rendering_driver = GLOBAL_GET("rendering/rendering_device/driver");
+			rendering_driver_source = OS::RenderingSource::RENDERING_SOURCE_PROJECT_SETTING;
 		}
 	}
 
 	// always convert to lower case for consistency in the code
 	rendering_driver = rendering_driver.to_lower();
 
-	OS::get_singleton()->set_current_rendering_driver_name(rendering_driver);
-	OS::get_singleton()->set_current_rendering_method(rendering_method);
+	OS::get_singleton()->set_current_rendering_driver_name(rendering_driver, rendering_driver_source);
+	OS::get_singleton()->set_current_rendering_method(rendering_method, rendering_method_source);
 
 #ifdef TOOLS_ENABLED
 	if (!force_res && project_manager) {
@@ -2821,6 +2848,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/extensions/spatial_entity/april_tag_dict", PROPERTY_HINT_ENUM, "4x4H5,5x5H9,6x6H10,6x6H11"), "3");
 	GLOBAL_DEF_RST_BASIC("xr/openxr/extensions/eye_gaze_interaction", false);
 	GLOBAL_DEF_BASIC("xr/openxr/extensions/render_model", false);
+	GLOBAL_DEF_BASIC("xr/openxr/extensions/user_presence", false);
 
 	// OpenXR Binding modifier settings
 	GLOBAL_DEF_BASIC("xr/openxr/binding_modifiers/analog_threshold", false);
@@ -2998,9 +3026,9 @@ Error Main::setup2(bool p_show_boot_logo) {
 					bool ac_found = false;
 
 					if (editor) {
-						screen_property = "interface/editor/editor_screen";
+						screen_property = "interface/editor/appearance/editor_screen";
 					} else if (project_manager) {
-						screen_property = "interface/editor/project_manager_screen";
+						screen_property = "interface/editor/appearance/project_manager_screen";
 					} else {
 						// Skip.
 						screen_found = true;
@@ -3033,19 +3061,24 @@ Error Main::setup2(bool p_show_boot_logo) {
 							if (!ac_found && assign == "interface/accessibility/accessibility_support") {
 								accessibility_mode_editor = value;
 								ac_found = true;
-							} else if (!init_expand_to_title_found && assign == "interface/editor/expand_to_title") {
+							} else if (!init_expand_to_title_found && assign == "interface/editor/appearance/expand_to_title") {
 								init_expand_to_title = value;
 								init_expand_to_title_found = true;
-							} else if (!init_display_scale_found && assign == "interface/editor/display_scale") {
+							} else if (!init_display_scale_found && assign == "interface/editor/appearance/display_scale") {
 								init_display_scale = value;
 								init_display_scale_found = true;
-							} else if (!init_custom_scale_found && assign == "interface/editor/custom_display_scale") {
+							} else if (!init_custom_scale_found && assign == "interface/editor/appearance/custom_display_scale") {
 								init_custom_scale = value;
 								init_custom_scale_found = true;
 							} else if (!prefer_wayland_found && assign == "run/platforms/linuxbsd/prefer_wayland") {
-								prefer_wayland = value;
+								if (!OS::get_singleton()->get_environment("WAYLAND_DISPLAY").is_empty()) {
+									// Do not prefer Wayland if not currently on a Wayland session.
+									// This avoids error messages on startup when currently on X11
+									// and the Prefer Wayland setting is enabled.
+									prefer_wayland = value;
+								}
 								prefer_wayland_found = true;
-							} else if (!tablet_found && assign == "interface/editor/tablet_driver") {
+							} else if (!tablet_found && assign == "interface/editor/input/tablet_driver") {
 								tablet_driver_editor = value;
 								tablet_found = true;
 							}
@@ -3217,18 +3250,65 @@ Error Main::setup2(bool p_show_boot_logo) {
 		if (!accessibility_mode_set) {
 #ifdef TOOLS_ENABLED
 			if (editor || project_manager || cmdline_tool) {
-				accessibility_mode = (DisplayServer::AccessibilityMode)accessibility_mode_editor;
+				accessibility_mode = (AccessibilityServerEnums::AccessibilityMode)accessibility_mode_editor;
 			} else {
 #else
 			{
 #endif
-				accessibility_mode = (DisplayServer::AccessibilityMode)GLOBAL_GET("accessibility/general/accessibility_support").operator int64_t();
+				accessibility_mode = (AccessibilityServerEnums::AccessibilityMode)GLOBAL_GET("accessibility/general/accessibility_support").operator int64_t();
 			}
 		}
-		DisplayServer::accessibility_set_mode(accessibility_mode);
+		if (accessibility_driver_name.is_empty()) {
+			if (!editor && !project_manager) {
+				accessibility_driver_name = GLOBAL_GET("accessibility/general/accessibility_driver");
+			} else {
+				accessibility_driver_name = "accesskit";
+			}
+		}
+		if (display_driver == NULL_DISPLAY_DRIVER || display_driver == EMBEDDED_DISPLAY_DRIVER || accessibility_mode == AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_DISABLED) {
+			accessibility_driver_name = "dummy";
+		}
+		int accessibility_driver_idx = -1;
 
-		// rendering_driver now held in static global String in main and initialized in setup()
+		if (accessibility_driver_name.is_empty() || accessibility_driver_name == "default") {
+			accessibility_driver_idx = 0;
+		} else {
+			for (int i = 0; i < AccessibilityServer::get_create_function_count(); i++) {
+				String name = AccessibilityServer::get_create_function_name(i);
+				if (accessibility_driver_name == name) {
+					accessibility_driver_idx = i;
+					break;
+				}
+			}
+
+			if (accessibility_driver_idx < 0) {
+				// If the requested driver wasn't found, pick the first entry.
+				// If all else failed it would be the headless server.
+				accessibility_driver_idx = 0;
+			}
+		}
+
 		Error err;
+		accessibility_server = AccessibilityServer::create(accessibility_driver_idx, err);
+		if (err != OK || accessibility_server == nullptr) {
+			String last_name = AccessibilityServer::get_create_function_name(accessibility_driver_idx);
+
+			for (int i = 0; i < AccessibilityServer::get_create_function_count(); i++) {
+				if (i == accessibility_driver_idx) {
+					continue; // Don't try the same twice.
+				}
+				String name = AccessibilityServer::get_create_function_name(i);
+				WARN_VERBOSE(vformat("Accessibility driver %s failed, falling back to %s.", last_name, name));
+
+				accessibility_server = AccessibilityServer::create(i, err);
+				if (err == OK && accessibility_server != nullptr) {
+					break;
+				}
+			}
+		}
+		accessibility_server->set_mode(accessibility_mode);
+
+		String rendering_driver = OS::get_singleton()->get_current_rendering_driver_name();
 		display_server = DisplayServer::create(display_driver_idx, rendering_driver, window_mode, window_vsync_mode, window_flags, window_position, window_size, init_screen, context, init_embed_parent_window_id, err);
 		if (err != OK || display_server == nullptr) {
 			String last_name = DisplayServer::get_create_function_name(display_driver_idx);
@@ -3713,7 +3793,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 				GLOBAL_GET("display/mouse_cursor/custom_image"));
 		if (cursor.is_valid()) {
 			Vector2 hotspot = GLOBAL_GET("display/mouse_cursor/custom_image_hotspot");
-			Input::get_singleton()->set_custom_mouse_cursor(cursor, Input::CURSOR_ARROW, hotspot);
+			Input::get_singleton()->set_custom_mouse_cursor(cursor, Input::CursorShape::CURSOR_ARROW, hotspot);
 		}
 	}
 
@@ -3795,7 +3875,7 @@ void Main::setup_boot_logo() {
 	if (show_logo) { //boot logo!
 		const bool boot_logo_image = GLOBAL_DEF_BASIC("application/boot_splash/show_image", true);
 
-		const RenderingServer::SplashStretchMode boot_stretch_mode = GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "application/boot_splash/stretch_mode", PROPERTY_HINT_ENUM, "Disabled,Keep,Keep Width,Keep Height,Cover,Ignore"), 1);
+		const RSE::SplashStretchMode boot_stretch_mode = GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "application/boot_splash/stretch_mode", PROPERTY_HINT_ENUM, "Disabled,Keep,Keep Width,Keep Height,Cover,Ignore"), 1);
 		const bool boot_logo_filter = GLOBAL_DEF_BASIC("application/boot_splash/use_filter", true);
 		String boot_logo_path = GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/boot_splash/image", PROPERTY_HINT_FILE, "*.png"), String());
 
@@ -3849,7 +3929,7 @@ void Main::setup_boot_logo() {
 			MAIN_PRINT("Main: ClearColor");
 			RenderingServer::get_singleton()->set_default_clear_color(boot_bg_color);
 			MAIN_PRINT("Main: Image");
-			RenderingServer::get_singleton()->set_boot_image_with_stretch(splash, boot_bg_color, RenderingServer::SPLASH_STRETCH_MODE_DISABLED);
+			RenderingServer::get_singleton()->set_boot_image_with_stretch(splash, boot_bg_color, RSE::SPLASH_STRETCH_MODE_DISABLED);
 #endif
 		}
 
@@ -3862,10 +3942,6 @@ void Main::setup_boot_logo() {
 	}
 	RenderingServer::get_singleton()->set_default_clear_color(
 			GLOBAL_GET("rendering/environment/defaults/default_clear_color"));
-}
-
-String Main::get_rendering_driver_name() {
-	return rendering_driver;
 }
 
 String Main::get_locale_override() {
@@ -4366,7 +4442,7 @@ int Main::start() {
 			if (!game_path.is_empty() || !script.is_empty()) {
 				//autoload
 				OS::get_singleton()->benchmark_begin_measure("Startup", "Load Autoloads");
-				HashMap<StringName, ProjectSettings::AutoloadInfo> autoloads = ProjectSettings::get_singleton()->get_autoload_list();
+				HashMap<StringName, ProjectSettings::AutoloadInfo> autoloads(ProjectSettings::get_singleton()->get_autoload_list());
 
 				//first pass, add the constants so they exist before any script is loaded
 				for (const KeyValue<StringName, ProjectSettings::AutoloadInfo> &E : autoloads) {
@@ -4560,12 +4636,12 @@ int Main::start() {
 
 #ifdef TOOLS_ENABLED
 		if (editor) {
-			bool editor_embed_subwindows = EDITOR_GET("interface/editor/single_window_mode");
+			bool editor_embed_subwindows = EDITOR_GET("interface/editor/display/single_window_mode");
 
 			if (editor_embed_subwindows) {
 				sml->get_root()->set_embedding_subwindows(true);
 			}
-			restore_editor_window_layout = EDITOR_GET("interface/editor/editor_screen").operator int() == EditorSettings::InitialScreen::INITIAL_SCREEN_AUTO;
+			restore_editor_window_layout = EDITOR_GET("interface/editor/appearance/editor_screen").operator int() == EditorSettings::InitialScreen::INITIAL_SCREEN_AUTO;
 		}
 #endif
 

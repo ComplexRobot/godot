@@ -49,6 +49,7 @@
 #include "drivers/windows/thread_windows.h"
 #include "main/main.h"
 #include "servers/audio/audio_server.h"
+#include "servers/rendering/rendering_server.h"
 #include "servers/rendering/rendering_server_default.h"
 #include "servers/text/text_server.h"
 
@@ -1285,23 +1286,23 @@ Dictionary OS_Windows::get_memory_info() const {
 }
 
 Dictionary OS_Windows::execute_with_pipe(const String &p_path, const List<String> &p_arguments, bool p_blocking) {
-#define CLEAN_PIPES               \
-	if (pipe_in[0] != 0) {        \
-		CloseHandle(pipe_in[0]);  \
-	}                             \
-	if (pipe_in[1] != 0) {        \
-		CloseHandle(pipe_in[1]);  \
-	}                             \
-	if (pipe_out[0] != 0) {       \
+#define CLEAN_PIPES \
+	if (pipe_in[0] != 0) { \
+		CloseHandle(pipe_in[0]); \
+	} \
+	if (pipe_in[1] != 0) { \
+		CloseHandle(pipe_in[1]); \
+	} \
+	if (pipe_out[0] != 0) { \
 		CloseHandle(pipe_out[0]); \
-	}                             \
-	if (pipe_out[1] != 0) {       \
+	} \
+	if (pipe_out[1] != 0) { \
 		CloseHandle(pipe_out[1]); \
-	}                             \
-	if (pipe_err[0] != 0) {       \
+	} \
+	if (pipe_err[0] != 0) { \
 		CloseHandle(pipe_err[0]); \
-	}                             \
-	if (pipe_err[1] != 0) {       \
+	} \
+	if (pipe_err[1] != 0) { \
 		CloseHandle(pipe_err[1]); \
 	}
 

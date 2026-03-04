@@ -32,6 +32,7 @@
 
 #include "core/config/project_settings.h"
 #include "core/input/input_map.h"
+#include "core/object/class_db.h"
 #include "core/os/keyboard.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/editor_log.h"
@@ -45,7 +46,6 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/settings/event_listener_line_edit.h"
 #include "editor/settings/input_event_configuration_dialog.h"
-#include "editor/settings/project_settings_editor.h"
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/gui/check_button.h"
@@ -65,8 +65,13 @@ void EditorSettingsDialog::_settings_changed() {
 	timer->start();
 }
 
-void EditorSettingsDialog::_settings_property_edited(const String &p_name) {
-	String full_name = inspector->get_full_item_path(p_name);
+void EditorSettingsDialog::_settings_property_edited() {
+	Vector<String> changed = EditorSettings::get_singleton()->get_changed_settings();
+	if (changed.is_empty()) {
+		return;
+	}
+
+	const String full_name = changed[changed.size() - 1];
 
 	// Set theme presets to Custom when controlled settings change.
 
@@ -234,6 +239,14 @@ void EditorSettingsDialog::popup_edit_settings() {
 	_focus_current_search_box();
 }
 
+void EditorSettingsDialog::set_advanced_mode_enabled(bool p_enabled) {
+	advanced_switch->set_pressed(p_enabled);
+}
+
+void EditorSettingsDialog::set_current_section(const String &p_section) {
+	inspector->set_current_section(p_section);
+}
+
 void EditorSettingsDialog::_undo_redo_callback(void *p_self, const String &p_name) {
 	EditorNode::get_log()->add_message(p_name, EditorLog::MSG_TYPE_EDITOR);
 }
@@ -285,7 +298,7 @@ void EditorSettingsDialog::_notification(int p_what) {
 				inspector->get_inspector()->update_tree();
 			}
 
-			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor/localize_settings")) {
+			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor/localization/localize_settings")) {
 				inspector->update_category_list();
 			}
 		} break;
@@ -358,7 +371,7 @@ bool EditorSettingsDialog::_is_in_project_manager() const {
 void EditorSettingsDialog::_update_builtin_action(const String &p_name, const Array &p_events) {
 	Array old_input_array = EditorSettings::get_singleton()->get_builtin_action_overrides(p_name);
 	if (old_input_array.is_empty()) {
-		List<Ref<InputEvent>> defaults = InputMap::get_singleton()->get_builtins_with_feature_overrides_applied()[current_edited_identifier];
+		List<Ref<InputEvent>> defaults(InputMap::get_singleton()->get_builtins_with_feature_overrides_applied()[current_edited_identifier]);
 		old_input_array = _event_list_to_array_helper(defaults);
 	}
 
@@ -435,6 +448,7 @@ TreeItem *EditorSettingsDialog::_create_shortcut_treeitem(TreeItem *p_parent, co
 	TreeItem *shortcut_item = shortcuts->create_item(p_parent);
 	shortcut_item->set_collapsed(p_is_collapsed);
 	shortcut_item->set_text(0, p_display);
+	shortcut_item->set_tooltip_text(0, p_shortcut_identifier);
 
 	Ref<InputEvent> primary = p_events.size() > 0 ? Ref<InputEvent>(p_events[0]) : Ref<InputEvent>();
 	Ref<InputEvent> secondary = p_events.size() > 1 ? Ref<InputEvent>(p_events[1]) : Ref<InputEvent>();
@@ -738,7 +752,7 @@ void EditorSettingsDialog::_shortcut_button_pressed(Object *p_item, int p_column
 		case EditorSettingsDialog::SHORTCUT_REVERT: {
 			// Only for "shortcut" types
 			if (is_editing_action) {
-				List<Ref<InputEvent>> defaults = InputMap::get_singleton()->get_builtins_with_feature_overrides_applied()[current_edited_identifier];
+				List<Ref<InputEvent>> defaults(InputMap::get_singleton()->get_builtins_with_feature_overrides_applied()[current_edited_identifier]);
 				Array events = _event_list_to_array_helper(defaults);
 
 				_update_builtin_action(current_edited_identifier, events);
@@ -976,7 +990,6 @@ EditorSettingsDialog::EditorSettingsDialog() {
 	inspector->register_advanced_toggle(advanced_switch);
 	inspector->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	tab_general->add_child(inspector);
-	inspector->get_inspector()->connect("property_edited", callable_mp(this, &EditorSettingsDialog::_settings_property_edited));
 	inspector->get_inspector()->connect("restart_requested", callable_mp(this, &EditorSettingsDialog::_editor_restart_request));
 
 	if (EDITOR_GET("interface/touchscreen/enable_touch_optimizations")) {
@@ -1009,6 +1022,9 @@ EditorSettingsDialog::EditorSettingsDialog() {
 	restart_close_button->connect(SceneStringName(pressed), callable_mp(this, &EditorSettingsDialog::_editor_restart_close));
 	restart_hb->add_child(restart_close_button);
 	restart_container->hide();
+
+	// Needs to be done via the signal instead of the notification, otherwise it happens too late.
+	EditorSettings::get_singleton()->connect("settings_changed", callable_mp(this, &EditorSettingsDialog::_settings_property_edited));
 
 	// Shortcuts Tab
 

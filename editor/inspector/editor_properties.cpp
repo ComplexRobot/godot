@@ -32,6 +32,8 @@
 
 #include "core/config/project_settings.h"
 #include "core/input/input_map.h"
+#include "core/io/marshalls.h"
+#include "core/object/class_db.h"
 #include "core/string/translation_server.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/scene_tree_dock.h"
@@ -46,7 +48,7 @@
 #include "editor/inspector/editor_resource_picker.h"
 #include "editor/inspector/property_selector.h"
 #include "editor/scene/scene_tree_editor.h"
-#include "editor/script/script_editor_plugin.h"
+#include "editor/script/syntax_highlighters.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/settings/project_settings_editor.h"
 #include "editor/themes/editor_scale.h"
@@ -59,6 +61,7 @@
 #include "scene/main/window.h"
 #include "scene/resources/font.h"
 #include "scene/resources/mesh.h"
+#include "scene/resources/sky.h"
 #include "scene/resources/visual_shader_nodes.h"
 
 ///////////////////// NIL /////////////////////////
@@ -95,6 +98,10 @@ void EditorPropertyVariant::_popup_edit_menu() {
 	change_type->popup();
 }
 
+void EditorPropertyVariant::_object_id_selected(const StringName &p_property, ObjectID p_id) {
+	emit_signal(SNAME("object_id_selected"), p_property, p_id);
+}
+
 void EditorPropertyVariant::_set_read_only(bool p_read_only) {
 	edit_button->set_disabled(p_read_only);
 	if (sub_property) {
@@ -123,7 +130,14 @@ void EditorPropertyVariant::update_property() {
 		}
 
 		if (current_type == Variant::OBJECT) {
-			sub_property = EditorInspector::instantiate_property_editor(nullptr, current_type, "", PROPERTY_HINT_RESOURCE_TYPE, "Resource", PROPERTY_USAGE_NONE);
+			Object *obj = value.get_validated_object();
+			if (Object::cast_to<EncodedObjectAsID>(obj)) {
+				EditorPropertyObjectID *editor = memnew(EditorPropertyObjectID);
+				editor->setup("Object");
+				sub_property = editor;
+			} else {
+				sub_property = EditorInspector::instantiate_property_editor(nullptr, current_type, "", PROPERTY_HINT_RESOURCE_TYPE, Resource::get_class_static(), PROPERTY_USAGE_NONE);
+			}
 		} else {
 			sub_property = EditorInspector::instantiate_property_editor(nullptr, current_type, "", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NONE);
 		}
@@ -136,6 +150,7 @@ void EditorPropertyVariant::update_property() {
 		sub_property->set_read_only(is_read_only());
 		sub_property->set_h_size_flags(SIZE_EXPAND_FILL);
 		sub_property->connect(SNAME("property_changed"), callable_mp((EditorProperty *)this, &EditorProperty::emit_changed));
+		sub_property->connect(SNAME("object_id_selected"), callable_mp(this, &EditorPropertyVariant::_object_id_selected));
 		content->add_child(sub_property);
 		content->move_child(sub_property, 0);
 		sub_property->update_property();
@@ -1017,6 +1032,10 @@ void EditorPropertyFlags::setup(const Vector<String> &p_options) {
 		Vector<String> text_split = option.split(":");
 		if (text_split.size() != 1) {
 			current_val = text_split[1].to_int();
+			// Skip entries like "None:0" (it's not an actual flag).
+			if (current_val == 0) {
+				continue;
+			}
 		} else {
 			current_val = 1u << i;
 		}
@@ -1051,8 +1070,10 @@ void EditorPropertyLayersGrid::_rename_pressed(int p_menu) {
 	// Show rename popup for active layer.
 	ERR_FAIL_INDEX(renamed_layer_index, names.size());
 	String name = names[renamed_layer_index];
-	rename_dialog->set_title(vformat(TTR("Renaming layer %d:"), renamed_layer_index + 1));
+	rename_dialog->set_title(vformat(TTR("Renaming Layer %d:"), renamed_layer_index + 1));
 	rename_dialog_text->set_text(name);
+	// Indicate that leaving it blank reverts back to "Layer [Number]".
+	rename_dialog_text->set_placeholder(vformat(TTR("Layer %d"), renamed_layer_index + 1));
 	rename_dialog_text->select(0, name.length());
 	rename_dialog->popup_centered(Size2(300, 80) * EDSCALE);
 	rename_dialog_text->grab_focus();
@@ -1060,15 +1081,13 @@ void EditorPropertyLayersGrid::_rename_pressed(int p_menu) {
 
 void EditorPropertyLayersGrid::_rename_operation_confirm() {
 	String new_name = rename_dialog_text->get_text().strip_edges();
-	if (new_name.length() == 0) {
-		EditorNode::get_singleton()->show_warning(TTR("No name provided."));
-		return;
-	} else if (new_name.contains_char('/') || new_name.contains_char('\\') || new_name.contains_char(':')) {
+	if (new_name.contains_char('/') || new_name.contains_char('\\') || new_name.contains_char(':')) {
 		EditorNode::get_singleton()->show_warning(TTR("Name contains invalid characters."));
 		return;
 	}
+
 	names.set(renamed_layer_index, new_name);
-	tooltips.set(renamed_layer_index, new_name + "\n" + vformat(TTR("Bit %d, value %d"), renamed_layer_index, 1u << renamed_layer_index));
+	tooltips.set(renamed_layer_index, new_name + "\n" + vformat(TTR("Bit %d, Value %d"), renamed_layer_index, 1u << renamed_layer_index));
 	emit_signal(SNAME("rename_confirmed"), renamed_layer_index, new_name);
 }
 
@@ -1083,7 +1102,7 @@ EditorPropertyLayersGrid::EditorPropertyLayersGrid() {
 	rename_dialog->register_text_enter(rename_dialog_text);
 	rename_dialog->connect(SceneStringName(confirmed), callable_mp(this, &EditorPropertyLayersGrid::_rename_operation_confirm));
 	layer_rename = memnew(PopupMenu);
-	layer_rename->add_item(TTR("Rename layer"), 0);
+	layer_rename->add_item(TTR("Rename Layer"), 0);
 	add_child(layer_rename);
 	layer_rename->connect(SceneStringName(id_pressed), callable_mp(this, &EditorPropertyLayersGrid::_rename_pressed));
 }
@@ -1227,15 +1246,6 @@ void EditorPropertyLayersGrid::gui_input(const Ref<InputEvent> &p_ev) {
 
 void EditorPropertyLayersGrid::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			//TODO
-			DisplayServer::get_singleton()->accessibility_update_set_role(ae, DisplayServer::AccessibilityRole::ROLE_STATIC_TEXT);
-			DisplayServer::get_singleton()->accessibility_update_set_value(ae, TTR(vformat("The %s is not accessible at this time.", "Layers grid property editor")));
-		} break;
-
 		case NOTIFICATION_DRAW: {
 			Size2 grid_size = get_grid_size();
 			grid_size.x = get_size().x;
@@ -1565,6 +1575,12 @@ void EditorPropertyInteger::_value_changed(int64_t val) {
 	emit_changed(get_edited_property(), val);
 }
 
+void EditorPropertyInteger::set_deferred_drag_mode_enabled(bool p_enabled) {
+	EditorProperty::set_deferred_drag_mode_enabled(p_enabled);
+
+	spin->set_deferred_drag_mode_enabled(p_enabled);
+}
+
 void EditorPropertyInteger::update_property() {
 	int64_t val = get_edited_property_display_value();
 	spin->set_value_no_signal(val);
@@ -1601,12 +1617,24 @@ EditorPropertyInteger::EditorPropertyInteger() {
 
 ///////////////////// OBJECT ID /////////////////////////
 
-void EditorPropertyObjectID::_set_read_only(bool p_read_only) {
-	edit->set_disabled(p_read_only);
+ObjectID EditorPropertyObjectID::_get_object_id() const {
+	const Variant value = get_edited_property_value();
+	if (value.get_type() == Variant::OBJECT) {
+		Object *obj = value.get_validated_object();
+		EncodedObjectAsID *obj_as_id = Object::cast_to<EncodedObjectAsID>(obj);
+		if (obj_as_id) {
+			return obj_as_id->get_object_id();
+		}
+	}
+	return value;
 }
 
 void EditorPropertyObjectID::_edit_pressed() {
-	emit_signal(SNAME("object_id_selected"), get_edited_property(), get_edited_property_value());
+	emit_signal(SNAME("object_id_selected"), get_edited_property(), _get_object_id());
+}
+
+void EditorPropertyObjectID::_set_read_only(bool p_read_only) {
+	edit->set_disabled(p_read_only);
 }
 
 void EditorPropertyObjectID::update_property() {
@@ -1615,7 +1643,7 @@ void EditorPropertyObjectID::update_property() {
 		type = "Object";
 	}
 
-	ObjectID id = get_edited_property_value();
+	ObjectID id = _get_object_id();
 	if (id.is_valid()) {
 		edit->set_text(type + " ID: " + uitos(id));
 		edit->set_tooltip_text(type + " ID: " + uitos(id));
@@ -1700,6 +1728,12 @@ void EditorPropertyFloat::_value_changed(double val) {
 		val = Math::deg_to_rad(val);
 	}
 	emit_changed(get_edited_property(), val);
+}
+
+void EditorPropertyFloat::set_deferred_drag_mode_enabled(bool p_enabled) {
+	EditorProperty::set_deferred_drag_mode_enabled(p_enabled);
+
+	spin->set_deferred_drag_mode_enabled(p_enabled);
 }
 
 void EditorPropertyFloat::update_property() {
@@ -3177,13 +3211,17 @@ void EditorPropertyNodePath::update_property() {
 	const Node *target_node = base_node->get_node(p);
 	ERR_FAIL_NULL(target_node);
 
-	if (String(target_node->get_name()).contains_char('@')) {
+	String new_text = target_node->get_name();
+	if (new_text.contains_char('@')) {
 		assign->set_button_icon(Ref<Texture2D>());
 		assign->set_text(String(p));
 		return;
 	}
 
-	assign->set_text(target_node->get_name());
+	if (p.get_subname_count() > 0) {
+		new_text += ":" + p.get_concatenated_subnames();
+	}
+	assign->set_text(new_text);
 	assign->set_button_icon(EditorNode::get_singleton()->get_object_icon(target_node));
 }
 
@@ -3831,7 +3869,7 @@ static EditorProperty *get_input_action_editor(const String &p_hint_text, bool i
 	ProjectSettings::get_singleton()->get_property_list(&pinfo);
 	Vector<String> hints = p_hint_text.remove_char(' ').split(",", false);
 
-	HashMap<String, List<Ref<InputEvent>>> builtins = InputMap::get_singleton()->get_builtins();
+	HashMap<String, List<Ref<InputEvent>>> builtins(InputMap::get_singleton()->get_builtins());
 	bool show_builtin = hints.has("show_builtin");
 
 	for (const PropertyInfo &pi : pinfo) {
@@ -3960,7 +3998,7 @@ EditorProperty *EditorInspectorDefaultPlugin::get_editor_for_property(Object *p_
 				Vector<String> options;
 				Vector<String> option_names;
 				if (p_hint_text.begins_with(";")) {
-					// This is not supported officially. Only for `interface/editor/editor_language`.
+					// This is not supported officially. Only for `interface/editor/localization/editor_language`.
 					for (const String &option : p_hint_text.split(";", false)) {
 						options.append(option.get_slicec('/', 0));
 						option_names.append(option.get_slicec('/', 1));
@@ -4106,7 +4144,6 @@ EditorProperty *EditorInspectorDefaultPlugin::get_editor_for_property(Object *p_
 		} break;
 		case Variant::BASIS: {
 			EditorPropertyBasis *editor = memnew(EditorPropertyBasis);
-			EditorPropertyRangeHint hint = _parse_range_hint(p_hint, p_hint_text, default_float_step);
 			editor->setup(_parse_range_hint(p_hint, p_hint_text, default_float_step));
 			return editor;
 		} break;
