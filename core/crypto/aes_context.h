@@ -58,6 +58,8 @@ public:
 	PackedByteArray update(const PackedByteArray &p_src);
 	PackedByteArray get_iv_state();
 	void finish();
+
+	AESContext();
 };
 
 VARIANT_ENUM_CAST(AESContext::Mode);

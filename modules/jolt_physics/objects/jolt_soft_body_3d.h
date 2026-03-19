@@ -32,7 +32,7 @@
 
 #include "jolt_object_3d.h"
 
-#include "servers/physics_3d/physics_server_3d.h"
+#include "servers/physics_server_3d.h"
 
 #include "Jolt/Jolt.h"
 
@@ -42,12 +42,21 @@
 class JoltSpace3D;
 
 class JoltSoftBody3D final : public JoltObject3D {
+	struct Shared {
+		LocalVector<int> mesh_to_physics;
+		JPH::Ref<JPH::SoftBodySharedSettings> settings = new JPH::SoftBodySharedSettings();
+		int ref_count = 1;
+	};
+
+	inline static HashMap<RID, Shared> mesh_to_shared;
+
 	HashSet<int> pinned_vertices;
 	LocalVector<RID> exceptions;
 	LocalVector<Vector3> normals;
 
+	const Shared *shared = nullptr;
+
 	RID mesh;
-	LocalVector<int> mesh_to_physics;
 
 	JPH::SoftBodyCreationSettings *jolt_settings = new JPH::SoftBodyCreationSettings();
 
@@ -67,7 +76,8 @@ class JoltSoftBody3D final : public JoltObject3D {
 
 	virtual void _add_to_space() override;
 
-	JPH::SoftBodySharedSettings *_create_shared_settings();
+	bool _ref_shared_data();
+	void _deref_shared_data();
 
 	void _update_mass();
 	void _update_pressure();
@@ -90,6 +100,8 @@ class JoltSoftBody3D final : public JoltObject3D {
 public:
 	JoltSoftBody3D();
 	virtual ~JoltSoftBody3D() override;
+
+	bool in_space() const;
 
 	void add_collision_exception(const RID &p_excepted_body);
 	void remove_collision_exception(const RID &p_excepted_body);

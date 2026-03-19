@@ -75,7 +75,7 @@
 #endif
 
 class RID_AllocBase {
-	static inline SafeNumeric<uint64_t> base_id{ 1 };
+	static SafeNumeric<uint64_t> base_id;
 
 protected:
 	static RID _make_from_id(uint64_t p_id) {

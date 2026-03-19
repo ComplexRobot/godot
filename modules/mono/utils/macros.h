@@ -30,7 +30,10 @@
 
 #pragma once
 
-#include "core/typedefs.h"
+#define _GD_VARNAME_CONCAT_B_(m_ignore, m_name) m_name
+#define _GD_VARNAME_CONCAT_A_(m_a, m_b, m_c) _GD_VARNAME_CONCAT_B_(hello there, m_a##m_b##m_c)
+#define _GD_VARNAME_CONCAT_(m_a, m_b, m_c) _GD_VARNAME_CONCAT_A_(m_a, m_b, m_c)
+#define GD_UNIQUE_NAME(m_name) _GD_VARNAME_CONCAT_(m_name, _, __COUNTER__)
 
 // unreachable
 

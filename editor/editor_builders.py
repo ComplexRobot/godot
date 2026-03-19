@@ -124,7 +124,7 @@ inline constexpr const unsigned char _{category}_translation_{name}_compressed[]
         file.write(f"""\
 #include "{target_h}"
 
-const EditorTranslationList _{category}_translations[] = {{
+const {category.capitalize()}TranslationList _{category}_translations[] = {{
 """)
 
         for x in xl_names:
@@ -137,18 +137,12 @@ const EditorTranslationList _{category}_translations[] = {{
 
     with methods.generated_wrapper(target_h) as file:
         file.write(f"""\
-
-#ifndef EDITOR_TRANSLATION_LIST
-#define EDITOR_TRANSLATION_LIST
-
-struct EditorTranslationList {{
+struct {category.capitalize()}TranslationList {{
 	const char* lang;
 	int comp_size;
 	int uncomp_size;
 	const unsigned char* data;
 }};
 
-#endif // EDITOR_TRANSLATION_LIST
-
-extern const EditorTranslationList _{category}_translations[];
+extern const {category.capitalize()}TranslationList _{category}_translations[];
 """)

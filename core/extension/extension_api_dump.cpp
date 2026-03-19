@@ -88,7 +88,7 @@ static String get_property_info_type_name(const PropertyInfo &p_info) {
 }
 
 static String get_type_meta_name(const GodotTypeInfo::Metadata metadata) {
-	static const char *argmeta[14] = { "none", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float", "double", "char16", "char32", "required" };
+	static const char *argmeta[13] = { "none", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float", "double", "char16", "char32" };
 	return argmeta[metadata];
 }
 
@@ -797,17 +797,6 @@ Dictionary GDExtensionAPIDump::generate_extension_api(bool p_include_docs) {
 					d2["is_static"] = Variant::is_builtin_method_static(type, method_name);
 					d2["hash"] = Variant::get_builtin_method_hash(type, method_name);
 
-					Vector<uint32_t> compat_hashes = Variant::get_builtin_method_compatibility_hashes(type, method_name);
-					Array compatibility;
-					if (compat_hashes.size()) {
-						for (int j = 0; j < compat_hashes.size(); j++) {
-							compatibility.push_back(compat_hashes[j]);
-						}
-					}
-					if (compatibility.size() > 0) {
-						d2["hash_compatibility"] = compatibility;
-					}
-
 					Vector<Variant> default_args = Variant::get_builtin_method_default_arguments(type, method_name);
 
 					Array arguments;
@@ -911,9 +900,11 @@ Dictionary GDExtensionAPIDump::generate_extension_api(bool p_include_docs) {
 		// classes
 		Array classes;
 
-		LocalVector<StringName> class_list;
+		List<StringName> class_list;
 
-		ClassDB::get_class_list(class_list);
+		ClassDB::get_class_list(&class_list);
+
+		class_list.sort_custom<StringName::AlphCompare>();
 
 		for (const StringName &class_name : class_list) {
 			if (!ClassDB::is_class_exposed(class_name)) {
@@ -1182,10 +1173,6 @@ Dictionary GDExtensionAPIDump::generate_extension_api(bool p_include_docs) {
 				List<MethodInfo> signal_list;
 				ClassDB::get_signal_list(class_name, &signal_list, true);
 				for (const MethodInfo &F : signal_list) {
-					if (F.name.begins_with("_")) {
-						continue; // Hidden signal.
-					}
-
 					StringName signal_name = F.name;
 					Dictionary d2;
 					d2["name"] = String(signal_name);

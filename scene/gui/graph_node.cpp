@@ -580,7 +580,7 @@ void GraphNode::_notification(int p_what) {
 						}
 					}
 				}
-				if (slot.enable_right) {
+				if (slot.enable_left) {
 					if (type_info.has(slot.type_right)) {
 						name += "," + vformat(ETR("output port, type: %s"), type_info[slot.type_right]);
 					} else {
@@ -835,19 +835,6 @@ Ref<Texture2D> GraphNode::get_slot_custom_icon_left(int p_slot_index) const {
 	return slot_table[p_slot_index].custom_port_icon_left;
 }
 
-void GraphNode::set_slot_metadata_left(int p_slot_index, const Variant &p_value) {
-	ERR_FAIL_COND_MSG(!slot_table.has(p_slot_index), vformat("Cannot set left metadata for the slot with index '%d' because it hasn't been enabled.", p_slot_index));
-	slot_table[p_slot_index].metadata_left = p_value;
-}
-
-Variant GraphNode::get_slot_metadata_left(int p_slot_index) const {
-	const Slot *slot = slot_table.getptr(p_slot_index);
-	if (slot == nullptr) {
-		return Variant();
-	}
-	return slot->metadata_left;
-}
-
 bool GraphNode::is_slot_enabled_right(int p_slot_index) const {
 	if (!slot_table.has(p_slot_index)) {
 		return false;
@@ -934,19 +921,6 @@ Ref<Texture2D> GraphNode::get_slot_custom_icon_right(int p_slot_index) const {
 		return Ref<Texture2D>();
 	}
 	return slot_table[p_slot_index].custom_port_icon_right;
-}
-
-void GraphNode::set_slot_metadata_right(int p_slot_index, const Variant &p_value) {
-	ERR_FAIL_COND_MSG(!slot_table.has(p_slot_index), vformat("Cannot set right metadata for the slot with index '%d' because it hasn't been enabled.", p_slot_index));
-	slot_table[p_slot_index].metadata_right = p_value;
-}
-
-Variant GraphNode::get_slot_metadata_right(int p_slot_index) const {
-	const Slot *slot = slot_table.getptr(p_slot_index);
-	if (slot == nullptr) {
-		return Variant();
-	}
-	return slot->metadata_right;
 }
 
 bool GraphNode::is_slot_draw_stylebox(int p_slot_index) const {
@@ -1255,9 +1229,6 @@ void GraphNode::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_slot_custom_icon_left", "slot_index", "custom_icon"), &GraphNode::set_slot_custom_icon_left);
 	ClassDB::bind_method(D_METHOD("get_slot_custom_icon_left", "slot_index"), &GraphNode::get_slot_custom_icon_left);
 
-	ClassDB::bind_method(D_METHOD("set_slot_metadata_left", "slot_index", "value"), &GraphNode::set_slot_metadata_left);
-	ClassDB::bind_method(D_METHOD("get_slot_metadata_left", "slot_index"), &GraphNode::get_slot_metadata_left);
-
 	ClassDB::bind_method(D_METHOD("is_slot_enabled_right", "slot_index"), &GraphNode::is_slot_enabled_right);
 	ClassDB::bind_method(D_METHOD("set_slot_enabled_right", "slot_index", "enable"), &GraphNode::set_slot_enabled_right);
 
@@ -1269,9 +1240,6 @@ void GraphNode::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_slot_custom_icon_right", "slot_index", "custom_icon"), &GraphNode::set_slot_custom_icon_right);
 	ClassDB::bind_method(D_METHOD("get_slot_custom_icon_right", "slot_index"), &GraphNode::get_slot_custom_icon_right);
-
-	ClassDB::bind_method(D_METHOD("set_slot_metadata_right", "slot_index", "value"), &GraphNode::set_slot_metadata_right);
-	ClassDB::bind_method(D_METHOD("get_slot_metadata_right", "slot_index"), &GraphNode::get_slot_metadata_right);
 
 	ClassDB::bind_method(D_METHOD("is_slot_draw_stylebox", "slot_index"), &GraphNode::is_slot_draw_stylebox);
 	ClassDB::bind_method(D_METHOD("set_slot_draw_stylebox", "slot_index", "enable"), &GraphNode::set_slot_draw_stylebox);

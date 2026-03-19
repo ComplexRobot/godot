@@ -31,7 +31,6 @@
 #import "godot_app_delegate.h"
 
 #import "app_delegate_service.h"
-#include "core/typedefs.h"
 
 @implementation GDTApplicationDelegate
 
@@ -120,9 +119,6 @@ static NSMutableArray<GDTAppDelegateServiceProtocol *> *services = nil;
 */
 
 // MARK: Life-Cycle
-
-// UIApplication lifecycle has become deprecated in favor of UIScene lifecycle
-GODOT_CLANG_WARNING_PUSH_AND_IGNORE("-Wdeprecated-declarations")
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
 	for (GDTAppDelegateServiceProtocol *service in services) {
@@ -465,5 +461,3 @@ GODOT_CLANG_WARNING_PUSH_AND_IGNORE("-Wdeprecated-declarations")
 */
 
 @end
-
-GODOT_CLANG_WARNING_POP

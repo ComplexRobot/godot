@@ -81,7 +81,7 @@ void Tween::_start_tweeners() {
 		ERR_FAIL_MSG("Tween without commands, aborting.");
 	}
 
-	for (Ref<Tweener> &tweener : tweeners[current_step]) {
+	for (Ref<Tweener> &tweener : tweeners.write[current_step]) {
 		tweener->start();
 	}
 }
@@ -95,8 +95,8 @@ void Tween::_stop_internal(bool p_reset) {
 	}
 }
 
-RequiredResult<PropertyTweener> Tween::tween_property(RequiredParam<const Object> rp_target, const NodePath &p_property, Variant p_to, double p_duration) {
-	EXTRACT_PARAM_OR_FAIL_V(p_target, rp_target, nullptr);
+Ref<PropertyTweener> Tween::tween_property(const Object *p_target, const NodePath &p_property, Variant p_to, double p_duration) {
+	ERR_FAIL_NULL_V(p_target, nullptr);
 	CHECK_VALID();
 
 	Vector<StringName> property_subnames = p_property.get_as_property_path().get_subnames();
@@ -118,7 +118,7 @@ RequiredResult<PropertyTweener> Tween::tween_property(RequiredParam<const Object
 	return tweener;
 }
 
-RequiredResult<IntervalTweener> Tween::tween_interval(double p_time) {
+Ref<IntervalTweener> Tween::tween_interval(double p_time) {
 	CHECK_VALID();
 
 	Ref<IntervalTweener> tweener;
@@ -127,7 +127,7 @@ RequiredResult<IntervalTweener> Tween::tween_interval(double p_time) {
 	return tweener;
 }
 
-RequiredResult<CallbackTweener> Tween::tween_callback(const Callable &p_callback) {
+Ref<CallbackTweener> Tween::tween_callback(const Callable &p_callback) {
 	CHECK_VALID();
 
 	Ref<CallbackTweener> tweener;
@@ -136,7 +136,7 @@ RequiredResult<CallbackTweener> Tween::tween_callback(const Callable &p_callback
 	return tweener;
 }
 
-RequiredResult<MethodTweener> Tween::tween_method(const Callable &p_callback, const Variant p_from, Variant p_to, double p_duration) {
+Ref<MethodTweener> Tween::tween_method(const Callable &p_callback, const Variant p_from, Variant p_to, double p_duration) {
 	CHECK_VALID();
 
 	if (!Animation::validate_type_match(p_from, p_to)) {
@@ -149,11 +149,11 @@ RequiredResult<MethodTweener> Tween::tween_method(const Callable &p_callback, co
 	return tweener;
 }
 
-RequiredResult<SubtweenTweener> Tween::tween_subtween(RequiredParam<Tween> rp_subtween) {
+Ref<SubtweenTweener> Tween::tween_subtween(const Ref<Tween> &p_subtween) {
 	CHECK_VALID();
 
 	// Ensure that the subtween being added is not null.
-	EXTRACT_PARAM_OR_FAIL_V(p_subtween, rp_subtween, nullptr);
+	ERR_FAIL_COND_V(p_subtween.is_null(), nullptr);
 
 	Ref<SubtweenTweener> tweener;
 	tweener.instantiate(p_subtween);
@@ -164,7 +164,6 @@ RequiredResult<SubtweenTweener> Tween::tween_subtween(RequiredParam<Tween> rp_su
 	if (tweener->subtween->parent_tree != nullptr) {
 		tweener->subtween->parent_tree->remove_tween(tweener->subtween);
 	}
-	subtweens.push_back(p_subtween);
 	append(tweener);
 	return tweener;
 }
@@ -180,7 +179,7 @@ void Tween::append(Ref<Tweener> p_tweener) {
 	parallel_enabled = default_parallel;
 
 	tweeners.resize(current_step + 1);
-	tweeners[current_step].push_back(p_tweener);
+	tweeners.write[current_step].push_back(p_tweener);
 }
 
 void Tween::stop() {
@@ -201,11 +200,6 @@ void Tween::kill() {
 	running = false; // For the sake of is_running().
 	valid = false;
 	dead = true;
-
-	// Kill all subtweens of this tween.
-	for (Ref<Tween> &st : subtweens) {
-		st->kill();
-	}
 }
 
 bool Tween::is_running() {
@@ -221,15 +215,15 @@ void Tween::clear() {
 	tweeners.clear();
 }
 
-RequiredResult<Tween> Tween::bind_node(RequiredParam<const Node> rp_node) {
-	EXTRACT_PARAM_OR_FAIL_V(p_node, rp_node, this);
+Ref<Tween> Tween::bind_node(const Node *p_node) {
+	ERR_FAIL_NULL_V(p_node, this);
 
 	bound_node = p_node->get_instance_id();
 	is_bound = true;
 	return this;
 }
 
-RequiredResult<Tween> Tween::set_process_mode(TweenProcessMode p_mode) {
+Ref<Tween> Tween::set_process_mode(TweenProcessMode p_mode) {
 	process_mode = p_mode;
 	return this;
 }
@@ -238,7 +232,7 @@ Tween::TweenProcessMode Tween::get_process_mode() const {
 	return process_mode;
 }
 
-RequiredResult<Tween> Tween::set_pause_mode(TweenPauseMode p_mode) {
+Ref<Tween> Tween::set_pause_mode(TweenPauseMode p_mode) {
 	pause_mode = p_mode;
 	return this;
 }
@@ -247,7 +241,7 @@ Tween::TweenPauseMode Tween::get_pause_mode() const {
 	return pause_mode;
 }
 
-RequiredResult<Tween> Tween::set_ignore_time_scale(bool p_ignore) {
+Ref<Tween> Tween::set_ignore_time_scale(bool p_ignore) {
 	ignore_time_scale = p_ignore;
 	return this;
 }
@@ -256,13 +250,13 @@ bool Tween::is_ignoring_time_scale() const {
 	return ignore_time_scale;
 }
 
-RequiredResult<Tween> Tween::set_parallel(bool p_parallel) {
+Ref<Tween> Tween::set_parallel(bool p_parallel) {
 	default_parallel = p_parallel;
 	parallel_enabled = p_parallel;
 	return this;
 }
 
-RequiredResult<Tween> Tween::set_loops(int p_loops) {
+Ref<Tween> Tween::set_loops(int p_loops) {
 	loops = p_loops;
 	return this;
 }
@@ -275,12 +269,12 @@ int Tween::get_loops_left() const {
 	}
 }
 
-RequiredResult<Tween> Tween::set_speed_scale(float p_speed) {
+Ref<Tween> Tween::set_speed_scale(float p_speed) {
 	speed_scale = p_speed;
 	return this;
 }
 
-RequiredResult<Tween> Tween::set_trans(TransitionType p_trans) {
+Ref<Tween> Tween::set_trans(TransitionType p_trans) {
 	default_transition = p_trans;
 	return this;
 }
@@ -289,7 +283,7 @@ Tween::TransitionType Tween::get_trans() const {
 	return default_transition;
 }
 
-RequiredResult<Tween> Tween::set_ease(EaseType p_ease) {
+Ref<Tween> Tween::set_ease(EaseType p_ease) {
 	default_ease = p_ease;
 	return this;
 }
@@ -298,12 +292,12 @@ Tween::EaseType Tween::get_ease() const {
 	return default_ease;
 }
 
-RequiredResult<Tween> Tween::parallel() {
+Ref<Tween> Tween::parallel() {
 	parallel_enabled = true;
 	return this;
 }
 
-RequiredResult<Tween> Tween::chain() {
+Ref<Tween> Tween::chain() {
 	parallel_enabled = false;
 	return this;
 }
@@ -371,7 +365,7 @@ bool Tween::step(double p_delta) {
 		double step_delta = rem_delta;
 		step_active = false;
 
-		for (Ref<Tweener> &tweener : tweeners[current_step]) {
+		for (Ref<Tweener> &tweener : tweeners.write[current_step]) {
 			// Modified inside Tweener.step().
 			double temp_delta = rem_delta;
 			// Turns to true if any Tweener returns true (i.e. is still not finished).
@@ -385,7 +379,7 @@ bool Tween::step(double p_delta) {
 			emit_signal(SNAME("step_finished"), current_step);
 			current_step++;
 
-			if (current_step == (int)tweeners.size()) {
+			if (current_step == tweeners.size()) {
 				loops_done++;
 				if (loops_done == loops) {
 					running = false;
@@ -459,8 +453,8 @@ Variant Tween::interpolate_variant(const Variant &p_initial_val, const Variant &
 	return ret;
 }
 
-String Tween::_to_string() {
-	String ret = Object::_to_string();
+String Tween::to_string() {
+	String ret = Object::to_string();
 	Node *node = get_bound_node();
 	if (node) {
 		ret += vformat(" (bound to %s)", node->get_name());
@@ -554,7 +548,7 @@ double PropertyTweener::_get_custom_interpolated_value(const Variant &p_value) {
 	return result;
 }
 
-RequiredResult<PropertyTweener> PropertyTweener::from(const Variant &p_value) {
+Ref<PropertyTweener> PropertyTweener::from(const Variant &p_value) {
 	Ref<Tween> tween = _get_tween();
 	ERR_FAIL_COND_V(tween.is_null(), nullptr);
 
@@ -568,32 +562,32 @@ RequiredResult<PropertyTweener> PropertyTweener::from(const Variant &p_value) {
 	return this;
 }
 
-RequiredResult<PropertyTweener> PropertyTweener::from_current() {
+Ref<PropertyTweener> PropertyTweener::from_current() {
 	do_continue = false;
 	return this;
 }
 
-RequiredResult<PropertyTweener> PropertyTweener::as_relative() {
+Ref<PropertyTweener> PropertyTweener::as_relative() {
 	relative = true;
 	return this;
 }
 
-RequiredResult<PropertyTweener> PropertyTweener::set_trans(Tween::TransitionType p_trans) {
+Ref<PropertyTweener> PropertyTweener::set_trans(Tween::TransitionType p_trans) {
 	trans_type = p_trans;
 	return this;
 }
 
-RequiredResult<PropertyTweener> PropertyTweener::set_ease(Tween::EaseType p_ease) {
+Ref<PropertyTweener> PropertyTweener::set_ease(Tween::EaseType p_ease) {
 	ease_type = p_ease;
 	return this;
 }
 
-RequiredResult<PropertyTweener> PropertyTweener::set_custom_interpolator(const Callable &p_method) {
+Ref<PropertyTweener> PropertyTweener::set_custom_interpolator(const Callable &p_method) {
 	custom_method = p_method;
 	return this;
 }
 
-RequiredResult<PropertyTweener> PropertyTweener::set_delay(double p_delay) {
+Ref<PropertyTweener> PropertyTweener::set_delay(double p_delay) {
 	delay = p_delay;
 	return this;
 }
@@ -731,7 +725,7 @@ IntervalTweener::IntervalTweener() {
 	ERR_FAIL_MSG("IntervalTweener can't be created directly. Use the tween_interval() method in Tween.");
 }
 
-RequiredResult<CallbackTweener> CallbackTweener::set_delay(double p_delay) {
+Ref<CallbackTweener> CallbackTweener::set_delay(double p_delay) {
 	delay = p_delay;
 	return this;
 }
@@ -781,17 +775,17 @@ CallbackTweener::CallbackTweener() {
 	ERR_FAIL_MSG("CallbackTweener can't be created directly. Use the tween_callback() method in Tween.");
 }
 
-RequiredResult<MethodTweener> MethodTweener::set_delay(double p_delay) {
+Ref<MethodTweener> MethodTweener::set_delay(double p_delay) {
 	delay = p_delay;
 	return this;
 }
 
-RequiredResult<MethodTweener> MethodTweener::set_trans(Tween::TransitionType p_trans) {
+Ref<MethodTweener> MethodTweener::set_trans(Tween::TransitionType p_trans) {
 	trans_type = p_trans;
 	return this;
 }
 
-RequiredResult<MethodTweener> MethodTweener::set_ease(Tween::EaseType p_ease) {
+Ref<MethodTweener> MethodTweener::set_ease(Tween::EaseType p_ease) {
 	ease_type = p_ease;
 	return this;
 }
@@ -912,7 +906,7 @@ bool SubtweenTweener::step(double &r_delta) {
 	return true;
 }
 
-RequiredResult<SubtweenTweener> SubtweenTweener::set_delay(double p_delay) {
+Ref<SubtweenTweener> SubtweenTweener::set_delay(double p_delay) {
 	delay = p_delay;
 	return this;
 }

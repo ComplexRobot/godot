@@ -66,5 +66,6 @@ public:
 	Error add_file_removal(const String &p_target_path);
 	Error flush(bool p_verbose = false);
 
+	PCKPacker() {}
 	~PCKPacker();
 };

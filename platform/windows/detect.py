@@ -24,8 +24,6 @@ def try_cmd(test, prefix, arch, check_clang=False):
     archs = ["x86_64", "x86_32", "arm64", "arm32"]
     if arch:
         archs = [arch]
-    if os.name == "nt":
-        archs += [""]
 
     for a in archs:
         try:
@@ -235,8 +233,7 @@ def get_flags():
 
     return {
         "arch": arch,
-        "d3d12": True,
-        "supported": ["d3d12", "dcomp", "library", "mono", "xaudio2"],
+        "supported": ["d3d12", "dcomp", "mono", "xaudio2"],
     }
 
 
@@ -246,7 +243,7 @@ def configure_msvc(env: "SConsEnvironment"):
     ## Build type
 
     # TODO: Re-evaluate the need for this / streamline with common config.
-    if env["target"] == "template_release" and env["library_type"] == "executable":
+    if env["target"] == "template_release":
         env.Append(LINKFLAGS=["/ENTRY:mainCRTStartup"])
 
     if env["windows_subsystem"] == "gui":
@@ -353,7 +350,10 @@ def configure_msvc(env: "SConsEnvironment"):
 
     env.AppendUnique(CCFLAGS=["/Gd", "/GR", "/nologo"])
     env.AppendUnique(CCFLAGS=["/utf-8"])  # Force to use Unicode encoding.
-    env.AppendUnique(CCFLAGS=["/bigobj"])  # Support big objects.
+    # Once it was thought that only debug builds would be too large,
+    # but this has recently stopped being true. See the mingw function
+    # for notes on why this shouldn't be enabled for gcc
+    env.AppendUnique(CCFLAGS=["/bigobj"])
 
     env.AppendUnique(
         CPPDEFINES=[
@@ -362,8 +362,8 @@ def configure_msvc(env: "SConsEnvironment"):
             "WINMIDI_ENABLED",
             "TYPED_METHOD_BIND",
             "WIN32",
-            ("WINVER", "0x0A00"),
-            ("_WIN32_WINNT", "0x0A00"),
+            "WINVER=0x0A00",
+            "_WIN32_WINNT=0x0A00",
         ]
     )
     env.AppendUnique(CPPDEFINES=["NOMINMAX"])  # disable bogus min/max WinDef.h macros
@@ -450,6 +450,10 @@ def configure_msvc(env: "SConsEnvironment"):
         env.AppendUnique(CPPDEFINES=["D3D12_ENABLED", "RD_ENABLED"])
         LIBS += ["dxgi", "dxguid"]
         LIBS += ["version"]  # Mesa dependency.
+
+        # Needed for avoiding C1128.
+        if env["target"] == "release_debug":
+            env.Append(CXXFLAGS=["/bigobj"])
 
         # PIX
         if env["arch"] not in ["x86_64", "arm64"] or env["pix_path"] == "" or not os.path.exists(env["pix_path"]):
@@ -634,6 +638,12 @@ def configure_mingw(env: "SConsEnvironment"):
         print("Detected GCC to be a wrapper for Clang.")
         env["use_llvm"] = True
 
+    if env.dev_build:
+        # Allow big objects. It's supposed not to have drawbacks but seems to break
+        # GCC LTO, so enabling for debug builds only (which are not built with LTO
+        # and are the only ones with too big objects).
+        env.Append(CCFLAGS=["-Wa,-mbig-obj"])
+
     if env["windows_subsystem"] == "gui":
         env.Append(LINKFLAGS=["-Wl,--subsystem,windows"])
     else:
@@ -650,10 +660,6 @@ def configure_mingw(env: "SConsEnvironment"):
     else:
         if env["use_static_cpp"]:
             env.Append(LINKFLAGS=["-static"])
-
-    # NOTE: Big objects have historically broken LTO on mingw-gcc specifically. While that no
-    # longer appears to be the case, this notice is retained for posterity.
-    env.AppendUnique(CCFLAGS=["-Wa,-mbig-obj"])  # Support big objects.
 
     if env["arch"] == "x86_32":
         env["x86_libtheora_opt_gcc"] = True
@@ -748,8 +754,8 @@ def configure_mingw(env: "SConsEnvironment"):
     env.Append(CPPDEFINES=["WINDOWS_ENABLED", "WASAPI_ENABLED", "WINMIDI_ENABLED"])
     env.Append(
         CPPDEFINES=[
-            ("WINVER", "0x0A00"),
-            ("_WIN32_WINNT", "0x0A00"),
+            "WINVER=0x0A00",
+            "_WIN32_WINNT=0x0A00",
         ]
     )
     env.Append(
@@ -926,8 +932,7 @@ def check_d3d12_installed(env, suffix):
         print_error(
             "The Direct3D 12 rendering driver requires dependencies to be installed.\n"
             "You can install them by running `python misc\\scripts\\install_d3d12_sdk_windows.py`.\n"
-            "See the documentation for more information:\n"
-            "\thttps://docs.godotengine.org/en/latest/engine_details/development/compiling/compiling_for_windows.html\n"
-            "Alternatively, disable this driver by compiling with `d3d12=no` explicitly."
+            "See the documentation for more information:\n\t"
+            "https://docs.godotengine.org/en/latest/engine_details/development/compiling/compiling_for_windows.html"
         )
         sys.exit(255)

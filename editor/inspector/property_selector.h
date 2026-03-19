@@ -54,7 +54,7 @@ class PropertySelector : public ConfirmationDialog {
 
 	bool properties = false;
 	String selected;
-	Variant::Type type = Variant::NIL;
+	Variant::Type type;
 	String base_type;
 	ObjectID script;
 	Object *instance = nullptr;

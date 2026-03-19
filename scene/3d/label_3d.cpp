@@ -31,7 +31,6 @@
 #include "label_3d.h"
 
 #include "scene/main/window.h"
-#include "scene/resources/mesh.h"
 #include "scene/resources/theme.h"
 #include "scene/theme/theme_db.h"
 
@@ -215,8 +214,11 @@ void Label3D::_notification(int p_what) {
 			window->disconnect("size_changed", callable_mp(this, &Label3D::_font_changed));
 		} break;
 		case NOTIFICATION_TRANSLATION_CHANGED: {
-			// Language update might change the appearance of some characters.
-			xl_text = atr(text);
+			String new_text = atr(text);
+			if (new_text == xl_text) {
+				return; // Nothing new.
+			}
+			xl_text = new_text;
 			dirty_text = true;
 			_queue_update();
 		} break;
@@ -393,7 +395,7 @@ void Label3D::_generate_glyph_surfaces(const Glyph &p_glyph, Vector2 &r_offset, 
 			}
 
 			RID shader_rid;
-			StandardMaterial3D::get_material_for_2d(get_draw_flag(FLAG_SHADED), mat_transparency, get_draw_flag(FLAG_DOUBLE_SIDED), get_billboard_mode() == StandardMaterial3D::BILLBOARD_ENABLED, get_billboard_mode() == StandardMaterial3D::BILLBOARD_FIXED_Y, msdf, get_draw_flag(FLAG_DISABLE_DEPTH_TEST), get_draw_flag(FLAG_FIXED_SIZE), texture_filter, alpha_antialiasing_mode, false, &shader_rid);
+			StandardMaterial3D::get_material_for_2d(get_draw_flag(FLAG_SHADED), mat_transparency, get_draw_flag(FLAG_DOUBLE_SIDED), get_billboard_mode() == StandardMaterial3D::BILLBOARD_ENABLED, get_billboard_mode() == StandardMaterial3D::BILLBOARD_FIXED_Y, msdf, get_draw_flag(FLAG_DISABLE_DEPTH_TEST), get_draw_flag(FLAG_FIXED_SIZE), texture_filter, alpha_antialiasing_mode, &shader_rid);
 
 			RS::get_singleton()->material_set_shader(surf.material, shader_rid);
 			RS::get_singleton()->material_set_param(surf.material, "texture_albedo", tex);
@@ -468,7 +470,7 @@ void Label3D::_shape() {
 
 	// Clear materials.
 	for (const KeyValue<SurfaceKey, SurfaceData> &E : surfaces) {
-		RenderingServer::get_singleton()->free_rid(E.value.material);
+		RenderingServer::get_singleton()->free(E.value.material);
 	}
 	surfaces.clear();
 
@@ -480,9 +482,8 @@ void Label3D::_shape() {
 		TS->shaped_text_clear(text_rid);
 		TS->shaped_text_set_direction(text_rid, text_direction);
 
-		const String &lang = language.is_empty() ? _get_locale() : language;
-		String txt = uppercase ? TS->string_to_upper(xl_text, lang) : xl_text;
-		TS->shaped_text_add_string(text_rid, txt, font->get_rids(), font_size, font->get_opentype_features(), lang);
+		String txt = (uppercase) ? TS->string_to_upper(xl_text, language) : xl_text;
+		TS->shaped_text_add_string(text_rid, txt, font->get_rids(), font_size, font->get_opentype_features(), language);
 
 		TypedArray<Vector3i> stt;
 		if (st_parser == TextServer::STRUCTURED_TEXT_CUSTOM) {
@@ -738,16 +739,16 @@ TextServer::StructuredTextParser Label3D::get_structured_text_bidi_override() co
 	return st_parser;
 }
 
-void Label3D::set_structured_text_bidi_override_options(const Array &p_args) {
+void Label3D::set_structured_text_bidi_override_options(Array p_args) {
 	if (st_args != p_args) {
-		st_args = Array(p_args);
+		st_args = p_args;
 		dirty_text = true;
 		_queue_update();
 	}
 }
 
 Array Label3D::get_structured_text_bidi_override_options() const {
-	return Array(st_args);
+	return st_args;
 }
 
 void Label3D::set_uppercase(bool p_uppercase) {
@@ -1104,9 +1105,9 @@ Label3D::~Label3D() {
 	TS->free_rid(text_rid);
 
 	ERR_FAIL_NULL(RenderingServer::get_singleton());
-	RenderingServer::get_singleton()->free_rid(mesh);
+	RenderingServer::get_singleton()->free(mesh);
 	for (KeyValue<SurfaceKey, SurfaceData> E : surfaces) {
-		RenderingServer::get_singleton()->free_rid(E.value.material);
+		RenderingServer::get_singleton()->free(E.value.material);
 	}
 	surfaces.clear();
 }

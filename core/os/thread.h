@@ -138,6 +138,7 @@ public:
 	///< waits until thread is finished, and deallocates it.
 	void wait_to_finish();
 
+	Thread();
 	~Thread();
 };
 

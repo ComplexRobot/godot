@@ -37,7 +37,7 @@
 #include "editor/run/run_instances_dialog.h"
 #include "editor/settings/editor_settings.h"
 #include "main/main.h"
-#include "servers/display/display_server.h"
+#include "servers/display_server.h"
 
 EditorRun::Status EditorRun::get_status() const {
 	return status;
@@ -169,7 +169,6 @@ Error EditorRun::run(const String &p_scene, const String &p_write_movie, const V
 
 		if (OS::get_singleton()->is_stdout_verbose()) {
 			PackedStringArray output;
-			output.reserve_exact(instance_args.size() + 1);
 			output.append(vformat("Running: %s", exec));
 			for (const String &E : instance_args) {
 				output.append(E);
@@ -261,7 +260,7 @@ EditorRun::WindowPlacement EditorRun::get_window_placement() {
 
 	Ref<ConfigFile> cfg_override;
 	cfg_override.instantiate();
-	if (!bool(GLOBAL_GET("application/config/disable_project_settings_override")) && FileAccess::exists("res://override.cfg")) {
+	if (FileAccess::exists("res://override.cfg")) {
 		Error err = cfg_override->load("res://override.cfg");
 		if (err != OK) {
 			WARN_PRINT("Found override.cfg but could not load it.");

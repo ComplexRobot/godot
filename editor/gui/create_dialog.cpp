@@ -81,9 +81,9 @@ void CreateDialog::for_inherit() {
 }
 
 void CreateDialog::_fill_type_list() {
-	LocalVector<StringName> complete_type_list;
-	ClassDB::get_class_list(complete_type_list);
-	ScriptServer::get_global_class_list(complete_type_list);
+	List<StringName> complete_type_list;
+	ClassDB::get_class_list(&complete_type_list);
+	ScriptServer::get_global_class_list(&complete_type_list);
 
 	EditorData &ed = EditorNode::get_editor_data();
 	HashMap<String, DocData::ClassDoc> &class_docs_list = EditorHelp::get_doc_data()->class_list;
@@ -376,9 +376,7 @@ void CreateDialog::_configure_search_option_item(TreeItem *r_item, const StringN
 		if (is_tool) {
 			tooltip = TTR("The script will run in the editor.") + "\n" + tooltip;
 		}
-		const String script_path = ScriptServer::get_global_class_path(p_type);
-		r_item->add_button(0, get_editor_theme_icon(SNAME("Script")), 1, false, vformat(tooltip, script_path));
-		r_item->set_meta(SNAME("_script_path"), script_path);
+		r_item->add_button(0, get_editor_theme_icon(SNAME("Script")), 1, false, vformat(tooltip, ScriptServer::get_global_class_path(p_type)));
 		if (is_tool) {
 			int button_index = r_item->get_button_count(0) - 1;
 			r_item->set_button_color(0, button_index, get_theme_color(SNAME("accent_color"), EditorStringName(Editor)));
@@ -499,7 +497,7 @@ void CreateDialog::_cleanup() {
 }
 
 void CreateDialog::_confirmed() {
-	String selected_item = get_selected_type_name();
+	String selected_item = get_selected_type();
 	if (selected_item.is_empty()) {
 		return;
 	}
@@ -563,7 +561,7 @@ void CreateDialog::_notification(int p_what) {
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
 			if (is_visible()) {
-				callable_mp((Control *)search_box, &Control::grab_focus).call_deferred(false); // Still not visible.
+				callable_mp((Control *)search_box, &Control::grab_focus).call_deferred(); // Still not visible.
 				search_box->select_all();
 			} else {
 				EditorSettings::get_singleton()->set_project_metadata("dialog_bounds", "create_new_node", Rect2(get_position(), get_size()));
@@ -614,30 +612,11 @@ void CreateDialog::select_base() {
 
 String CreateDialog::get_selected_type() {
 	TreeItem *selected = search_options->get_selected();
-
 	if (!selected) {
 		return String();
 	}
 
-	String type = selected->get_text(0).get_slicec(' ', 0);
-	if (ClassDB::class_exists(type)) {
-		return type; // CPP type - from the core or GDExtensions
-	}
-
-	const EditorData::CustomType *custom_type = EditorNode::get_editor_data().get_custom_type_by_name(type);
-	if (custom_type != nullptr) {
-		return custom_type->script->get_path(); // Types via EditorPlugin::add_custom_type()
-	}
-
-	return String(selected->get_meta("_script_path", "")); // Script types
-}
-
-String CreateDialog::get_selected_type_name() {
-	TreeItem *selected = search_options->get_selected();
-	if (!selected) {
-		return String();
-	}
-	return selected->get_text(0).get_slicec(' ', 0);
+	return selected->get_text(0);
 }
 
 void CreateDialog::set_base_type(const String &p_base) {
@@ -677,7 +656,8 @@ Variant CreateDialog::instantiate_selected() {
 }
 
 void CreateDialog::_item_selected() {
-	select_type(get_selected_type_name(), false);
+	String name = get_selected_type();
+	select_type(name, false);
 }
 
 void CreateDialog::_hide_requested() {
@@ -694,7 +674,7 @@ void CreateDialog::_favorite_toggled() {
 		return;
 	}
 
-	String name = get_selected_type_name();
+	String name = item->get_text(0).get_slicec(' ', 0);
 
 	if (favorite_list.has(name)) {
 		favorite_list.erase(name);
@@ -871,17 +851,12 @@ CreateDialog::CreateDialog() {
 
 	type_blacklist.insert("PluginScript"); // PluginScript must be initialized before use, which is not possible here.
 	type_blacklist.insert("ScriptCreateDialog"); // This is an exposed editor Node that doesn't have an Editor prefix.
-	type_blacklist.insert("MissingNode");
-	type_blacklist.insert("MissingResource");
 
 	HSplitContainer *hsc = memnew(HSplitContainer);
 	add_child(hsc);
 
 	VSplitContainer *vsc = memnew(VSplitContainer);
 	hsc->add_child(vsc);
-
-	VSplitContainer *vsc_right = memnew(VSplitContainer);
-	hsc->add_child(vsc_right);
 
 	VBoxContainer *fav_vb = memnew(VBoxContainer);
 	fav_vb->set_custom_minimum_size(Size2(150, 100) * EDSCALE);
@@ -919,8 +894,7 @@ CreateDialog::CreateDialog() {
 	VBoxContainer *vbc = memnew(VBoxContainer);
 	vbc->set_custom_minimum_size(Size2(300, 0) * EDSCALE);
 	vbc->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	vbc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	vsc_right->add_child(vbc);
+	hsc->add_child(vbc);
 
 	search_box = memnew(LineEdit);
 	search_box->set_accessibility_name(TTRC("Search"));
@@ -945,20 +919,13 @@ CreateDialog::CreateDialog() {
 	search_options->connect("item_activated", callable_mp(this, &CreateDialog::_confirmed));
 	search_options->connect("cell_selected", callable_mp(this, &CreateDialog::_item_selected));
 	search_options->connect("button_clicked", callable_mp(this, &CreateDialog::_script_button_clicked));
-	search_options->set_theme_type_variation("TreeSecondary");
 	vbc->add_margin_child(TTR("Matches:"), search_options, true);
 
 	help_bit = memnew(EditorHelpBit);
 	help_bit->set_accessibility_name(TTRC("Description:"));
-	help_bit->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	help_bit->set_content_height_limits(80 * EDSCALE, 80 * EDSCALE);
 	help_bit->connect("request_hide", callable_mp(this, &CreateDialog::_hide_requested));
-
-	VBoxContainer *vbc_desc = memnew(VBoxContainer);
-	vbc_desc->set_custom_minimum_size(Size2(300, 0) * EDSCALE);
-	vbc_desc->add_margin_child(TTR("Description:"), help_bit, true);
-
-	vsc_right->add_child(vbc_desc);
+	vbc->add_margin_child(TTR("Description:"), help_bit);
 
 	register_text_enter(search_box);
 	set_hide_on_ok(false);

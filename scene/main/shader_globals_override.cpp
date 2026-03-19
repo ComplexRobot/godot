@@ -31,7 +31,6 @@
 #include "shader_globals_override.h"
 
 #include "scene/main/node.h"
-#include "servers/rendering/rendering_server.h"
 
 StringName *ShaderGlobalsOverride::_remap(const StringName &p_name) const {
 	StringName *r = param_remaps.getptr(p_name);
@@ -227,7 +226,8 @@ void ShaderGlobalsOverride::_get_property_list(List<PropertyInfo> *p_list) const
 
 void ShaderGlobalsOverride::_activate() {
 	ERR_FAIL_NULL(get_tree());
-	Vector<Node *> nodes = get_tree()->get_nodes_in_group(SceneStringName(shader_overrides_group_active));
+	List<Node *> nodes;
+	get_tree()->get_nodes_in_group(SceneStringName(shader_overrides_group_active), &nodes);
 	if (nodes.is_empty()) {
 		//good we are the only override, enable all
 		active = true;

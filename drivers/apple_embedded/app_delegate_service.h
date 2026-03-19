@@ -36,6 +36,7 @@
 
 @interface GDTAppDelegateService : NSObject <UIApplicationDelegate>
 
-@property(strong, class, nonatomic) GDTViewController *viewController;
+@property(strong, nonatomic) UIWindow *window;
+@property(strong, class, readonly, nonatomic) GDTViewController *viewController;
 
 @end

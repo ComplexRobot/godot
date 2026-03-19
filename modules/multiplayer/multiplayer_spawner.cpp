@@ -30,7 +30,6 @@
 
 #include "multiplayer_spawner.h"
 
-#include "core/io/resource_loader.h"
 #include "scene/main/multiplayer_api.h"
 
 #ifdef TOOLS_ENABLED

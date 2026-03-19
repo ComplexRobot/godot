@@ -6,7 +6,6 @@
 
 #include <Jolt/Physics/Ragdoll/Ragdoll.h>
 #include <Jolt/Physics/Constraints/SwingTwistConstraint.h>
-#include <Jolt/Physics/Constraints/HingeConstraint.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Body/BodyLockMulti.h>
 #include <Jolt/Physics/Collision/GroupFilterTable.h>
@@ -635,12 +634,6 @@ void Ragdoll::DriveToPoseUsingMotors(const SkeletonPose &inPose)
 				st_constraint->SetSwingMotorState(EMotorState::Position);
 				st_constraint->SetTwistMotorState(EMotorState::Position);
 				st_constraint->SetTargetOrientationBS(joint_state.mRotation);
-			}
-			else if (sub_type == EConstraintSubType::Hinge)
-			{
-				HingeConstraint *h_constraint = static_cast<HingeConstraint *>(constraint);
-				h_constraint->SetMotorState(EMotorState::Position);
-				h_constraint->SetTargetOrientationBS(joint_state.mRotation);
 			}
 			else
 				JPH_ASSERT(false, "Constraint type not implemented!");

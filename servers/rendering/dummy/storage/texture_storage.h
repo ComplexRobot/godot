@@ -36,7 +36,7 @@ namespace RendererDummy {
 
 class TextureStorage : public RendererTextureStorage {
 private:
-	static inline TextureStorage *singleton = nullptr;
+	static TextureStorage *singleton;
 
 	struct DummyTexture {
 		Ref<Image> image;
@@ -46,8 +46,8 @@ private:
 public:
 	static TextureStorage *get_singleton() { return singleton; }
 
-	TextureStorage() { singleton = this; }
-	~TextureStorage() { singleton = nullptr; }
+	TextureStorage();
+	~TextureStorage();
 
 	/* Canvas Texture API */
 

@@ -71,6 +71,9 @@ public:
 
 	void set_encode_buffer_max_size(int p_max_size);
 	int get_encode_buffer_max_size() const;
+
+	PacketPeer() {}
+	~PacketPeer() {}
 };
 
 class PacketPeerExtension : public PacketPeer {

@@ -68,5 +68,6 @@ public:
 
 	virtual int get_available_bytes() const override;
 
+	StreamPeerGZIP();
 	~StreamPeerGZIP();
 };

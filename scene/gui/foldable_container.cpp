@@ -320,7 +320,7 @@ void FoldableContainer::_notification(int p_what) {
 				_draw_flippable_stylebox(theme_cache.panel_style, panel_rect);
 			}
 
-			if (has_focus(true)) {
+			if (has_focus()) {
 				Rect2 focus_rect = folded ? title_rect : Rect2(Point2(), size);
 				_draw_flippable_stylebox(theme_cache.focus_style, focus_rect);
 			}
@@ -495,8 +495,7 @@ void FoldableContainer::_shape() {
 	}
 	text_buf->set_horizontal_alignment(_get_actual_alignment());
 	text_buf->set_text_overrun_behavior(overrun_behavior);
-	const String &lang = language.is_empty() ? _get_locale() : language;
-	text_buf->add_string(atr(title), font, font_size, lang);
+	text_buf->add_string(atr(title), font, font_size, language);
 }
 
 HorizontalAlignment FoldableContainer::_get_actual_alignment() const {

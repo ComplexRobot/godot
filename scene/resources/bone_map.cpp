@@ -30,8 +30,6 @@
 
 #include "bone_map.h"
 
-#include "core/config/engine.h"
-
 bool BoneMap::_set(const StringName &p_path, const Variant &p_value) {
 	String path = p_path;
 	if (path.begins_with("bone_map/")) {

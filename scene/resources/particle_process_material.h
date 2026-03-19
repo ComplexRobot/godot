@@ -334,6 +334,8 @@ private:
 	Vector3 emission_shape_offset;
 	Vector3 emission_shape_scale;
 
+	bool anim_loop = false;
+
 	bool turbulence_enabled;
 	Vector3 turbulence_noise_speed;
 	Ref<Texture2D> turbulence_color_ramp;

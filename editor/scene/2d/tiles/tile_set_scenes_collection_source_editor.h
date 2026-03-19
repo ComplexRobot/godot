@@ -118,7 +118,7 @@ private:
 
 	void _tile_set_scenes_collection_source_changed();
 	void _scenes_collection_source_proxy_object_changed(const String &p_what);
-	void _scene_thumbnail_done(const String &p_path, const Ref<Texture2D> &p_preview, const Ref<Texture2D> &p_small_preview, int p_idx);
+	void _scene_thumbnail_done(const String &p_path, const Ref<Texture2D> &p_preview, const Ref<Texture2D> &p_small_preview, const Variant &p_ud);
 	void _scenes_list_item_activated(int p_index);
 
 	void _source_add_pressed();
@@ -130,7 +130,6 @@ private:
 	void _update_tile_inspector();
 	void _update_scenes_list();
 	void _update_action_buttons();
-	void _update_all();
 
 	void _drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_from);
 	bool _can_drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_from) const;

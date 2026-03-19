@@ -166,11 +166,7 @@ public:
 			if (tight) {
 				capacity = p_size;
 			} else {
-				// Try 1.5x the current capacity.
-				// This ratio was chosen because it is close to the ideal growth rate of the golden ratio.
-				// See https://archive.ph/Z2R8w for details.
 				capacity = MAX((U)2, capacity + ((1 + capacity) >> 1));
-				// If 1.5x growth isn't enough, just use the needed size exactly.
 				if (p_size > capacity) {
 					capacity = p_size;
 				}
@@ -193,8 +189,7 @@ public:
 	/// Resize and set all values to 0 / false / nullptr.
 	_FORCE_INLINE_ void resize_initialized(U p_size) { _resize<true>(p_size); }
 
-	/// Resize and keep memory uninitialized.
-	/// This means that any newly added elements have an unknown value, and are expected to be set after the `resize_uninitialized` call.
+	/// Resize and set all values to 0 / false / nullptr.
 	/// This is only available for trivially destructible types (otherwise, trivial resize might be UB).
 	_FORCE_INLINE_ void resize_uninitialized(U p_size) { _resize<false>(p_size); }
 
@@ -323,12 +318,18 @@ public:
 		insert(i, p_val);
 	}
 
-	explicit operator Vector<T>() const {
+	operator Vector<T>() const {
 		Vector<T> ret;
 		ret.resize(count);
 		T *w = ret.ptrw();
 		if (w) {
-			copy_arr_placement(w, data, count);
+			if constexpr (std::is_trivially_copyable_v<T>) {
+				memcpy(w, data, sizeof(T) * count);
+			} else {
+				for (U i = 0; i < count; i++) {
+					w[i] = data[i];
+				}
+			}
 		}
 		return ret;
 	}

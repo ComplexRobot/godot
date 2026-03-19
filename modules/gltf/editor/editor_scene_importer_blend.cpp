@@ -247,14 +247,6 @@ Node *EditorSceneFormatImporterBlend::import_scene(const String &p_path, uint32_
 			parameters_map["export_gn_mesh"] = false;
 		}
 	}
-	if (blender_major_version >= 4) {
-		if (p_options.has(SNAME("blender/meshes/gpu_instances")) && p_options[SNAME("blender/meshes/gpu_instances")]) {
-			parameters_map["export_gpu_instances"] = true;
-		} else {
-			parameters_map["export_gpu_instances"] = false;
-		}
-	}
-
 	if (p_options.has(SNAME("blender/meshes/tangents")) && p_options[SNAME("blender/meshes/tangents")]) {
 		parameters_map["export_tangents"] = true;
 	} else {
@@ -344,7 +336,7 @@ Node *EditorSceneFormatImporterBlend::import_scene(const String &p_path, uint32_
 
 Variant EditorSceneFormatImporterBlend::get_option_visibility(const String &p_path, const String &p_scene_import_type, const String &p_option,
 		const HashMap<StringName, Variant> &p_options) {
-	if (!p_path.has_extension("blend")) {
+	if (p_path.get_extension().to_lower() != "blend") {
 		return true;
 	}
 
@@ -358,7 +350,7 @@ Variant EditorSceneFormatImporterBlend::get_option_visibility(const String &p_pa
 
 void EditorSceneFormatImporterBlend::get_import_options(const String &p_path, List<ResourceImporter::ImportOption> *r_options) {
 	// Returns all the options when path is empty because that means it's for the Project Settings.
-	if (!p_path.is_empty() && !p_path.has_extension("blend")) {
+	if (!p_path.is_empty() && p_path.get_extension().to_lower() != "blend") {
 		return;
 	}
 #define ADD_OPTION_BOOL(PATH, VALUE) \
@@ -376,7 +368,6 @@ void EditorSceneFormatImporterBlend::get_import_options(const String &p_path, Li
 	ADD_OPTION_BOOL("blender/meshes/uvs", true);
 	ADD_OPTION_BOOL("blender/meshes/normals", true);
 	ADD_OPTION_BOOL("blender/meshes/export_geometry_nodes_instances", false);
-	ADD_OPTION_BOOL("blender/meshes/gpu_instances", false);
 	ADD_OPTION_BOOL("blender/meshes/tangents", true);
 	ADD_OPTION_ENUM("blender/meshes/skins", "None,4 Influences (Compatible),All Influences", BLEND_BONE_INFLUENCES_ALL);
 	ADD_OPTION_BOOL("blender/meshes/export_bones_deforming_mesh_only", false);
@@ -387,6 +378,15 @@ void EditorSceneFormatImporterBlend::get_import_options(const String &p_path, Li
 	ADD_OPTION_BOOL("blender/animation/group_tracks", true);
 
 	r_options->push_back(ResourceImporterScene::ImportOption(PropertyInfo(Variant::INT, "gltf/naming_version", PROPERTY_HINT_ENUM, "Godot 4.0 or 4.1,Godot 4.2 to 4.4,Godot 4.5 or later"), 2));
+}
+
+void EditorSceneFormatImporterBlend::handle_compatibility_options(HashMap<StringName, Variant> &p_import_params) const {
+	if (!p_import_params.has("gltf/naming_version")) {
+		// If a .blend's existing import file is missing the glTF
+		// naming compatibility version, we need to use version 1.
+		// Version 1 is the behavior before this option was added.
+		p_import_params["gltf/naming_version"] = 1;
+	}
 }
 
 ///////////////////////////

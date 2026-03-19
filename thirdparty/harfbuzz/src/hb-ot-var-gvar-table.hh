@@ -66,14 +66,12 @@ struct glyph_variations_t
 
   hb_vector_t<tuple_variations_t> glyph_variations;
 
-  hb_vector_t<F2DOT14> compiled_shared_tuples;
+  hb_vector_t<char> compiled_shared_tuples;
   private:
   unsigned shared_tuples_count = 0;
 
   /* shared coords-> index map after instantiation */
-  hb_hashmap_t<const hb_vector_t<F2DOT14>*, unsigned> shared_tuples_idx_map;
-
-  hb_alloc_pool_t pool;
+  hb_hashmap_t<const hb_vector_t<char>*, unsigned> shared_tuples_idx_map;
 
   public:
   unsigned compiled_shared_tuples_count () const
@@ -130,7 +128,6 @@ struct glyph_variations_t
                                           iterator, &(plan->axes_old_index_tag_map),
                                           shared_indices, shared_tuples,
                                           tuple_vars, /* OUT */
-					  &pool,
                                           is_composite_glyph))
         return false;
       glyph_variations.push (std::move (tuple_vars));
@@ -142,7 +139,6 @@ struct glyph_variations_t
   {
     unsigned count = plan->new_to_old_gid_list.length;
     bool iup_optimize = false;
-    optimize_scratch_t scratch;
     iup_optimize = plan->flags & HB_SUBSET_FLAGS_OPTIMIZE_IUP_DELTAS;
     for (unsigned i = 0; i < count; i++)
     {
@@ -150,7 +146,7 @@ struct glyph_variations_t
       contour_point_vector_t *all_points;
       if (!plan->new_gid_contour_points_map.has (new_gid, &all_points))
         return false;
-      if (!glyph_variations[i].instantiate (plan->axes_location, plan->axes_triple_distances, scratch, &pool, all_points, iup_optimize))
+      if (!glyph_variations[i].instantiate (plan->axes_location, plan->axes_triple_distances, all_points, iup_optimize))
         return false;
     }
     return true;
@@ -165,8 +161,7 @@ struct glyph_variations_t
       if (!vars.compile_bytes (axes_index_map, axes_old_index_tag_map,
                                true, /* use shared points*/
                                true,
-                               &shared_tuples_idx_map,
-			       &pool))
+                               &shared_tuples_idx_map))
         return false;
 
     return true;
@@ -177,21 +172,20 @@ struct glyph_variations_t
   {
     /* key is pointer to compiled_peak_coords inside each tuple, hashing
      * function will always deref pointers first */
-    hb_hashmap_t<const hb_vector_t<F2DOT14>*, unsigned> coords_count_map;
+    hb_hashmap_t<const hb_vector_t<char>*, unsigned> coords_count_map;
 
     /* count the num of shared coords */
     for (tuple_variations_t& vars: glyph_variations)
     {
       for (tuple_delta_t& var : vars.tuple_vars)
       {
-        if (!var.compile_coords (axes_index_map, axes_old_index_tag_map, &pool))
+        if (!var.compile_peak_coords (axes_index_map, axes_old_index_tag_map))
           return false;
-        unsigned *count;
-	unsigned hash = hb_hash (&var.compiled_peak_coords);
-        if (coords_count_map.has_with_hash (&(var.compiled_peak_coords), hash, &count))
-	  (*count)++;
+        unsigned* count;
+        if (coords_count_map.has (&(var.compiled_peak_coords), &count))
+          coords_count_map.set (&(var.compiled_peak_coords), *count + 1);
         else
-          coords_count_map.set_with_hash (&(var.compiled_peak_coords), hash, 1);
+          coords_count_map.set (&(var.compiled_peak_coords), 1);
       }
     }
 
@@ -199,45 +193,66 @@ struct glyph_variations_t
       return false;
 
     /* add only those coords that are used more than once into the vector and sort */
-    hb_vector_t<hb_pair_t<const hb_vector_t<F2DOT14>*, unsigned>> shared_coords {
-      + hb_iter (coords_count_map)
-      | hb_filter ([] (const hb_pair_t<const hb_vector_t<F2DOT14>*, unsigned>& p) { return p.second > 1; })
-    };
-    if (unlikely (shared_coords.in_error ())) return false;
+    hb_vector_t<const hb_vector_t<char>*> shared_coords;
+    if (unlikely (!shared_coords.alloc (coords_count_map.get_population ())))
+      return false;
+
+    for (const auto _ : coords_count_map.iter ())
+    {
+      if (_.second == 1) continue;
+      shared_coords.push (_.first);
+    }
 
     /* no shared tuples: no coords are used more than once */
     if (!shared_coords) return true;
     /* sorting based on the coords frequency first (high to low), then compare
      * the coords bytes */
-    shared_coords.qsort (_cmp_coords);
+    hb_qsort (shared_coords.arrayZ, shared_coords.length, sizeof (hb_vector_t<char>*), _cmp_coords, (void *) (&coords_count_map));
 
     /* build shared_coords->idx map and shared tuples byte array */
 
     shared_tuples_count = hb_min (0xFFFu + 1, shared_coords.length);
-    unsigned len = shared_tuples_count * (shared_coords[0].first->length);
+    unsigned len = shared_tuples_count * (shared_coords[0]->length);
     if (unlikely (!compiled_shared_tuples.alloc (len)))
       return false;
 
     for (unsigned i = 0; i < shared_tuples_count; i++)
     {
-      shared_tuples_idx_map.set (shared_coords[i].first, i);
+      shared_tuples_idx_map.set (shared_coords[i], i);
       /* add a concat() in hb_vector_t? */
-      for (auto c : shared_coords[i].first->iter ())
+      for (char c : shared_coords[i]->iter ())
         compiled_shared_tuples.push (c);
     }
 
     return true;
   }
 
-  static int _cmp_coords (const void *pa, const void *pb)
+  static int _cmp_coords (const void *pa, const void *pb, void *arg)
   {
-    const hb_pair_t<hb_vector_t<F2DOT14> *, unsigned> *a = (const hb_pair_t<hb_vector_t<F2DOT14> *, unsigned> *) pa;
-    const hb_pair_t<hb_vector_t<F2DOT14> *, unsigned> *b = (const hb_pair_t<hb_vector_t<F2DOT14> *, unsigned> *) pb;
+    const hb_hashmap_t<const hb_vector_t<char>*, unsigned>* coords_count_map =
+        reinterpret_cast<const hb_hashmap_t<const hb_vector_t<char>*, unsigned>*> (arg);
 
-    if (a->second != b->second)
-      return b->second - a->second; // high to low
+    /* shared_coords is hb_vector_t<const hb_vector_t<char>*> so casting pa/pb
+     * to be a pointer to a pointer */
+    const hb_vector_t<char>** a = reinterpret_cast<const hb_vector_t<char>**> (const_cast<void*>(pa));
+    const hb_vector_t<char>** b = reinterpret_cast<const hb_vector_t<char>**> (const_cast<void*>(pb));
 
-    return b->first->as_array().cmp (a->first->as_array ());
+    bool has_a = coords_count_map->has (*a);
+    bool has_b = coords_count_map->has (*b);
+
+    if (has_a && has_b)
+    {
+      unsigned a_num = coords_count_map->get (*a);
+      unsigned b_num = coords_count_map->get (*b);
+
+      if (a_num != b_num)
+        return b_num - a_num;
+
+      return (*b)->as_array().cmp ((*a)->as_array ());
+    }
+    else if (has_a) return -1;
+    else if (has_b) return 1;
+    else return 0;
   }
 
   template<typename Iterator,
@@ -387,9 +402,9 @@ struct gvar_GVAR
       out->sharedTuples = 0;
     else
     {
-      hb_array_t<const F2DOT14> shared_tuples = glyph_vars.compiled_shared_tuples.as_array ().copy (c);
+      hb_array_t<const char> shared_tuples = glyph_vars.compiled_shared_tuples.as_array ().copy (c);
       if (!shared_tuples.arrayZ) return_trace (false);
-      out->sharedTuples = (const char *) shared_tuples.arrayZ - (char *) out;
+      out->sharedTuples = shared_tuples.arrayZ - (char *) out;
     }
 
     char *glyph_var_data = c->start_embed<char> ();
@@ -671,7 +686,7 @@ struct gvar_GVAR
 
 	if (!deltas)
 	{
-	  if (unlikely (!deltas_vec.resize_dirty  (count))) return false;
+	  if (unlikely (!deltas_vec.resize (count, false))) return false;
 	  deltas = deltas_vec.as_array ();
 	  hb_memset (deltas.arrayZ + (phantom_only ? count - 4 : 0), 0,
 		     (phantom_only ? 4 : count) * sizeof (deltas[0]));
@@ -687,10 +702,10 @@ struct gvar_GVAR
 
 	bool apply_to_all = (indices.length == 0);
 	unsigned num_deltas = apply_to_all ? points.length : indices.length;
-	unsigned start_deltas = (apply_to_all && phantom_only && num_deltas >= 4 ? num_deltas - 4 : 0);
-	if (unlikely (!x_deltas.resize_dirty  (num_deltas))) return false;
+	unsigned start_deltas = (phantom_only && num_deltas >= 4 ? num_deltas - 4 : 0);
+	if (unlikely (!x_deltas.resize (num_deltas, false))) return false;
 	if (unlikely (!GlyphVariationData::decompile_deltas (p, x_deltas, end, false, start_deltas))) return false;
-	if (unlikely (!y_deltas.resize_dirty  (num_deltas))) return false;
+	if (unlikely (!y_deltas.resize (num_deltas, false))) return false;
 	if (unlikely (!GlyphVariationData::decompile_deltas (p, y_deltas, end, false, start_deltas))) return false;
 
 	if (!apply_to_all)

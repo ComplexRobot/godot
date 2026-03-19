@@ -30,8 +30,9 @@
 
 #pragma once
 
+#include "core/input/input_event.h"
 #include "core/object/gdvirtual.gen.inc"
-#include "core/object/object.h"
+#include "core/object/ref_counted.h"
 
 class MainLoop : public Object {
 	GDCLASS(MainLoop, Object);
@@ -66,5 +67,6 @@ public:
 	virtual bool process(double p_time);
 	virtual void finalize();
 
+	MainLoop() {}
 	virtual ~MainLoop() {}
 };

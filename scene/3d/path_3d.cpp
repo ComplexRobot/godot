@@ -30,8 +30,6 @@
 
 #include "path_3d.h"
 
-#include "scene/resources/mesh.h"
-
 Path3D::Path3D() {
 	SceneTree *st = SceneTree::get_singleton();
 	if (st && st->is_debugging_paths_hint()) {
@@ -44,11 +42,11 @@ Path3D::Path3D() {
 Path3D::~Path3D() {
 	if (debug_instance.is_valid()) {
 		ERR_FAIL_NULL(RenderingServer::get_singleton());
-		RS::get_singleton()->free_rid(debug_instance);
+		RS::get_singleton()->free(debug_instance);
 	}
 	if (debug_mesh.is_valid()) {
 		ERR_FAIL_NULL(RenderingServer::get_singleton());
-		RS::get_singleton()->free_rid(debug_mesh->get_rid());
+		RS::get_singleton()->free(debug_mesh->get_rid());
 	}
 }
 

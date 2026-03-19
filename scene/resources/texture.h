@@ -30,10 +30,12 @@
 
 #pragma once
 
-#include "core/io/image.h"
 #include "core/io/resource.h"
-#include "core/variant/typed_array.h"
+#include "core/math/rect2.h"
 #include "scene/resources/curve.h"
+#include "scene/resources/gradient.h"
+#include "servers/camera_server.h"
+#include "servers/rendering_server.h"
 
 class Texture : public Resource {
 	GDCLASS(Texture, Resource);

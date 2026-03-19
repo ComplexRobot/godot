@@ -89,7 +89,6 @@ private:
 	Color number_color;
 	Color member_variable_color;
 	Color string_color;
-	Color placeholder_color;
 	Color node_path_color;
 	Color node_ref_color;
 	Color annotation_color;

@@ -42,8 +42,6 @@ protected:
 	static void _bind_methods();
 
 public:
-	static constexpr AncestralClass static_ancestral_class = AncestralClass::REF_COUNTED;
-
 	_FORCE_INLINE_ bool is_referenced() const { return refcount_init.get() != 1; }
 	bool init_ref();
 	bool reference(); // returns false if refcount is at zero and didn't get increased
@@ -51,6 +49,7 @@ public:
 	int get_reference_count() const;
 
 	RefCounted();
+	~RefCounted() {}
 };
 
 template <typename T>
@@ -215,8 +214,6 @@ public:
 		ref(memnew(T(p_params...)));
 	}
 
-	uint32_t hash() const { return HashMapHasherDefault::hash(reference); }
-
 	Ref() = default;
 
 	~Ref() {
@@ -236,6 +233,8 @@ public:
 	Variant get_ref() const;
 	void set_obj(Object *p_object);
 	void set_ref(const Ref<RefCounted> &p_ref);
+
+	WeakRef() {}
 };
 
 template <typename T>

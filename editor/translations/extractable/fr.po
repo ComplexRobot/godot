@@ -18,6 +18,9 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 5.5-dev\n"
 
+msgid "All Recognized"
+msgstr "Tous les types de fichiers reconnus"
+
 msgid "New Code Region"
 msgstr "Nouvelle section de code"
 
@@ -181,32 +184,14 @@ msgstr "Sélectionner le dossier courant"
 msgid "Select This Folder"
 msgstr "Sélectionner ce dossier"
 
-msgid "Copy Path"
-msgstr "Copier le chemin"
-
-msgid "Delete"
-msgstr "Supprimer"
-
-msgid "New Folder..."
-msgstr "Créer un dossier..."
-
-msgid "Refresh"
-msgstr "Rafraîchir"
-
 msgid "Open in File Manager"
 msgstr "Ouvrir dans le gestionnaire de fichiers"
-
-msgid "Show in File Manager"
-msgstr "Voir dans le gestionnaire de fichiers"
 
 msgid "Show Package Contents"
 msgstr "Voir le contenu du paquet"
 
 msgid "You don't have permission to access contents of this folder."
 msgstr "Vous n'avez pas l'autorisation d'accéder au contenu de ce dossier."
-
-msgid "All Recognized"
-msgstr "Tous les types de fichiers reconnus"
 
 msgid "All Files"
 msgstr "Tous les fichiers"
@@ -237,9 +222,6 @@ msgstr "Aller au dossier parent."
 
 msgid "Path:"
 msgstr "Chemin :"
-
-msgid "Drive"
-msgstr "Disque"
 
 msgid "Refresh files."
 msgstr "Rafraîchir les fichiers."
@@ -300,15 +282,6 @@ msgstr "Nom de fichier :"
 
 msgid "File:"
 msgstr "Fichier :"
-
-msgid ""
-"Delete the selected file?\n"
-"Depending on your filesystem configuration, the files will either be moved to "
-"the system trash or deleted permanently."
-msgstr ""
-"Supprimer le fichier sélectionné ?\n"
-"Selon la configuration de votre système de fichier, les fichiers seront soit "
-"déplacés dans la corbeille système soit supprimés définitivement."
 
 msgid "Create Folder"
 msgstr "Créer un dossier"

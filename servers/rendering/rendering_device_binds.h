@@ -221,7 +221,6 @@ class RDVertexAttribute : public RefCounted {
 	RD::VertexAttribute base;
 
 public:
-	RD_SETGET(uint32_t, binding)
 	RD_SETGET(uint32_t, location)
 	RD_SETGET(uint32_t, offset)
 	RD_SETGET(RD::DataFormat, format)
@@ -230,7 +229,6 @@ public:
 
 protected:
 	static void _bind_methods() {
-		RD_BIND(Variant::INT, RDVertexAttribute, binding);
 		RD_BIND(Variant::INT, RDVertexAttribute, location);
 		RD_BIND(Variant::INT, RDVertexAttribute, offset);
 		RD_BIND(Variant::INT, RDVertexAttribute, format);

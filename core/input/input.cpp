@@ -151,8 +151,6 @@ void Input::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_accelerometer", "value"), &Input::set_accelerometer);
 	ClassDB::bind_method(D_METHOD("set_magnetometer", "value"), &Input::set_magnetometer);
 	ClassDB::bind_method(D_METHOD("set_gyroscope", "value"), &Input::set_gyroscope);
-	ClassDB::bind_method(D_METHOD("set_joy_light", "device", "color"), &Input::set_joy_light);
-	ClassDB::bind_method(D_METHOD("has_joy_light", "device"), &Input::has_joy_light);
 	ClassDB::bind_method(D_METHOD("get_last_mouse_velocity"), &Input::get_last_mouse_velocity);
 	ClassDB::bind_method(D_METHOD("get_last_mouse_screen_velocity"), &Input::get_last_mouse_screen_velocity);
 	ClassDB::bind_method(D_METHOD("get_mouse_button_mask"), &Input::get_mouse_button_mask);
@@ -415,9 +413,9 @@ bool Input::is_action_just_pressed(const StringName &p_action, bool p_exact) con
 	}
 }
 
-bool Input::is_action_just_pressed_by_event(const StringName &p_action, RequiredParam<InputEvent> rp_event, bool p_exact) const {
+bool Input::is_action_just_pressed_by_event(const StringName &p_action, const Ref<InputEvent> &p_event, bool p_exact) const {
 	ERR_FAIL_COND_V_MSG(!InputMap::get_singleton()->has_action(p_action), false, InputMap::get_singleton()->suggest_actions(p_action));
-	EXTRACT_PARAM_OR_FAIL_V(p_event, rp_event, false);
+	ERR_FAIL_COND_V(p_event.is_null(), false);
 
 	if (disable_input) {
 		return false;
@@ -472,9 +470,9 @@ bool Input::is_action_just_released(const StringName &p_action, bool p_exact) co
 	}
 }
 
-bool Input::is_action_just_released_by_event(const StringName &p_action, RequiredParam<InputEvent> rp_event, bool p_exact) const {
+bool Input::is_action_just_released_by_event(const StringName &p_action, const Ref<InputEvent> &p_event, bool p_exact) const {
 	ERR_FAIL_COND_V_MSG(!InputMap::get_singleton()->has_action(p_action), false, InputMap::get_singleton()->suggest_actions(p_action));
-	EXTRACT_PARAM_OR_FAIL_V(p_event, rp_event, false);
+	ERR_FAIL_COND_V(p_event.is_null(), false);
 
 	if (disable_input) {
 		return false;
@@ -995,29 +993,6 @@ void Input::set_joy_axis(int p_device, JoyAxis p_axis, float p_value) {
 	_joy_axis[c] = p_value;
 }
 
-void Input::set_joy_features(int p_device, JoypadFeatures *p_features) {
-	Joypad *joypad = joy_names.getptr(p_device);
-	if (!joypad) {
-		return;
-	}
-	joypad->features = p_features;
-	_update_joypad_features(p_device);
-}
-
-void Input::set_joy_light(int p_device, const Color &p_color) {
-	Joypad *joypad = joy_names.getptr(p_device);
-	if (!joypad || !joypad->has_light || joypad->features == nullptr) {
-		return;
-	}
-	Color linear = p_color.srgb_to_linear();
-	joypad->features->set_joy_light(linear);
-}
-
-bool Input::has_joy_light(int p_device) const {
-	const Joypad *joypad = joy_names.getptr(p_device);
-	return joypad && joypad->has_light;
-}
-
 void Input::start_joy_vibration(int p_device, float p_weak_magnitude, float p_strong_magnitude, float p_duration) {
 	_THREAD_SAFE_METHOD_
 	if (p_weak_magnitude < 0.f || p_weak_magnitude > 1.f || p_strong_magnitude < 0.f || p_strong_magnitude > 1.f) {
@@ -1229,10 +1204,10 @@ void Input::set_custom_mouse_cursor(const Ref<Resource> &p_cursor, CursorShape p
 	set_custom_mouse_cursor_func(p_cursor, p_shape, p_hotspot);
 }
 
-void Input::parse_input_event(RequiredParam<InputEvent> rp_event) {
+void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 	_THREAD_SAFE_METHOD_
 
-	EXTRACT_PARAM_OR_FAIL(p_event, rp_event);
+	ERR_FAIL_COND(p_event.is_null());
 
 #ifdef DEBUG_ENABLED
 	uint64_t curr_frame = Engine::get_singleton()->get_process_frames();
@@ -1416,12 +1391,10 @@ void Input::joy_axis(int p_device, JoyAxis p_axis, float p_value) {
 	if (map.type == TYPE_AXIS) {
 		JoyAxis axis = JoyAxis(map.index);
 		float value = map.value;
-#ifndef ANDROID_ENABLED // Android trigger values are already between 0.0f and 1.0f.
 		if (range == FULL_AXIS && (axis == JoyAxis::TRIGGER_LEFT || axis == JoyAxis::TRIGGER_RIGHT)) {
 			// Convert to a value between 0.0f and 1.0f.
 			value = 0.5f + value / 2.0f;
 		}
-#endif
 		_axis_event(p_device, axis, value);
 		return;
 	}
@@ -1509,16 +1482,6 @@ void Input::_update_action_cache(const StringName &p_action_name, ActionState &r
 		r_action_state.cache.pressed = true;
 		r_action_state.cache.strength = MAX(r_action_state.cache.strength, r_action_state.api_strength);
 		r_action_state.cache.raw_strength = MAX(r_action_state.cache.raw_strength, r_action_state.api_strength); // Use the strength as raw_strength for API-pressed states.
-	}
-}
-
-void Input::_update_joypad_features(int p_device) {
-	Joypad *joypad = joy_names.getptr(p_device);
-	if (!joypad || joypad->features == nullptr) {
-		return;
-	}
-	if (joypad->features->has_joy_light()) {
-		joypad->has_light = true;
 	}
 }
 
@@ -1800,7 +1763,8 @@ void Input::parse_mapping(const String &p_mapping) {
 void Input::add_joy_mapping(const String &p_mapping, bool p_update_existing) {
 	parse_mapping(p_mapping);
 	if (p_update_existing) {
-		const String uid = p_mapping.get_slicec(',', 0);
+		Vector<String> entry = p_mapping.split(",");
+		const String &uid = entry[0];
 		for (KeyValue<int, Joypad> &E : joy_names) {
 			Joypad &joy = E.value;
 			if (joy.uid == uid) {

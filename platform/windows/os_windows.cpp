@@ -38,8 +38,6 @@
 #include "core/debugger/engine_debugger.h"
 #include "core/debugger/script_debugger.h"
 #include "core/io/marshalls.h"
-#include "core/os/main_loop.h"
-#include "core/profiling/profiling.h"
 #include "core/version_generated.gen.h"
 #include "drivers/windows/dir_access_windows.h"
 #include "drivers/windows/file_access_windows.h"
@@ -48,9 +46,9 @@
 #include "drivers/windows/net_socket_winsock.h"
 #include "drivers/windows/thread_windows.h"
 #include "main/main.h"
-#include "servers/audio/audio_server.h"
+#include "servers/audio_server.h"
 #include "servers/rendering/rendering_server_default.h"
-#include "servers/text/text_server.h"
+#include "servers/text_server.h"
 
 #include <avrt.h>
 #include <bcrypt.h>
@@ -863,7 +861,7 @@ bool OS_Windows::get_user_prefers_integrated_gpu() const {
 			GetCurrentApplicationUserModelIdPtr GetCurrentApplicationUserModelId = (GetCurrentApplicationUserModelIdPtr)(void *)GetProcAddress(kernel32, "GetCurrentApplicationUserModelId");
 
 			if (GetCurrentApplicationUserModelId) {
-				UINT32 length = std_size(value_name);
+				UINT32 length = std::size(value_name);
 				LONG result = GetCurrentApplicationUserModelId(&length, value_name);
 				if (result == ERROR_SUCCESS) {
 					is_packaged = true;
@@ -1688,14 +1686,6 @@ Error OS_Windows::set_cwd(const String &p_cwd) {
 	return OK;
 }
 
-String OS_Windows::get_cwd() const {
-	Char16String real_current_dir_name;
-	size_t str_len = GetCurrentDirectoryW(0, nullptr);
-	real_current_dir_name.resize_uninitialized(str_len + 1);
-	GetCurrentDirectoryW(real_current_dir_name.size(), (LPWSTR)real_current_dir_name.ptrw());
-	return String::utf16((const char16_t *)real_current_dir_name.get_data()).trim_prefix(R"(\\?\)").replace_char('\\', '/');
-}
-
 Vector<String> OS_Windows::get_system_fonts() const {
 	if (!dwrite_init) {
 		return Vector<String>();
@@ -2348,8 +2338,6 @@ void OS_Windows::run() {
 	main_loop->initialize();
 
 	while (true) {
-		GodotProfileFrameMark;
-		GodotProfileZone("OS_Windows::run");
 		DisplayServer::get_singleton()->process_events(); // get rid of pending events
 		if (Main::iteration()) {
 			break;
@@ -2586,10 +2574,9 @@ String OS_Windows::get_system_ca_certificates() {
 		bool success = CryptBinaryToStringA(curr->pbCertEncoded, curr->cbCertEncoded, CRYPT_STRING_BASE64HEADER | CRYPT_STRING_NOCR, nullptr, &size);
 		ERR_CONTINUE(!success);
 		PackedByteArray pba;
-		pba.resize(size + 1);
+		pba.resize(size);
 		CryptBinaryToStringA(curr->pbCertEncoded, curr->cbCertEncoded, CRYPT_STRING_BASE64HEADER | CRYPT_STRING_NOCR, (char *)pba.ptrw(), &size);
-		pba.write[size] = 0;
-		certs += String::ascii(Span((const char *)pba.ptr(), strlen((const char *)pba.ptr())));
+		certs += String::ascii(Span((char *)pba.ptr(), size));
 		curr = CertEnumCertificatesInStore(cert_store, curr);
 	}
 	CertCloseStore(cert_store, 0);

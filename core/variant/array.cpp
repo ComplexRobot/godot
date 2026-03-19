@@ -30,10 +30,6 @@
 
 #include "array.h"
 
-STATIC_ASSERT_INCOMPLETE_TYPE(class, Dictionary);
-STATIC_ASSERT_INCOMPLETE_TYPE(class, Object);
-STATIC_ASSERT_INCOMPLETE_TYPE(class, String);
-
 #include "container_type_validate.h"
 #include "core/math/math_funcs.h"
 #include "core/object/script_language.h"
@@ -315,11 +311,6 @@ Error Array::resize(int p_new_size) {
 		}
 	}
 	return err;
-}
-
-Error Array::reserve(int p_new_size) {
-	ERR_FAIL_COND_V_MSG(_p->read_only, ERR_LOCKED, "Array is in read-only state.");
-	return _p->array.reserve(p_new_size);
 }
 
 Error Array::insert(int p_pos, const Variant &p_value) {
@@ -943,10 +934,6 @@ void Array::make_read_only() {
 
 bool Array::is_read_only() const {
 	return _p->read_only != nullptr;
-}
-
-Span<Variant> Array::span() const {
-	return _p->array.span();
 }
 
 Array::Array(const Array &p_from) {

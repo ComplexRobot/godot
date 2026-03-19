@@ -69,6 +69,8 @@ struct ErrorHandlerList {
 	void *userdata = nullptr;
 
 	ErrorHandlerList *next = nullptr;
+
+	ErrorHandlerList() {}
 };
 
 void add_error_handler(ErrorHandlerList *p_handler);

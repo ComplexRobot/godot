@@ -569,7 +569,10 @@ void LightStorage::reflection_probe_set_reflection_mask(RID p_probe, uint32_t p_
 }
 
 void LightStorage::reflection_probe_set_resolution(RID p_probe, int p_resolution) {
-	WARN_PRINT_ONCE("reflection_probe_set_resolution is not available in Godot 4. ReflectionProbe size is configured in the project settings with the rendering/reflections/reflection_atlas/reflection_size setting.");
+	ReflectionProbe *reflection_probe = reflection_probe_owner.get_or_null(p_probe);
+	ERR_FAIL_NULL(reflection_probe);
+
+	reflection_probe->resolution = p_resolution;
 }
 
 AABB LightStorage::reflection_probe_get_aabb(RID p_probe) const {
@@ -983,10 +986,6 @@ bool LightStorage::reflection_probe_instance_begin_render(RID p_instance, RID p_
 	rpi->dirty = false;
 	rpi->processing_layer = 0;
 
-	return true;
-}
-
-bool LightStorage::reflection_probe_instance_end_render(RID p_instance, RID p_reflection_atlas) {
 	return true;
 }
 

@@ -139,7 +139,7 @@ void AnimationNode::get_child_nodes(List<ChildNode> *r_child_nodes) {
 
 void AnimationNode::blend_animation(const StringName &p_animation, AnimationMixer::PlaybackInfo p_playback_info) {
 	ERR_FAIL_NULL(process_state);
-	p_playback_info.track_weights = Vector<real_t>(node_state.track_weights);
+	p_playback_info.track_weights = node_state.track_weights;
 	process_state->tree->make_animation_instance(p_animation, p_playback_info);
 }
 
@@ -739,8 +739,7 @@ void AnimationTree::_animation_node_renamed(const ObjectID &p_oid, const String 
 	for (const PropertyInfo &E : properties) {
 		if (E.name.begins_with(old_base)) {
 			String new_name = E.name.replace_first(old_base, new_base);
-			const Pair<Variant, bool> temp_copy = property_map[E.name];
-			property_map[new_name] = temp_copy;
+			property_map[new_name] = property_map[E.name];
 			property_map.erase(E.name);
 		}
 	}
@@ -903,9 +902,9 @@ void AnimationTree::_setup_animation_player() {
 // `libraries` is a dynamic property, so we can't use `_validate_property` to change it.
 uint32_t AnimationTree::_get_libraries_property_usage() const {
 	if (!animation_player.is_empty()) {
-		return PROPERTY_USAGE_READ_ONLY;
+		return PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY;
 	}
-	return PROPERTY_USAGE_STORAGE;
+	return PROPERTY_USAGE_DEFAULT;
 }
 
 void AnimationTree::_validate_property(PropertyInfo &p_property) const {
@@ -990,20 +989,6 @@ real_t AnimationTree::get_connection_activity(const StringName &p_path, int p_co
 
 	return activity[p_connection].activity;
 }
-
-#ifdef TOOLS_ENABLED
-String AnimationTree::get_editor_error_message() const {
-	if (!is_active()) {
-		return TTR("The AnimationTree is inactive.\nActivate it in the inspector to enable playback; check node warnings if activation fails.");
-	} else if (!is_enabled()) {
-		return TTR("The AnimationTree node (or one of its parents) has its process mode set to Disabled.\nChange the process mode in the inspector to allow playback.");
-	} else if (is_state_invalid()) {
-		return get_invalid_state_reason();
-	}
-
-	return "";
-}
-#endif
 
 void AnimationTree::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_tree_root", "animation_node"), &AnimationTree::set_root_animation_node);

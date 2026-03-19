@@ -33,19 +33,12 @@
 #include "core/object/undo_redo.h"
 #include "core/os/keyboard.h"
 #include "core/version.h"
-#include "editor/docks/editor_dock.h"
-#include "editor/docks/inspector_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_paths.h"
-#include "editor/script/script_editor_plugin.h"
-#include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
-#include "modules/regex/regex.h"
-#include "scene/gui/box_container.h"
 #include "scene/gui/separator.h"
-#include "scene/main/timer.h"
 #include "scene/resources/font.h"
 
 void EditorLog::_error_handler(void *p_self, const char *p_func, const char *p_file, int p_line, const char *p_error, const char *p_errorexp, bool p_editor_notify, ErrorHandlerType p_type) {
@@ -53,9 +46,9 @@ void EditorLog::_error_handler(void *p_self, const char *p_func, const char *p_f
 
 	String err_str;
 	if (p_errorexp && p_errorexp[0]) {
-		err_str = String::utf8(p_errorexp).replace("[", "[lb]");
+		err_str = String::utf8(p_errorexp);
 	} else {
-		err_str = vformat("[url]%s:%d[/url] - %s", String::utf8(p_file).replace("[", "[lb]"), p_line, String::utf8(p_error).replace("[", "[lb]"));
+		err_str = String::utf8(p_file) + ":" + itos(p_line) + " - " + String::utf8(p_error);
 	}
 
 	MessageType message_type = p_type == ERR_HANDLER_WARNING ? MSG_TYPE_WARNING : MSG_TYPE_ERROR;
@@ -203,40 +196,14 @@ void EditorLog::_load_state() {
 }
 
 void EditorLog::_meta_clicked(const String &p_meta) {
-	if (!p_meta.contains_char(':')) {
-		return;
-	}
-	const PackedStringArray parts = p_meta.rsplit(":", true, 1);
-	String path = parts[0];
-	const int line = parts[1].to_int() - 1;
-
-	if (path.begins_with("res://")) {
-		if (ResourceLoader::exists(path)) {
-			const Ref<Resource> res = ResourceLoader::load(path);
-			ScriptEditor::get_singleton()->edit(res, line, 0);
-			InspectorDock::get_singleton()->edit_resource(res);
-		}
-	} else if (path.has_extension("cpp") || path.has_extension("h") || path.has_extension("mm") || path.has_extension("hpp")) {
-		// Godot source file. Try to open it in external editor.
-		if (path.begins_with("./") || path.begins_with(".\\")) {
-			// Relative path. Convert to absolute, using executable path as reference.
-			path = path.trim_prefix("./").trim_prefix(".\\");
-			path = OS::get_singleton()->get_executable_path().get_base_dir().get_base_dir().path_join(path);
-		}
-
-		if (!ScriptEditorPlugin::open_in_external_editor(path, line, -1, true)) {
-			OS::get_singleton()->shell_open(path);
-		}
-	} else {
-		OS::get_singleton()->shell_open(p_meta);
-	}
+	OS::get_singleton()->shell_open(p_meta);
 }
 
 void EditorLog::_clear_request() {
 	log->clear();
 	messages.clear();
 	_reset_message_counts();
-	_set_dock_tab_icon(Ref<Texture2D>());
+	tool_button->set_button_icon(Ref<Texture2D>());
 }
 
 void EditorLog::_copy_request() {
@@ -287,9 +254,8 @@ void EditorLog::add_message(const String &p_msg, MessageType p_type) {
 	}
 }
 
-void EditorLog::_set_dock_tab_icon(Ref<Texture2D> p_icon) {
-	set_dock_icon(p_icon);
-	set_force_show_icon(p_icon.is_valid());
+void EditorLog::set_tool_button(Button *p_tool_button) {
+	tool_button = p_tool_button;
 }
 
 void EditorLog::register_undo_redo(UndoRedo *p_undo_redo) {
@@ -415,7 +381,7 @@ void EditorLog::_add_log_line(LogMessage &p_message, bool p_replace_previous) {
 			log->push_bold();
 			log->add_text(" ERROR: ");
 			log->pop(); // bold
-			_set_dock_tab_icon(icon);
+			tool_button->set_button_icon(icon);
 		} break;
 		case MSG_TYPE_WARNING: {
 			log->push_color(theme_cache.warning_color);
@@ -424,7 +390,7 @@ void EditorLog::_add_log_line(LogMessage &p_message, bool p_replace_previous) {
 			log->push_bold();
 			log->add_text(" WARNING: ");
 			log->pop(); // bold
-			_set_dock_tab_icon(icon);
+			tool_button->set_button_icon(icon);
 		} break;
 		case MSG_TYPE_EDITOR: {
 			// Distinguish editor messages from messages printed by the project
@@ -439,8 +405,7 @@ void EditorLog::_add_log_line(LogMessage &p_message, bool p_replace_previous) {
 		log->pop();
 	}
 
-	// Note that errors and warnings only support BBCode in the file part of the message.
-	if (p_message.type == MSG_TYPE_STD_RICH || p_message.type == MSG_TYPE_ERROR || p_message.type == MSG_TYPE_WARNING) {
+	if (p_message.type == MSG_TYPE_STD_RICH) {
 		log->append_text(p_message.text);
 	} else {
 		log->add_text(p_message.text);
@@ -487,12 +452,6 @@ void EditorLog::_reset_message_counts() {
 }
 
 EditorLog::EditorLog() {
-	set_name(TTRC("Output"));
-	set_icon_name("Output");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_output_bottom_panel", TTRC("Toggle Output Dock"), KeyModifierMask::ALT | Key::O));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
-	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
-
 	save_state_timer = memnew(Timer);
 	save_state_timer->set_wait_time(2);
 	save_state_timer->set_one_shot(true);
@@ -502,8 +461,7 @@ EditorLog::EditorLog() {
 	line_limit = int(EDITOR_GET("run/output/max_lines"));
 	EditorSettings::get_singleton()->connect("settings_changed", callable_mp(this, &EditorLog::_editor_settings_changed));
 
-	HBoxContainer *hb = memnew(HBoxContainer);
-	add_child(hb);
+	HBoxContainer *hb = this;
 
 	VBoxContainer *vb_left = memnew(VBoxContainer);
 	vb_left->set_custom_minimum_size(Size2(0, 180) * EDSCALE);

@@ -39,6 +39,7 @@ class SubViewport;
 class Camera3DEditor : public Control {
 	GDCLASS(Camera3DEditor, Control);
 
+	Panel *panel = nullptr;
 	Button *preview = nullptr;
 	Node *node = nullptr;
 

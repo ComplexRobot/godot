@@ -39,8 +39,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-#include "pcre2_internal.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
+#include "pcre2_internal.h"
 
 
 /*************************************************

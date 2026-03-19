@@ -30,8 +30,6 @@
 
 #include "external_texture.h"
 
-#include "servers/rendering/rendering_server.h"
-
 void ExternalTexture::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_size", "size"), &ExternalTexture::set_size);
 	ClassDB::bind_method(D_METHOD("get_external_texture_id"), &ExternalTexture::get_external_texture_id);
@@ -107,6 +105,6 @@ ExternalTexture::ExternalTexture() {
 ExternalTexture::~ExternalTexture() {
 	if (texture.is_valid()) {
 		ERR_FAIL_NULL(RenderingServer::get_singleton());
-		RenderingServer::get_singleton()->free_rid(texture);
+		RenderingServer::get_singleton()->free(texture);
 	}
 }

@@ -973,11 +973,7 @@ void PhysicsSystem::sDefaultSimCollideBodyVsBody(const Body &inBody1, const Body
 	{
 		// Collide with enhanced internal edge removal
 		ioCollideShapeSettings.mActiveEdgeMode = EActiveEdgeMode::CollideWithAll;
-		InternalEdgeRemovingCollector::sCollideShapeVsShape(inBody1.GetShape(), inBody2.GetShape(), Vec3::sOne(), Vec3::sOne(), inCenterOfMassTransform1, inCenterOfMassTransform2, part1, part2, ioCollideShapeSettings, ioCollector, inShapeFilter
-		#ifdef JPH_INTERNAL_EDGE_REMOVING_COLLECTOR_DEBUG
-			, inBody1.GetCenterOfMassPosition() // Query is done relative to the position of body 1
-		#endif // JPH_INTERNAL_EDGE_REMOVING_COLLECTOR_DEBUG
-		);
+		InternalEdgeRemovingCollector::sCollideShapeVsShape(inBody1.GetShape(), inBody2.GetShape(), Vec3::sOne(), Vec3::sOne(), inCenterOfMassTransform1, inCenterOfMassTransform2, part1, part2, ioCollideShapeSettings, ioCollector, inShapeFilter);
 	}
 	else
 	{
@@ -1037,7 +1033,8 @@ void PhysicsSystem::ProcessBodyPair(ContactAllocator &ioContactAllocator, const 
 		settings.mActiveEdgeMovementDirection = body1->GetLinearVelocity() - body2->GetLinearVelocity();
 
 		// Create shape filter
-		SimShapeFilterWrapper shape_filter(mSimShapeFilter, body1);
+		SimShapeFilterWrapperUnion shape_filter_union(mSimShapeFilter, body1);
+		SimShapeFilterWrapper &shape_filter = shape_filter_union.GetSimShapeFilterWrapper();
 		shape_filter.SetBody2(body2);
 
 		// Get transforms relative to body1
@@ -1159,7 +1156,7 @@ void PhysicsSystem::ProcessBodyPair(ContactAllocator &ioContactAllocator, const 
 			ReductionCollideShapeCollector collector(this, body1, body2);
 
 			// Perform collision detection between the two shapes
-			mSimCollideBodyVsBody(*body1, *body2, transform1, transform2, settings, collector, shape_filter.GetFilter());
+			mSimCollideBodyVsBody(*body1, *body2, transform1, transform2, settings, collector, shape_filter);
 
 			// Add the contacts
 			for (ContactManifold &manifold : collector.mManifolds)
@@ -1258,7 +1255,7 @@ void PhysicsSystem::ProcessBodyPair(ContactAllocator &ioContactAllocator, const 
 			NonReductionCollideShapeCollector collector(this, ioContactAllocator, body1, body2, body_pair_handle);
 
 			// Perform collision detection between the two shapes
-			mSimCollideBodyVsBody(*body1, *body2, transform1, transform2, settings, collector, shape_filter.GetFilter());
+			mSimCollideBodyVsBody(*body1, *body2, transform1, transform2, settings, collector, shape_filter);
 
 			constraint_created = collector.mConstraintCreated;
 		}
@@ -1911,7 +1908,7 @@ void PhysicsSystem::JobFindCCDContacts(const PhysicsUpdateContext *ioContext, Ph
 
 				// Do narrow phase collision check
 				RShapeCast relative_cast(mShapeCast.mShape, mShapeCast.mScale, mShapeCast.mCenterOfMassStart, direction, mShapeCast.mShapeWorldBounds);
-				body2.GetTransformedShape().CastShape(relative_cast, mShapeCastSettings, mShapeCast.mCenterOfMassStart.GetTranslation(), mCollector, mShapeFilter.GetFilter());
+				body2.GetTransformedShape().CastShape(relative_cast, mShapeCastSettings, mShapeCast.mCenterOfMassStart.GetTranslation(), mCollector, mShapeFilter);
 
 				// Update early out fraction based on narrow phase collector
 				if (!mCollector.mRejectAll)
@@ -1931,7 +1928,8 @@ void PhysicsSystem::JobFindCCDContacts(const PhysicsUpdateContext *ioContext, Ph
 		};
 
 		// Create shape filter
-		SimShapeFilterWrapper shape_filter(mSimShapeFilter, &body);
+		SimShapeFilterWrapperUnion shape_filter_union(mSimShapeFilter, &body);
+		SimShapeFilterWrapper &shape_filter = shape_filter_union.GetSimShapeFilterWrapper();
 
 		// Check if we collide with any other body. Note that we use the non-locking interface as we know the broadphase cannot be modified at this point.
 		RShapeCast shape_cast(body.GetShape(), Vec3::sOne(), body.GetCenterOfMassTransform(), ccd_body.mDeltaPosition);

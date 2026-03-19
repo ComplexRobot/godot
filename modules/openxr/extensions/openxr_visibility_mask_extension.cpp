@@ -34,7 +34,7 @@
 #include "core/string/print_string.h"
 #include "core/variant/array.h"
 #include "core/variant/variant.h"
-#include "servers/rendering/rendering_server.h"
+#include "servers/rendering_server.h"
 
 static const char *VISIBILITY_MASK_SHADER_CODE =
 		"shader_type spatial;\n"
@@ -69,7 +69,7 @@ OpenXRVisibilityMaskExtension::~OpenXRVisibilityMaskExtension() {
 	singleton = nullptr;
 }
 
-HashMap<String, bool *> OpenXRVisibilityMaskExtension::get_requested_extensions(XrVersion p_version) {
+HashMap<String, bool *> OpenXRVisibilityMaskExtension::get_requested_extensions() {
 	HashMap<String, bool *> request_extensions;
 
 	request_extensions[XR_KHR_VISIBILITY_MASK_EXTENSION_NAME] = &available;
@@ -117,19 +117,19 @@ void OpenXRVisibilityMaskExtension::on_session_destroyed() {
 
 	// Free our mesh.
 	if (mesh.is_valid()) {
-		rendering_server->free_rid(mesh);
+		rendering_server->free(mesh);
 		mesh = RID();
 	}
 
 	// Free our material.
 	if (material.is_valid()) {
-		rendering_server->free_rid(material);
+		rendering_server->free(material);
 		material = RID();
 	}
 
 	// Free our shader.
 	if (shader.is_valid()) {
-		rendering_server->free_rid(shader);
+		rendering_server->free(shader);
 		shader = RID();
 	}
 
@@ -237,7 +237,7 @@ void OpenXRVisibilityMaskExtension::_update_mesh() {
 		if (vertice_count == 0 || index_count == 0) {
 			// Free our mesh if we have one.
 			if (mesh.is_valid()) {
-				rendering_server->free_rid(mesh);
+				rendering_server->free(mesh);
 				mesh = RID();
 			}
 

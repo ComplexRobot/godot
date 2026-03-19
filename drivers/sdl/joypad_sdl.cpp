@@ -36,6 +36,8 @@
 #include "core/os/time.h"
 #include "core/variant/dictionary.h"
 
+#include <iterator>
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_events.h>
@@ -55,6 +57,19 @@ JoypadSDL *JoypadSDL::singleton = nullptr;
 JoypadSDL::JoypadSDL() {
 	singleton = this;
 }
+
+#ifdef WINDOWS_ENABLED
+extern "C" {
+HWND SDL_HelperWindow;
+}
+
+// Required for DInput joypads to work
+// TODO: remove this workaround when we update to newer version of SDL
+JoypadSDL::JoypadSDL(HWND p_helper_window) :
+		JoypadSDL() {
+	SDL_HelperWindow = p_helper_window;
+}
+#endif
 
 JoypadSDL::~JoypadSDL() {
 	// Process any remaining input events
@@ -196,8 +211,6 @@ void JoypadSDL::process_events() {
 						device_name,
 						joypads[joy_id].guid,
 						joypad_info);
-
-				Input::get_singleton()->set_joy_features(joy_id, &joypads[joy_id]);
 			}
 			// An event for an attached joypad
 		} else if (sdl_event.type >= SDL_EVENT_JOYSTICK_AXIS_MOTION && sdl_event.type < SDL_EVENT_FINGER_DOWN && sdl_instance_id_to_joypad_id.has(sdl_event.jdevice.which)) {
@@ -287,26 +300,6 @@ void JoypadSDL::close_joypad(int p_pad_idx) {
 		SDL_Joystick *joy = SDL_GetJoystickFromID(sdl_instance_idx);
 		SDL_CloseJoystick(joy);
 	}
-}
-
-bool JoypadSDL::Joypad::has_joy_light() const {
-	SDL_PropertiesID properties_id = SDL_GetJoystickProperties(get_sdl_joystick());
-	if (properties_id == 0) {
-		return false;
-	}
-	return SDL_GetBooleanProperty(properties_id, SDL_PROP_JOYSTICK_CAP_RGB_LED_BOOLEAN, false) || SDL_GetBooleanProperty(properties_id, SDL_PROP_JOYSTICK_CAP_MONO_LED_BOOLEAN, false);
-}
-
-void JoypadSDL::Joypad::set_joy_light(const Color &p_color) {
-	SDL_SetJoystickLED(get_sdl_joystick(), p_color.get_r8(), p_color.get_g8(), p_color.get_b8());
-}
-
-SDL_Joystick *JoypadSDL::Joypad::get_sdl_joystick() const {
-	return SDL_GetJoystickFromID(sdl_instance_idx);
-}
-
-SDL_Gamepad *JoypadSDL::Joypad::get_sdl_gamepad() const {
-	return SDL_GetGamepadFromID(sdl_instance_idx);
 }
 
 #endif // SDL_ENABLED

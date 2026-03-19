@@ -134,6 +134,8 @@ public:
 		}
 
 		void transfer_to_back(List<T, A> *p_dst_list);
+
+		_FORCE_INLINE_ Element() {}
 	};
 
 	typedef T ValueType;
@@ -413,19 +415,6 @@ public:
 	/**
 	 * find an element in the list,
 	 */
-	template <typename T_v>
-	const Element *find(const T_v &p_val) const {
-		const Element *it = front();
-		while (it) {
-			if (it->value == p_val) {
-				return it;
-			}
-			it = it->next();
-		}
-
-		return nullptr;
-	}
-
 	template <typename T_v>
 	Element *find(const T_v &p_val) {
 		Element *it = front();

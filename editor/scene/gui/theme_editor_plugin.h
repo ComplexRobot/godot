@@ -30,7 +30,6 @@
 
 #pragma once
 
-#include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 #include "editor/scene/gui/theme_editor_preview.h"
 #include "scene/gui/dialogs.h"
@@ -433,20 +432,16 @@ public:
 	ThemeTypeEditor();
 };
 
-class ThemeEditor : public EditorDock {
-	GDCLASS(ThemeEditor, EditorDock);
+class ThemeEditor : public VBoxContainer {
+	GDCLASS(ThemeEditor, VBoxContainer);
 
 	friend class ThemeEditorPlugin;
 	ThemeEditorPlugin *plugin = nullptr;
 
 	Ref<Theme> theme;
 
-	Button *theme_edit_button = nullptr;
-	Button *theme_close_button = nullptr;
-
 	TabBar *preview_tabs = nullptr;
 	PanelContainer *preview_tabs_content = nullptr;
-	Control *add_preview_button_ph = nullptr;
 	Button *add_preview_button = nullptr;
 	EditorFileDialog *preview_scene_dialog = nullptr;
 
@@ -458,7 +453,6 @@ class ThemeEditor : public EditorDock {
 	void _theme_save_button_cbk(bool p_save_as);
 	void _theme_edit_button_cbk();
 	void _theme_close_button_cbk();
-	void _dock_closed_cbk();
 	void _scene_closed(const String &p_path);
 	void _resource_saved(const Ref<Resource> &p_resource);
 	void _files_moved(const String &p_old_path, const String &p_new_path);
@@ -472,7 +466,6 @@ class ThemeEditor : public EditorDock {
 	void _remove_preview_tab_invalid(Node *p_tab_control);
 	void _update_preview_tab(Node *p_tab_control);
 	void _preview_control_picked(String p_class_name);
-	void _preview_tabs_resized();
 
 protected:
 	void _notification(int p_what);
@@ -491,6 +484,7 @@ class ThemeEditorPlugin : public EditorPlugin {
 	GDCLASS(ThemeEditorPlugin, EditorPlugin);
 
 	ThemeEditor *theme_editor = nullptr;
+	Button *button = nullptr;
 
 public:
 	virtual String get_plugin_name() const override { return "Theme"; }

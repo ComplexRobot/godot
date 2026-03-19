@@ -59,6 +59,7 @@ class Path3DGizmo : public EditorNode3DGizmo {
 	mutable Vector3 original;
 	mutable float orig_in_length;
 	mutable float orig_out_length;
+	mutable float disk_size = 0.8;
 
 	// Index that should have swapped control points for achieving an outwards curve.
 	int swapped_control_points_idx = -1;
@@ -76,11 +77,13 @@ public:
 	virtual void commit_handle(int p_id, bool p_secondary, const Variant &p_restore, bool p_cancel = false) override;
 
 	virtual void redraw() override;
-	Path3DGizmo(Path3D *p_path = nullptr);
+	Path3DGizmo(Path3D *p_path = nullptr, float p_disk_size = 0.8);
 };
 
 class Path3DGizmoPlugin : public EditorNode3DGizmoPlugin {
 	GDCLASS(Path3DGizmoPlugin, EditorNode3DGizmoPlugin);
+
+	float disk_size = 0.8;
 
 	// Locking basis is meant to ensure a predictable behavior during translation of the curve points in "local space transform mode".
 	// Without the locking, the gizmo/point, in "local space transform mode", wouldn't follow a straight path and would curve and twitch in an unpredictable way.
@@ -102,7 +105,7 @@ public:
 	virtual void commit_subgizmos(const EditorNode3DGizmo *p_gizmo, const Vector<int> &p_ids, const Vector<Transform3D> &p_restore, bool p_cancel = false) override;
 
 	int get_priority() const override;
-	Path3DGizmoPlugin();
+	Path3DGizmoPlugin(float p_disk_size);
 };
 
 class Path3DEditorPlugin : public EditorPlugin {
@@ -127,6 +130,8 @@ class Path3DEditorPlugin : public EditorPlugin {
 
 	Button *create_curve_button = nullptr;
 	ConfirmationDialog *clear_points_dialog = nullptr;
+
+	float disk_size = 0.8;
 
 	enum Mode {
 		MODE_CREATE,
@@ -161,7 +166,6 @@ class Path3DEditorPlugin : public EditorPlugin {
 	};
 
 protected:
-	virtual void _notification(int p_what);
 	static void _bind_methods();
 
 public:

@@ -67,7 +67,7 @@ def get_doc_path():
 def get_flags():
     return {
         "arch": detect_arch(),
-        "supported": ["library", "mono"],
+        "supported": ["mono"],
     }
 
 
@@ -144,7 +144,7 @@ def configure(env: "SConsEnvironment"):
 
     if env["use_ubsan"] or env["use_asan"] or env["use_lsan"] or env["use_tsan"] or env["use_msan"]:
         env.extra_suffix += ".san"
-        env.Append(CPPDEFINES=["SANITIZERS_ENABLED"])
+        env.Append(CCFLAGS=["-DSANITIZERS_ENABLED"])
 
         if env["use_ubsan"]:
             env.Append(
@@ -181,9 +181,6 @@ def configure(env: "SConsEnvironment"):
             env.Append(LINKFLAGS=["-fsanitize=memory"])
 
     env.Append(CCFLAGS=["-ffp-contract=off"])
-
-    if env["library_type"] == "shared_library":
-        env.Append(CCFLAGS=["-fPIC"])
 
     # LTO
 
@@ -247,9 +244,6 @@ def configure(env: "SConsEnvironment"):
 
     if not env["builtin_enet"]:
         env.ParseConfig("pkg-config libenet --cflags --libs")
-        print_warning(
-            "System-provided ENet has its functionality limited to IPv4 only and no DTLS support, unless patched for Godot."
-        )
 
     if not env["builtin_zstd"]:
         env.ParseConfig("pkg-config libzstd --cflags --libs")
@@ -514,7 +508,7 @@ def configure(env: "SConsEnvironment"):
             env.ParseConfig("pkg-config vulkan --cflags --libs")
         if not env["builtin_glslang"]:
             # No pkgconfig file so far, hardcode expected lib name.
-            env.Append(LIBS=["glslang", "SPIRV", "glslang-default-resource-limits"])
+            env.Append(LIBS=["glslang", "SPIRV"])
 
     if env["opengl3"]:
         env.Append(CPPDEFINES=["GLES3_ENABLED"])

@@ -520,8 +520,6 @@ void AudioDriverCoreAudio::finish_input_device() {
 }
 
 Error AudioDriverCoreAudio::input_start() {
-	ERR_FAIL_NULL_V(input_unit, FAILED);
-
 	input_buffer_init(capture_buffer_frames);
 
 	OSStatus result = AudioOutputUnitStart(input_unit);

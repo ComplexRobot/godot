@@ -32,8 +32,6 @@
 
 #include "editor_export_platform.h"
 
-class ImageTexture;
-
 class EditorExportPlatformPC : public EditorExportPlatform {
 	GDCLASS(EditorExportPlatformPC, EditorExportPlatform);
 

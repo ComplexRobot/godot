@@ -50,14 +50,14 @@
 # Krissse10 <Kristoffer.kaldani@hotmail.com>, 2025.
 # Viktor Jagebrant <vjagebrant@gmail.com>, 2025.
 # Alshat <gamaltk@gmail.com>, 2025.
-# Lasse Edsvik <lasse@lasseedsvik.se>, 2025, 2026.
+# Lasse Edsvik <lasse@lasseedsvik.se>, 2025.
 # "A Thousand Ships (she/her)" <over999ships@gmail.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-14 05:00+0000\n"
+"PO-Revision-Date: 2025-12-01 20:41+0000\n"
 "Last-Translator: Lasse Edsvik <lasse@lasseedsvik.se>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/godot-engine/"
 "godot/sv/>\n"
@@ -66,157 +66,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.2-dev\n"
+"X-Generator: Weblate 5.15-dev\n"
 
-msgid "OK"
-msgstr "OK"
-
-msgid "Failed"
-msgstr "Misslyckade"
-
-msgid "Unavailable"
-msgstr "Otillgänglig"
-
-msgid "Unconfigured"
-msgstr "Okonfigurerad"
-
-msgid "Unauthorized"
-msgstr "Obehörig"
-
-msgid "Parameter out of range"
-msgstr "Parameter utanför intervall"
-
-msgid "Out of memory"
-msgstr "Slut på minne"
-
-msgid "File not found"
-msgstr "Filen hittades inte"
-
-msgid "File: Bad drive"
-msgstr "Fil: Fel på enhet"
-
-msgid "File: Bad path"
-msgstr "Fil: Felaktig sökväg"
-
-msgid "File: Permission denied"
-msgstr "Fil: Åtkomst nekad"
-
-msgid "File already in use"
-msgstr "Filen finns redan"
-
-msgid "Can't open file"
-msgstr "Kan inte öppna filen"
-
-msgid "Can't write file"
-msgstr "Kan inte skriva till fil"
-
-msgid "Can't read file"
-msgstr "Kan inte läsa fil"
-
-msgid "File unrecognized"
-msgstr "Okänt filformat"
-
-msgid "File corrupt"
-msgstr "Korrupt fil"
-
-msgid "Missing dependencies for file"
-msgstr "Saknar beroenden för fi"
-
-msgid "End of file"
-msgstr "Slut på fil"
-
-msgid "Can't open"
-msgstr "Kan inte öppna"
-
-msgid "Can't create"
-msgstr "Kan inte skapa"
-
-msgid "Query failed"
-msgstr "Frågan misslyckades"
-
-msgid "Already in use"
-msgstr "Redan i bruk"
-
-msgid "Locked"
-msgstr "Låst"
-
-msgid "Timeout"
-msgstr "Timeout"
-
-msgid "Can't connect"
-msgstr "Kan inte ansluta"
-
-msgid "Can't resolve"
-msgstr "Kan inte lösas"
-
-msgid "Connection error"
-msgstr "Anslutningsfel"
-
-msgid "Can't acquire resource"
-msgstr "Kan inte hämta resurs"
-
-msgid "Can't fork"
-msgstr "Kan inte forka"
-
-msgid "Invalid data"
-msgstr "Ogiltig data"
-
-msgid "Invalid parameter"
-msgstr "Ogiltig parameter"
-
-msgid "Already exists"
-msgstr "Finns redan"
-
-msgid "Does not exist"
-msgstr "Existerar inte"
-
-msgid "Can't read database"
-msgstr "Kan inte läsa databasen"
-
-msgid "Can't write database"
-msgstr "Kan inte skriva till databasen"
-
-msgid "Compilation failed"
-msgstr "Kompileringen misslyckades"
-
-msgid "Method not found"
-msgstr "Metod hittades inte"
-
-msgid "Link failed"
-msgstr "Länk misslyckades"
-
-msgid "Script failed"
-msgstr "Skript misslyckades"
-
-msgid "Cyclic link detected"
-msgstr "Cyklist länk upptäckt"
-
-msgid "Invalid declaration"
-msgstr "Ogiltig deklaration"
-
-msgid "Duplicate symbol"
-msgstr "Duplicera symbol"
-
-msgid "Parse error"
-msgstr "Tolkningsfel"
-
-msgid "Busy"
-msgstr "Upptagen"
-
-msgid "Skip"
-msgstr "Hoppa över"
-
-msgid "Help"
-msgstr "Hjälp"
-
-msgid "Bug"
-msgstr "Bugg"
-
-msgid "Printer on fire"
-msgstr "Skrivaren brinner"
-
-msgid "unset"
-msgstr "nollställ"
+msgid "Unset"
+msgstr "Ej inställd"
 
 msgid "Physical"
 msgstr "Fysisk"
@@ -406,9 +259,6 @@ msgstr "Välj"
 msgid "Cancel"
 msgstr "Avbryt"
 
-msgid "Close Dialog"
-msgstr "Stäng dialogruta"
-
 msgid "Focus Next"
 msgstr "Fokusera nästa"
 
@@ -582,12 +432,6 @@ msgstr "Uppdatera"
 
 msgid "Show Hidden"
 msgstr "Visa dolda"
-
-msgid "Find"
-msgstr "Sök"
-
-msgid "Focus Path"
-msgstr "Fokusera sökväg"
 
 msgid "Swap Input Direction"
 msgstr "Byt inmatningsriktning"
@@ -770,19 +614,21 @@ msgid "Capture"
 msgstr "Fånga"
 
 msgid ""
-"Select and move points.\n"
-"RMB: Create point at position clicked.\n"
-"Shift+LMB+Drag: Set the blending position within the space."
+"AnimationTree is inactive.\n"
+"Activate to enable playback, check node warnings if activation fails."
 msgstr ""
-"Välj och flytta punkter.\n"
-"Höger musknapp: Skapa punkt på den klickade positionen.\n"
-"Shift + vänster musknapp + dra: Ange blandningspositionen inom utrymmet."
+"AnimationTree är inaktivt.\n"
+"Aktivera för att kunna spela upp, kontrollera nod-varningar om aktiveringen "
+"misslyckas."
+
+msgid "Set the blending position within the space"
+msgstr "Ställ in omvandlingspositionen inom utrymmet"
+
+msgid "Select and move points, create points with RMB."
+msgstr "Markera och förflytta punkter, skapa punkter med RMB."
 
 msgid "Create points."
 msgstr "Skapa punkter."
-
-msgid "Set the blending position within the space."
-msgstr "Ange blandningspositionen inom utrymmet."
 
 msgid "Erase points."
 msgstr "Radera punkter."
@@ -1088,19 +934,20 @@ msgid ""
 "\n"
 "If you want to use animations from this 3D model, open the Advanced Import "
 "Settings\n"
-"dialog and save the animations using Actions... → Set Animation Save Paths,\n"
+"dialog and save the animations using Actions... -> Set Animation Save Paths,\n"
 "or import the whole scene as a single AnimationLibrary in the Import dock."
 msgstr ""
-"Filen du har valt är en importerad scen från en 3D‑modell, till exempel glTF "
+"Filen du valde är en importerad scen från en 3D‑modell, till exempel glTF "
 "eller FBX.\n"
 "\n"
 "I Godot kan 3D‑modeller importeras antingen som scener eller som "
 "animationsbibliotek, vilket är anledningen till att de visas här.\n"
 "\n"
 "Om du vill använda animationer från denna 3D‑modell, öppna dialogrutan "
-"Avancerade importinställningar och spara animationerna via Åtgärder... → Ange "
-"sökvägar för animationssparning, eller importera hela scenen som ett enda "
-"AnimationLibrary i importpanelen."
+"Avancerade importinställningar\n"
+"och spara animationerna via Åtgärder... -> Ange sökvägar för att spara "
+"animationer,\n"
+"eller importera hela scenen som ett enda AnimationLibrary i importpanelen."
 
 msgid ""
 "The file you selected is not a valid AnimationLibrary.\n"
@@ -1263,6 +1110,18 @@ msgstr "Ändra omvandligstid"
 msgid "[Global] (create)"
 msgstr "[Global] (skapa)"
 
+msgid "Duplicated Animation Name:"
+msgstr "Duplicerad animations namn:"
+
+msgid "Onion skinning requires a RESET animation."
+msgstr "Lökskalning kräver en ÅTERSTÄLL-animation."
+
+msgid "Play Animation Backwards"
+msgstr "Spela animation baklänges"
+
+msgid "Play Animation Backwards from End"
+msgstr "Spela upp animation baklänges från slutet"
+
 msgid "Pause/Stop Animation"
 msgstr "Pausa/Stoppa animation"
 
@@ -1272,24 +1131,6 @@ msgstr "Spela upp animation från början"
 msgid "Play Animation"
 msgstr "Spela animation"
 
-msgid "Play Animation Backwards"
-msgstr "Spela animation baklänges"
-
-msgid "Play Animation Backwards from End"
-msgstr "Spela upp animation baklänges från slutet"
-
-msgid "Duplicated Animation Name:"
-msgstr "Duplicerad animations namn:"
-
-msgid "Onion skinning requires a RESET animation."
-msgstr "Lökskalning kräver en ÅTERSTÄLL-animation."
-
-msgid "Animation"
-msgstr "Animation"
-
-msgid "Toggle Animation Dock"
-msgstr "Växla animationspanelen"
-
 msgid "Animation position (in seconds)."
 msgstr "Position i animation (i sekunder)."
 
@@ -1298,6 +1139,9 @@ msgstr "Skala animationsuppspelning globalt för noden."
 
 msgid "Animation Tools"
 msgstr "Animationsverktyg"
+
+msgid "Animation"
+msgstr "Animation"
 
 msgid "New..."
 msgstr "Nytt…"
@@ -1377,26 +1221,20 @@ msgstr "Omvandling antal:"
 msgid "Next (Auto Queue):"
 msgstr "Nästa (Autokö):"
 
-msgid "Reconnect Transition"
-msgstr "Återanslut övergång"
+msgid "Go to Next Keyframe"
+msgstr "Gå till nästa Keyframe"
+
+msgid "Go to Previous Keyframe"
+msgstr "Gå till föregående Keyframe"
+
+msgid "Toggle Animation Bottom Panel"
+msgstr "Nedre animationspanel på/av"
 
 msgid "Move Node"
 msgstr "Flytta nod"
 
 msgid "Transition exists!"
 msgstr "Övergång finns!"
-
-msgid "Cannot transition to self!"
-msgstr "Kan inte övergå till sig själv!"
-
-msgid "Cannot transition to \"Start\"!"
-msgstr "Kan inte övergå till \"Start\"!"
-
-msgid "Cannot transition from \"End\"!"
-msgstr "Kan inte övergå från \"End\"!"
-
-msgid "Transition from \"%s\" to \"%s\" already exists!"
-msgstr "Övergång från \"%s\" till \"%s\" finns redan!"
 
 msgid "Play/Travel to %s"
 msgstr "Spela/gå till %s"
@@ -1406,9 +1244,6 @@ msgstr "Redigera %s"
 
 msgid "Add Node and Transition"
 msgstr "Lägg till nod och övergång"
-
-msgid "Transition already exists!"
-msgstr "Övergången finns redan!"
 
 msgid "Add Transition"
 msgstr "Lägg till övergång"
@@ -1647,24 +1482,17 @@ msgstr "In-grepp:"
 msgid "Out-Handle:"
 msgstr "Ut-grepp:"
 
-msgctxt "Bezier Handle Mode"
-msgid "Free"
-msgstr "Fri"
+msgid "Handle mode: Free\n"
+msgstr "Greppläge: Fri\n"
 
-msgctxt "Bezier Handle Mode"
-msgid "Linear"
-msgstr "Linjär"
+msgid "Handle mode: Linear\n"
+msgstr "Greppläge: Linjär\n"
 
-msgctxt "Bezier Handle Mode"
-msgid "Balanced"
-msgstr "Balanserad"
+msgid "Handle mode: Balanced\n"
+msgstr "Greppläge: Balanserad\n"
 
-msgctxt "Bezier Handle Mode"
-msgid "Mirrored"
-msgstr "Speglad"
-
-msgid "Handle mode: %s"
-msgstr "Handtagsläge: %s"
+msgid "Handle mode: Mirrored\n"
+msgstr "Greppläge: Speglad\n"
 
 msgid "Stream:"
 msgstr "Ström:"
@@ -1720,8 +1548,8 @@ msgstr "Klipp ut nycklar"
 msgid "Copy Key(s)"
 msgstr "Kopiera nycklar"
 
-msgid "Send Key(s) to RESET"
-msgstr "Skicka nyckel/nycklar till ÅTERSTÄLL"
+msgid "Add RESET Value(s)"
+msgstr "Lägg till ÅTERSTÄLL-värde(n)"
 
 msgid "Delete Key(s)"
 msgstr "Radera nycklar"
@@ -1778,12 +1606,6 @@ msgstr "egenskap \"%s\""
 
 msgid "Nearest FPS: %d"
 msgstr "Närmaste FPS: %d"
-
-msgid "Bezier Default Mode"
-msgstr "Standardläge för Bézier"
-
-msgid "Set the default handle mode of new bezier keys."
-msgstr "Ställ in standardhandtagsläge för nya Bézier‑nycklar."
 
 msgid "Change Animation Step"
 msgstr "Ändra animationssteg"
@@ -1890,9 +1712,6 @@ msgstr "Animation lägg till ÅTERSTÄLL-nycklar"
 msgid "Bake Animation as Linear Keys"
 msgstr "Baka animation som linjära nycklar"
 
-msgid "Create Node"
-msgstr "Skapa nod"
-
 msgid ""
 "This animation belongs to an imported scene, so changes to imported tracks "
 "will not be saved.\n"
@@ -1931,14 +1750,8 @@ msgstr "AnimationPlayer är inaktiv. Uppspelningen kommer inte att behandlas."
 msgid "Select an AnimationPlayer node to create and edit animations."
 msgstr "Välj en AnimationPlayer-nod för att skapa och redigera animationer."
 
-msgid "Add AnimationPlayer"
-msgstr "Lägg till AnimationPlayer"
-
-msgid "Add a new AnimationPlayer node to the scene."
-msgstr "Lägg till en ny AnimationPlayer‑nod i scenen."
-
-msgid "Imported Animation"
-msgstr "Importerad animation"
+msgid "Imported Scene"
+msgstr "Importerad scen"
 
 msgid "Warning: Editing imported animation"
 msgstr "Varning: Redigerar importerad animation"
@@ -1954,6 +1767,21 @@ msgstr "Inaktiv Player"
 
 msgid "Warning: AnimationPlayer is inactive"
 msgstr "Varning: AnimationPlayer är inaktiv"
+
+msgid "Bezier Default Mode:"
+msgstr "Bezier standardläge:"
+
+msgid "Free"
+msgstr "Fri"
+
+msgid "Balanced"
+msgstr "Balanserad"
+
+msgid "Mirrored"
+msgstr "Speglad"
+
+msgid "Set the default behavior of new bezier keys."
+msgstr "Välj standardbeteende för nya beziernycklar."
 
 msgid "Toggle between the bezier curve editor and track editor."
 msgstr "Växla mellan bezierkurve-redigeraren och spår-redigeraren."
@@ -1978,9 +1806,6 @@ msgstr ""
 
 msgid "Group tracks by node or display them as plain list."
 msgstr "Gruppera spår efter nod eller visa dem som enkel lista."
-
-msgid "Insert at current time."
-msgstr "Infoga vid aktuell tidpunkt."
 
 msgid "Apply snapping to timeline cursor."
 msgstr "Applicera snappning till tidslinjemarkören."
@@ -2066,17 +1891,8 @@ msgstr "Gå till nästa steg"
 msgid "Go to Previous Step"
 msgstr "Gå till föregående steg"
 
-msgid "Go to Next Keyframe"
-msgstr "Gå till nästa Keyframe"
-
-msgid "Go to Previous Keyframe"
-msgstr "Gå till föregående Keyframe"
-
-msgid "Add tracks to RESET"
-msgstr "Lägg till spår till ÅTERSTÄLL"
-
-msgid "Apply RESET"
-msgstr "Tillämpa ÅTERSTÄLLNING"
+msgid "Apply Reset"
+msgstr "Tillämpa återställning"
 
 msgid "Bake Animation..."
 msgstr "Baka animation..."
@@ -2202,20 +2018,20 @@ msgid "Ease Type:"
 msgstr "Utjämningstyp:"
 
 msgctxt "Ease Type"
-msgid "Ease In"
-msgstr "Mjuk in"
+msgid "In"
+msgstr "In"
 
 msgctxt "Ease Type"
-msgid "Ease Out"
-msgstr "Mjuk ut"
+msgid "Out"
+msgstr "Ut"
 
 msgctxt "Ease Type"
-msgid "Ease In-Out"
-msgstr "Mjuk in-ut"
+msgid "InOut"
+msgstr "InUt"
 
 msgctxt "Ease Type"
-msgid "Ease Out-In"
-msgstr "Mjuk ut-in"
+msgid "OutIn"
+msgstr "UtIn"
 
 msgid "FPS:"
 msgstr "FPS:"
@@ -2240,12 +2056,6 @@ msgstr "Markera allt/inget"
 
 msgid "Copy Selection"
 msgstr "Kopiera markering"
-
-msgid "Key Insertion Error"
-msgstr "Fel vid nyckelinfogning"
-
-msgid "Imported Animation cannot be edited!"
-msgstr "Importerad animation kan inte redigeras!"
 
 msgid "Animation Change Keyframe Time"
 msgstr "Animation, ändra nyckelrute-tid"
@@ -2325,14 +2135,14 @@ msgstr "Ändra ljudspårklippets slut-förskjutning"
 msgid "Root"
 msgstr "Rot"
 
+msgid "Path:"
+msgstr "Sökväg:"
+
 msgid "AnimationTree"
 msgstr "Animationsträd"
 
-msgid "Toggle AnimationTree Dock"
-msgstr "Växla AnimationTree‑docka"
-
-msgid "Path:"
-msgstr "Sökväg:"
+msgid "Toggle AnimationTree Bottom Panel"
+msgstr "Nedre animationsträd-panel på/av"
 
 msgid "Open asset details"
 msgstr "Öppna detaljer för resurs"
@@ -2728,6 +2538,9 @@ msgstr "Återställ ljudvolym"
 msgid "Delete Effect"
 msgstr "Radera effekt"
 
+msgid "Toggle Audio Bottom Panel"
+msgstr "Växla ljud-nederpanel"
+
 msgid "Add Audio Bus"
 msgstr "Lägg till ljudbuss"
 
@@ -2757,9 +2570,6 @@ msgstr "Öppna ljudbuss-layout"
 
 msgid "Error saving file: %s"
 msgstr "Fel när filen skulle sparas: %s"
-
-msgid "Toggle Audio Dock"
-msgstr "Växla ljuddocka"
 
 msgid "Layout:"
 msgstr "Layout:"
@@ -2797,9 +2607,6 @@ msgstr "Stig in"
 msgid "Step Over"
 msgstr "Hoppa över"
 
-msgid "Step Out"
-msgstr "Steg ut"
-
 msgid "Break"
 msgstr "Bryt"
 
@@ -2808,6 +2615,12 @@ msgstr "Fortsätt"
 
 msgid "Debug with External Editor"
 msgstr "Avlusa med extern redigerare"
+
+msgid "Debugger"
+msgstr "Avlusare"
+
+msgid "Toggle Debugger Bottom Panel"
+msgstr "Nedre avlusningspanel på/av"
 
 msgid "Deploy with Remote Debug"
 msgstr "Sjösätt med fjärr-avlusning"
@@ -2950,12 +2763,6 @@ msgstr "Fjärr- %s: %d"
 msgid "Remote %s (%d Selected)"
 msgstr "Fjärr-%s (%d valda)"
 
-msgid "Debugger"
-msgstr "Avlusare"
-
-msgid "Toggle Debugger Dock"
-msgstr "Växla felsökningsdocka"
-
 msgid "Session %d"
 msgstr "Session %d"
 
@@ -3000,9 +2807,6 @@ msgid ""
 msgstr ""
 "För att spara grenen som en scen måste en enda nod vara markerad, men du har "
 "markerat %d noder."
-
-msgid "Expression to evaluate (Up/Down: Navigate history)"
-msgstr "Uttryck att utvärdera (Upp/Ner: Navigera historik)"
 
 msgid "Expression to evaluate"
 msgstr "Uttryck att utvärdera"
@@ -3149,14 +2953,14 @@ msgstr "Stack Trace"
 msgid "Stack Trace:"
 msgstr "Stacktrace:"
 
-msgid "Line %d"
-msgstr "Rad %d"
-
 msgid "Debug session started."
 msgstr "Avlusnings-session påbörjad."
 
 msgid "Debug session closed."
 msgstr "Avlusnings-session avslutad."
+
+msgid "Line %d"
+msgstr "Rad %d"
 
 msgid "Delete Breakpoint"
 msgstr "Radera brytpunkt"
@@ -3175,6 +2979,9 @@ msgstr "Öppna C++-källa på GitHub"
 
 msgid "C++ Source"
 msgstr "C++-källa"
+
+msgid "Video RAM"
+msgstr "Grafikminne"
 
 msgid "Skip Breakpoints"
 msgstr "Hoppa över brytpunkter"
@@ -3223,9 +3030,6 @@ msgstr "Uppdatera Grafikminne"
 
 msgid "Export list to a CSV file"
 msgstr "Exportera tabell till CSV-fil"
-
-msgid "Video RAM"
-msgstr "Grafikminne"
 
 msgid "Resource Path"
 msgstr "Resurssökväg"
@@ -3743,18 +3547,6 @@ msgstr "Flytta den här fliken åt höger."
 msgid "Move this dock left one tab."
 msgstr "Flytta den här fliken åt vänster."
 
-msgid "Close this dock."
-msgstr "Stäng den här fliken."
-
-msgid "This dock can't be closed."
-msgstr "Denna docka kan inte stängas."
-
-msgid "This dock does not support floating."
-msgstr "Denna docka stöder inte flytande läge."
-
-msgid "Make this dock floating."
-msgstr "Gör den här fliken svävande."
-
 msgid "Move Tab Left"
 msgstr "Flytta flik åt vänster"
 
@@ -3766,6 +3558,18 @@ msgstr "Flytta flik åt höger"
 
 msgid "Make Floating"
 msgstr "Gör svävande"
+
+msgid "Make this dock floating."
+msgstr "Gör den här fliken svävande."
+
+msgid "Move to Bottom"
+msgstr "Flytta längst ned"
+
+msgid "Move this dock to the bottom panel."
+msgstr "Flytta den här fliken till panelen längst ned."
+
+msgid "Close this dock."
+msgstr "Stäng den här fliken."
 
 msgid "Link to: %s"
 msgstr "Länk to: %s"
@@ -3888,16 +3692,6 @@ msgstr ""
 msgid "Could not create folder: %s"
 msgstr "Kunde inte skapa mapp: %s"
 
-msgid "Copy %d selected item to \"%s\"?"
-msgid_plural "Copy %d selected items to \"%s\"?"
-msgstr[0] "Kopiera %d markerat objekt till \"%s\"?"
-msgstr[1] "Kopiera %d markerade objekt till \"%s\"?"
-
-msgid "Move %d selected item to \"%s\"?"
-msgid_plural "Move %d selected items to \"%s\"?"
-msgstr[0] "Flytta %d markerat objekt till \"%s\"?"
-msgstr[1] "Flytta %d markerade objekt till \"%s\"?"
-
 msgid "Open Scene"
 msgstr "Öppna scen"
 
@@ -4015,12 +3809,6 @@ msgstr "Sortera efter senast ändrad"
 msgid "Sort by First Modified"
 msgstr "Sortera efter tidigast ändrad"
 
-msgid "FileSystem"
-msgstr "Filsystem"
-
-msgid "Open FileSystem Dock"
-msgstr "Öppna filsystemsdocka"
-
 msgid "Copy Path"
 msgstr "Kopiera sökväg"
 
@@ -4069,6 +3857,9 @@ msgstr "Gå till nästa markerade mapp/fil."
 msgid "Change Split Mode"
 msgstr "Ändra klyvningsläge"
 
+msgid "Dock Placement"
+msgstr "Docka placering"
+
 msgid "Filter Files"
 msgstr "Filtrera filer"
 
@@ -4102,12 +3893,6 @@ msgstr "Skapa skript"
 
 msgid "Convert"
 msgstr "Konvertera"
-
-msgid "Groups"
-msgstr "Grupper"
-
-msgid "Open Groups Dock"
-msgstr "Öppna gruppdocka"
 
 msgid "Scene Groups"
 msgstr "Scengrupper"
@@ -4175,17 +3960,8 @@ msgstr "Lägg till ny grupp."
 msgid "Filter Groups"
 msgstr "Filtrera grupper"
 
-msgid "Select one or more nodes to edit their groups."
-msgstr "Välj en eller flera noder för att redigera deras grupper."
-
 msgid "The Beginning"
 msgstr "Början"
-
-msgid "History"
-msgstr "Historik"
-
-msgid "Open History Dock"
-msgstr "Öppna historikdocka"
 
 msgid "Scene"
 msgstr "Scen"
@@ -4218,12 +3994,6 @@ msgstr ""
 "att tillämpa ändringar av importinställningarna.\n"
 "Om du väljer en annan resurs i filsystem-fliken utan att klicka på Importera "
 "igen kommer ändringarna att förkastas."
-
-msgid "Import"
-msgstr "Importera"
-
-msgid "Open Import Dock"
-msgstr "Öppna importdocka"
 
 msgid "Import As:"
 msgstr "Importera som:"
@@ -4261,8 +4031,8 @@ msgid ""
 msgstr ""
 "Följande resurser kommer dupliceras och bäddas in i den här resursen/objektet."
 
-msgid "This object has no resources to duplicate."
-msgstr "Detta objekt har inga resurser att duplicera."
+msgid "This object has no resources."
+msgstr "Det här objektet har inga resurser."
 
 msgid "Failed to load resource."
 msgstr "Kunde inte ladda resurs."
@@ -4296,12 +4066,6 @@ msgstr "Klistra in egenskaper"
 
 msgid "Make Sub-Resources Unique"
 msgstr "Gör under-resurser unika"
-
-msgid "Inspector"
-msgstr "Granskare"
-
-msgid "Open Inspector Dock"
-msgstr "Öppna inspektördocka"
 
 msgid "Create a new resource in memory and edit it."
 msgstr "Skapa en ny resurs i minnet och redigera den."
@@ -4353,6 +4117,12 @@ msgstr "Visa information"
 
 msgid "This cannot be undone. Are you sure?"
 msgstr "Åtgärden kan inte ångras. Är du säker?"
+
+msgid "Groups"
+msgstr "Grupper"
+
+msgid "Select a single node to edit its signals and groups."
+msgstr "Välj en (1) nod för att redigera dess signaler och grupper."
 
 msgid "No parent to instantiate a child at."
 msgstr "Ingen förälder att instansiera ett barn hos."
@@ -4482,11 +4252,11 @@ msgid "Save New Scene As..."
 msgstr "Spara ny scen som..."
 
 msgid ""
-"Disabling \"Editable Children\" will cause all properties of this subscene's "
-"descendant nodes to be reverted to their default."
+"Disabling \"editable_instance\" will cause all properties of the node to be "
+"reverted to their default."
 msgstr ""
-"Om \"Redigerbara barn\" inaktiveras kommer alla egenskaper hos denna subscens "
-"underordnade noder att återställas till sina standardvärden."
+"Om du avaktiverar \"editable_instance\" kommer alla nodens egenskaper att "
+"återställas till sina standardvärden."
 
 msgid ""
 "Enabling \"Load as Placeholder\" will disable \"Editable Children\" and cause "
@@ -4538,6 +4308,9 @@ msgstr "Annan nod"
 msgid "Paste From Clipboard"
 msgstr "Klistra in från urklipp"
 
+msgid "Filters"
+msgstr "Filter"
+
 msgid "Can't operate on nodes from a foreign scene!"
 msgstr "Kan inte köras på noder från en annan scen!"
 
@@ -4564,6 +4337,9 @@ msgstr "Klipp ut nod(er)"
 
 msgid "Remove Node(s)"
 msgstr "Ta bort nod(er)"
+
+msgid "Create Node"
+msgstr "Skapa nod"
 
 msgid "Change type of node(s)"
 msgstr "Ändra typ på nod(er)"
@@ -4658,24 +4434,18 @@ msgstr ""
 msgid "Filter by Type"
 msgstr "Filtrera efter typ"
 
-msgid ""
-"Selects all Nodes of the given type.\n"
-"Inserts \"type:\". You can also use the shorthand \"t:\"."
-msgstr ""
-"Markerar alla noder av angiven typ.\n"
-"Infogar \"type:\". Du kan också använda förkortningen \"t:\"."
-
 msgid "Filter by Group"
 msgstr "Filtrera efter grupp"
 
+msgid "Selects all Nodes of the given type."
+msgstr "Markerar alla noder av den angivna typen."
+
 msgid ""
 "Selects all Nodes belonging to the given group.\n"
-"If empty, selects any Node belonging to any group.\n"
-"Inserts \"group:\". You can also use the shorthand \"g:\"."
+"If empty, selects any Node belonging to any group."
 msgstr ""
 "Markerar alla noder som tillhör den angivna gruppen.\n"
-"Om tomt, markeras alla noder som tillhör någon grupp.\n"
-"Infogar \"group:\". Du kan också använda förkortningen \"g:\"."
+"Om det lämnas tomt kan noder tillhörande vilken grupp som helst väljas."
 
 msgid ""
 "Cannot attach a script: there are no languages registered.\n"
@@ -4706,9 +4476,6 @@ msgstr "(använd %d ggr)"
 
 msgid "None"
 msgstr "Inget"
-
-msgid "Open Scene Dock"
-msgstr "Öppna scendocka"
 
 msgid "Batch Rename..."
 msgstr "Döp om flera…"
@@ -4765,6 +4532,9 @@ msgstr ""
 "Instansiera en scen-fil som en ny nod. Skapar en ärvd scen om ingen rot-nod "
 "finns."
 
+msgid "Filter: name, t:type, g:group"
+msgstr "Filter: namn, t:typ, g:grupp"
+
 msgid "Filter Nodes"
 msgstr "Filtrera noder"
 
@@ -4801,9 +4571,6 @@ msgstr "Radera relaterade animationsspår"
 msgid "Clear Inheritance? (No Undo!)"
 msgstr "Rensa arv? (Kan ej ångras!)"
 
-msgid "Open Signals Dock"
-msgstr "Öppna signaldocka"
-
 msgid "Paste Params"
 msgstr "Klistra in parametrar"
 
@@ -4830,12 +4597,6 @@ msgstr "Miniatyrbild…"
 
 msgid "Create New %s"
 msgstr "Skapa ny %s"
-
-msgid "Output"
-msgstr "Utmatning"
-
-msgid "Toggle Output Dock"
-msgstr "Växla utdocka"
 
 msgid "Filter Messages"
 msgstr "Filtrera meddelanden"
@@ -4901,9 +4662,6 @@ msgstr ""
 msgid "Unnamed Project"
 msgstr "Namnlöst projekt"
 
-msgid "%s (Overridden)"
-msgstr "%s (Åsidosatt)"
-
 msgid "Recovery Mode is enabled. Editor functionality has been restricted."
 msgstr ""
 "Återställningsläge är aktiverad. Åtkomst till editorns funktioner är "
@@ -4924,32 +4682,11 @@ msgstr "Snurrar när redigerarfönstret ritas om."
 msgid "Imported resources can't be saved."
 msgstr "Importerade resurser kan inte sparas."
 
+msgid "OK"
+msgstr "OK"
+
 msgid "Error saving resource!"
 msgstr "Fel när resursen skulle sparas!"
-
-msgid ""
-"The text-based resource at path \"%s\" is large on disk (%s), likely because "
-"it has embedded binary data.\n"
-"This slows down resource saving and loading.\n"
-"Consider saving its binary subresource(s) to a binary `.res` file or saving "
-"the resource as a binary `.res` file.\n"
-"This warning can be disabled in the Editor Settings (FileSystem > On Save > "
-"Warn on Saving Large Text Resources)."
-msgstr ""
-"Den textbaserade resursen på sökvägen \"%s\" är stor på disken (%s), troligen "
-"eftersom den innehåller inbäddad binärdata.\n"
-"Detta gör att resursens sparande och inläsning går långsammare.\n"
-"Överväg att spara dess binära underresurs(er) till en binär .res‑fil eller "
-"att spara resursen som en binär .res‑fil.\n"
-"Denna varning kan inaktiveras i Editorinställningar (FileSystem > On Save > "
-"Warn on Saving Large Text Resources)."
-
-msgid ""
-"This resource can't be saved because it was imported from another file. Make "
-"it unique first."
-msgstr ""
-"Den här resursen kan inte sparas då den importerades från en annan fil. Gör "
-"den unik först."
 
 msgid ""
 "This resource can't be saved because it does not belong to the edited scene. "
@@ -4957,6 +4694,13 @@ msgid ""
 msgstr ""
 "Den här resursen kan inte sparas då den inte tillhör scenen som redigeras. "
 "Gör den unik först."
+
+msgid ""
+"This resource can't be saved because it was imported from another file. Make "
+"it unique first."
+msgstr ""
+"Den här resursen kan inte sparas då den importerades från en annan fil. Gör "
+"den unik först."
 
 msgid "Save Resource As..."
 msgstr "Spara resurs som…"
@@ -5018,23 +4762,6 @@ msgid ""
 msgstr ""
 "Kunde inte spara scen. Troligtvis kunde inte beroenden (instanser eller arv) "
 "uppfyllas."
-
-msgid ""
-"The text-based scene at path \"%s\" is large on disk (%s), likely because it "
-"has embedded binary data.\n"
-"This slows down scene saving and loading.\n"
-"Consider saving its binary subresource(s) to a binary `.res` file or saving "
-"the scene as a binary `.scn` file.\n"
-"This warning can be disabled in the Editor Settings (FileSystem > On Save > "
-"Warn on Saving Large Text Resources)."
-msgstr ""
-"Den textbaserade scenen på sökvägen \"%s\" är stor på disken (%s), troligen "
-"eftersom den innehåller inbäddad binärdata.\n"
-"Detta gör att scenens sparande och inläsning går långsammare.\n"
-"Överväg att spara dess binära underresurs(er) till en binär `.res `‑fil eller "
-"att spara scenen som en binär `.scn `‑fil.\n"
-"Denna varning kan inaktiveras i Editorinställningar (FileSystem > On Save > "
-"Warn on Saving Large Text Resources)."
 
 msgid "Save scene before running..."
 msgstr "Spara scenen innan den körs…"
@@ -5160,9 +4887,6 @@ msgstr ""
 
 msgid "Save Scene As..."
 msgstr "Spara scen som…"
-
-msgid "Save new main scene..."
-msgstr "Spara ny huvudscen..."
 
 msgid "Can't undo while mouse buttons are pressed."
 msgstr "Kan inte ångra medan musknappar är nedtryckta."
@@ -5471,23 +5195,20 @@ msgstr "Laddar om..."
 msgid "Reloading done."
 msgstr "Omladdning klar."
 
-msgid "Save & Restart"
-msgstr "Spara & starta om"
-
 msgid ""
 "Changing the renderer requires restarting the editor.\n"
 "\n"
-"Choosing Save & Restart will change the renderer to:\n"
+"Choosing Save & Restart will change the rendering method to:\n"
 "- Desktop platforms: %s\n"
 "- Mobile platforms: %s\n"
-"- Web platform: %s"
+"- Web platform: gl_compatibility"
 msgstr ""
-"Att byta renderare kräver att editorn startas om.\n"
+"Ändring av renderare kräver omstart av redigeraren.\n"
 "\n"
-"Om du väljer Spara & Starta om ändras renderaren till:\n"
-"- Skrivbordsplattformar: %s\n"
-"- Mobilplattformar: %s\n"
-"- Webbplattform: %s"
+"Välj Spara & starta om för att ändra renderingsläge till:\n"
+"- Stationära plattformar: %s\n"
+"- Mobil-plattformar: %s\n"
+"- Webb-plattform: gl_compatibility"
 
 msgid "Forward+"
 msgstr "Forward+"
@@ -5498,62 +5219,8 @@ msgstr "Mobil"
 msgid "Compatibility"
 msgstr "Kompatibilitet"
 
-msgid "Open Recent"
-msgstr "Öppna senaste"
-
-msgid "Export As..."
-msgstr "Exportera som..."
-
-msgid "Version Control"
-msgstr "Versionshantering"
-
-msgid "Create/Override Version Control Metadata..."
-msgstr "Skapa/skriv över versionshanterings-metadata..."
-
-msgid "Version Control Settings..."
-msgstr "Versionshanterings-inställningar..."
-
-msgid "Pack Project as ZIP..."
-msgstr "Arkivera project som ZIP..."
-
-msgid "Install Android Build Template..."
-msgstr "Installera Android-byggmall…"
-
-msgid "Open User Data Folder"
-msgstr "Öppna användardata-mapp"
-
-msgid "Tools"
-msgstr "Verktyg"
-
-msgid "Editor Docks"
-msgstr "Redigerarflikar"
-
-msgid "Editor Layout"
-msgstr "Reddigerarlayout"
-
-msgid "Screenshots are stored in the user data folder (\"user://\")."
-msgstr "Skärdumpar sparas i användardatamappen (\"user://\")."
-
-msgid "Open Editor Data/Settings Folder"
-msgstr "Öppna mappen Redigerardata/-inställningar"
-
-msgid "Open Editor Data Folder"
-msgstr "Öppna mappen Redigerardata"
-
-msgid "Open Editor Settings Folder"
-msgstr "Öppna mappen Redigerarinställningar"
-
-msgid "Manage Editor Features..."
-msgstr "Hantera redigerarfunktioner..."
-
-msgid "Manage Export Templates..."
-msgstr "Hantera exportmallar..."
-
-msgid "Configure FBX Importer..."
-msgstr "Konfigurera FBX-importör..."
-
-msgid "Copies the system info as a single-line text into the clipboard."
-msgstr "Kopiera systeminformation till urklipp som en textrad."
+msgid "%s (Overridden)"
+msgstr "%s (Åsidosatt)"
 
 msgid "Main Menu"
 msgstr "Huvudmeny"
@@ -5585,9 +5252,6 @@ msgstr "Växla distraktionslöst läge."
 msgid "Copy Text"
 msgstr "Kopiera text"
 
-msgid "Command Palette"
-msgstr "Kommandopalett"
-
 msgid "Next Scene Tab"
 msgstr "Nästa scenflik"
 
@@ -5596,6 +5260,9 @@ msgstr "Föregående scenflik"
 
 msgid "Focus FileSystem Filter"
 msgstr "Fokusera filsystems-filter"
+
+msgid "Command Palette"
+msgstr "Kommandopalett"
 
 msgid "New Scene"
 msgstr "Ny scen"
@@ -5608,6 +5275,9 @@ msgstr "Öppna scen..."
 
 msgid "Reopen Closed Scene"
 msgstr "Öppna stängd scen igen"
+
+msgid "Open Recent"
+msgstr "Öppna senaste"
 
 msgid "Save Scene"
 msgstr "Spara scen"
@@ -5624,6 +5294,9 @@ msgstr "Snabböppna scen…"
 msgid "Quick Open Script..."
 msgstr "Snabböppna skript…"
 
+msgid "Export As..."
+msgstr "Exportera som..."
+
 msgid "MeshLibrary..."
 msgstr "MeshLibrary…"
 
@@ -5633,14 +5306,14 @@ msgstr "Ladda om sparad scen"
 msgid "Close Scene"
 msgstr "Stäng scen"
 
-msgid "Close All Scenes"
-msgstr "Stäng alla scener"
+msgid "Quit"
+msgstr "Avsluta"
 
 msgid "Editor Settings..."
 msgstr "Redigerarinställningar…"
 
-msgid "Quit"
-msgstr "Avsluta"
+msgid "Project"
+msgstr "Projekt"
 
 msgid "Project Settings..."
 msgstr "Projektinställningar..."
@@ -5651,11 +5324,26 @@ msgstr "Projektinställningar"
 msgid "Find in Files..."
 msgstr "Sök i filer…"
 
+msgid "Version Control"
+msgstr "Versionshantering"
+
 msgid "Export..."
 msgstr "Exportera..."
 
 msgid "Export"
 msgstr "Exportera"
+
+msgid "Pack Project as ZIP..."
+msgstr "Arkivera project som ZIP..."
+
+msgid "Install Android Build Template..."
+msgstr "Installera Android-byggmall…"
+
+msgid "Open User Data Folder"
+msgstr "Öppna användardata-mapp"
+
+msgid "Tools"
+msgstr "Verktyg"
 
 msgid "Orphan Resource Explorer..."
 msgstr "Övergivna resurser-utforskare..."
@@ -5675,11 +5363,41 @@ msgstr "Avsluta och gå till projektlistan"
 msgid "Command Palette..."
 msgstr "Kommandopalett..."
 
+msgid "Editor Docks"
+msgstr "Redigerarflikar"
+
+msgid "Editor Layout"
+msgstr "Reddigerarlayout"
+
 msgid "Take Screenshot"
 msgstr "Ta skärmdump"
 
+msgid "Screenshots are stored in the user data folder (\"user://\")."
+msgstr "Skärdumpar sparas i användardatamappen (\"user://\")."
+
 msgid "Toggle Fullscreen"
 msgstr "Växla fullskärm"
+
+msgid "Open Editor Data/Settings Folder"
+msgstr "Öppna mappen Redigerardata/-inställningar"
+
+msgid "Open Editor Data Folder"
+msgstr "Öppna mappen Redigerardata"
+
+msgid "Open Editor Settings Folder"
+msgstr "Öppna mappen Redigerarinställningar"
+
+msgid "Manage Editor Features..."
+msgstr "Hantera redigerarfunktioner..."
+
+msgid "Manage Export Templates..."
+msgstr "Hantera exportmallar..."
+
+msgid "Configure FBX Importer..."
+msgstr "Konfigurera FBX-importör..."
+
+msgid "Help"
+msgstr "Hjälp"
 
 msgid "Search Help..."
 msgstr "Sök i hjälp…"
@@ -5692,6 +5410,9 @@ msgstr "Forum"
 
 msgid "Copy System Info"
 msgstr "Kopiera systeminformation"
+
+msgid "Copies the system info as a single-line text into the clipboard."
+msgstr "Kopiera systeminformation till urklipp som en textrad."
 
 msgid "Report a Bug"
 msgstr "Anmäl ett fel"
@@ -5708,46 +5429,25 @@ msgstr "Om Godot..."
 msgid "Support Godot Development"
 msgstr "Stöd utvecklingen av Godot"
 
-msgid "Open 2D Workspace"
-msgstr "Öppna 2D‑arbetsyta"
-
-msgid "Open 3D Workspace"
-msgstr "Öppna 3D‑arbetsyta"
-
-msgid "Open Script Editor"
-msgstr "Öppna Skriptredigerare"
-
-msgid "Open Game View"
-msgstr "Öppna spelvy"
-
-msgid "Open Asset Library"
-msgstr "Öppna asset-bibliotek"
-
-msgid "Open the next Editor"
-msgstr "Öppna nästa redigerare"
-
-msgid "Open the previous Editor"
-msgstr "Öppna föregående redigerare"
-
-msgid "Project"
-msgstr "Projekt"
-
 msgid ""
-"Choose a renderer.\n"
+"Choose a rendering method.\n"
 "\n"
 "Notes:\n"
-"- On mobile platforms, the Mobile renderer is used if Forward+ is selected "
-"here.\n"
-"- On the web platform, the Compatibility renderer is always used."
+"- On mobile platforms, the Mobile rendering method is used if Forward+ is "
+"selected here.\n"
+"- On the web platform, the Compatibility rendering method is always used."
 msgstr ""
-"Välj en renderare.\n"
+"Välj renderingsläge.\n"
 "\n"
-"Noteringar:\n"
-"- På mobilplattformar används mobilrenderaren om Forward+ väljs här.\n"
-"- På webbplattformen används alltid kompatibilitetsrenderaren."
+"Obs!\n"
+"- På mobila plattformar används Mobilt renderingsläge om Forward+ väljs här.\n"
+"- På webb-plattformen används alltid Kompatibilitets-renderingsläget."
 
-msgid "Renderer"
-msgstr "Renderare"
+msgid "Rendering Method"
+msgstr "Renderingsmetod"
+
+msgid "Save & Restart"
+msgstr "Spara & starta om"
 
 msgid "Update Mode"
 msgstr "Uppdateringsläge"
@@ -5760,6 +5460,45 @@ msgstr "Uppdatera vid förändring"
 
 msgid "Hide Update Spinner"
 msgstr "Göm uppdateringssnurra"
+
+msgid "Open Scene Dock"
+msgstr "Öppna scendocka"
+
+msgid "Import"
+msgstr "Importera"
+
+msgid "Open Import Dock"
+msgstr "Öppna importdocka"
+
+msgid "FileSystem"
+msgstr "Filsystem"
+
+msgid "Open FileSystem Dock"
+msgstr "Öppna filsystemsdocka"
+
+msgid "Inspector"
+msgstr "Granskare"
+
+msgid "Open Inspector Dock"
+msgstr "Öppna inspektördocka"
+
+msgid "Node"
+msgstr "Nod"
+
+msgid "Open Node Dock"
+msgstr "Öppna noddocka"
+
+msgid "History"
+msgstr "Historik"
+
+msgid "Open History Dock"
+msgstr "Öppna historikdocka"
+
+msgid "Output"
+msgstr "Utmatning"
+
+msgid "Toggle Output Bottom Panel"
+msgstr "Växla utmatnings-bottenpanel"
 
 msgid "Don't Save"
 msgstr "Spara inte"
@@ -5785,6 +5524,9 @@ msgstr "Mallpaket"
 msgid "Export Library"
 msgstr "Exportera bibliotek"
 
+msgid "Open & Run a Script"
+msgstr "Öppna & kör ett skript"
+
 msgid "Files have been modified outside Godot"
 msgstr "Filer har modifierats på disk utanför Godot"
 
@@ -5806,6 +5548,12 @@ msgstr "Projektdatamappen (.godot) saknas. Var snäll och starta om editorn."
 msgid "Restart"
 msgstr "Starta om"
 
+msgid "Create/Override Version Control Metadata..."
+msgstr "Skapa/skriv över versionshanterings-metadata..."
+
+msgid "Version Control Settings..."
+msgstr "Versionshanterings-inställningar..."
+
 msgid "Open Anyway"
 msgstr "Öppna ändå"
 
@@ -5820,6 +5568,27 @@ msgstr "Välj aktuell"
 
 msgid "Open Project Settings"
 msgstr "Öppna projektets inställningar"
+
+msgid "Open 2D Editor"
+msgstr "Öppna 2D-redigerare"
+
+msgid "Open 3D Editor"
+msgstr "Öppna 3D-redigerare"
+
+msgid "Open Script Editor"
+msgstr "Öppna Skriptredigerare"
+
+msgid "Open Game View"
+msgstr "Öppna spelvy"
+
+msgid "Open Asset Library"
+msgstr "Öppna asset-bibliotek"
+
+msgid "Open the next Editor"
+msgstr "Öppna nästa redigerare"
+
+msgid "Open the previous Editor"
+msgstr "Öppna föregående redigerare"
 
 msgid "Ok"
 msgstr "OK"
@@ -6423,12 +6192,6 @@ msgstr ""
 "Alla förinställningar måste ha en angiven exportsökväg för att \"Exportera "
 "alla\" ska kunna användas."
 
-msgid "Hide encryption key"
-msgstr "Göm krypteringsnyckel"
-
-msgid "Show encryption key"
-msgstr "Visa krypteringsnyckel"
-
 msgid "Delete preset '%s'?"
 msgstr "Radera förinställingen \"%s\"?"
 
@@ -6541,37 +6304,8 @@ msgstr ""
 "Filter för att exkludera filer/mappar från projektet\n"
 "(kommaseparerade, t.ex: *.json, *.txt, docs/*)"
 
-msgid "Patching"
-msgstr "Patchning"
-
-msgid "Enable Delta Encoding"
-msgstr "Aktivera delta‑kodning"
-
-msgid "Delta Encoding Compression Level"
-msgstr "Komprimeringsnivå för delta‑kodning"
-
-msgid "Delta Encoding Minimum Size Reduction"
-msgstr "Minimal storleksminskning för delta‑kodning"
-
-msgid "Delta Encoding Include Filters"
-msgstr "Inkluderingsfilter för delta‑kodning"
-
-msgid ""
-"Filters to include files/folders from being delta-encoded\n"
-"(comma-separated, e.g: *.gdc, scripts/*)"
-msgstr ""
-"Filter för att inkludera filer/mappar i delta‑kodning\n"
-"(separerade med kommatecken, t.ex: .gdc, scripts/)"
-
-msgid "Delta Encoding Exclude Filters"
-msgstr "Exkluderingsfilter för delta‑kodning"
-
-msgid ""
-"Filters to exclude files/folders from being delta-encoded\n"
-"(comma-separated, e.g: *.ctex, textures/*)"
-msgstr ""
-"Filter för att exkludera filer/mappar från delta‑kodning\n"
-"(separerade med kommatecken, t.ex: .ctex, textures/)"
+msgid "Patches"
+msgstr "Patchar"
 
 msgid "Base Packs:"
 msgstr "Baspaket:"
@@ -6645,13 +6379,6 @@ msgstr "Binära tokens (snabbare inläsning)"
 msgid "Compressed binary tokens (smaller files)"
 msgstr "Komprimerade binära tokens (mindre filstorlek)"
 
-msgid ""
-"No presets found.\n"
-"Create one so that its parameters can be edited here."
-msgstr ""
-"Inga förinställningar hittades.\n"
-"Skapa en så att dess parametrar kan redigeras här."
-
 msgid "Export PCK/ZIP..."
 msgstr "Exportera PCK/ZIP..."
 
@@ -6696,23 +6423,25 @@ msgstr "Hantera exportmallar"
 msgid "Baking shaders"
 msgstr "Bakar shaders"
 
-msgid "Search Replacement For: %s"
-msgstr "Sök ersättning för: %s"
+msgid "Search Replacement For:"
+msgstr "Sök ersättning för:"
 
 msgid "Dependencies For:"
 msgstr "Beroenden för:"
 
 msgid ""
-"Scene \"%s\" is currently being edited. Changes will only take effect when "
-"reloaded."
+"Scene '%s' is currently being edited.\n"
+"Changes will only take effect when reloaded."
 msgstr ""
-"Scenen \"%s\" redigeras för närvarande. Ändringar träder i kraft först när "
-"den laddas om."
+"Scenen ”%s” redigeras just nu.\n"
+"Ändringar träder i kraft först vid omladdning."
 
-msgid "Resource \"%s\" is in use. Changes will only take effect when reloaded."
+msgid ""
+"Resource '%s' is in use.\n"
+"Changes will only take effect when reloaded."
 msgstr ""
-"Resursen \"%s\" används för närvarande. Ändringar träder i kraft först när "
-"den laddas om."
+"Resursen ”%s” används just nu.\n"
+"Ändringar träder i kraft först vid omladdning."
 
 msgid "Dependencies"
 msgstr "Beroenden"
@@ -6726,14 +6455,11 @@ msgstr "Åtgärda trasiga"
 msgid "Dependency Editor"
 msgstr "Beroende-redigerare"
 
+msgid "Search Replacement Resource:"
+msgstr "Sök efter ersättningsresurs:"
+
 msgid "Owners of: %s (Total: %d)"
 msgstr "Ägare av: %s (Totalt: %d)"
-
-msgid "No owners found for: %s"
-msgstr "Inga ägare hittades för: %s"
-
-msgid "Owners List"
-msgstr "Ägarlista"
 
 msgid "Localization remap"
 msgstr "Lokaliserings-ersättning"
@@ -6771,20 +6497,20 @@ msgstr "Radera markerade:"
 msgid "Dependencies of files to be deleted:"
 msgstr "Radera följande filers beroenden:"
 
-msgid "Error loading: %s"
-msgstr "Fel vid inläsning: %s"
-
-msgid "Referenced by %s"
-msgstr "Refereras av %s"
-
-msgid "Fix Dependencies"
-msgstr "Åtgärda beroenden"
+msgid "Error loading:"
+msgstr "Fel vid inläsning:"
 
 msgid "Load failed due to missing dependencies:"
 msgstr "Inläsning misslyckades p.g.a att beroenden saknas:"
 
 msgid "Which action should be taken?"
 msgstr "Vilken åtgärd ska tas?"
+
+msgid "Fix Dependencies"
+msgstr "Åtgärda beroenden"
+
+msgid "Errors loading!"
+msgstr "Fel vid inläsning!"
 
 msgid "Permanently delete %d item(s)? (No undo!)"
 msgstr "Radera %d objekt permanent? (Kan inte ångras)"
@@ -6889,6 +6615,9 @@ msgstr "Visa ersättning"
 msgid "Replace Mode"
 msgstr "Ersättningsläge"
 
+msgid "Find"
+msgstr "Sök"
+
 msgid "Match Case"
 msgstr "Skiftlägeskänslig"
 
@@ -6912,14 +6641,14 @@ msgctxt "Indentation"
 msgid "Tabs"
 msgstr "Indrag"
 
-msgid "Zoom Factor"
+msgid "Zoom factor"
 msgstr "Zoomfaktor"
 
 msgid ""
-"%s+Mouse Wheel, %s/%s: Finetune\n"
+"%sMouse wheel, %s/%s: Finetune\n"
 "%s: Reset"
 msgstr ""
-"%s+Mushjul, %s/%s: Finjustera\n"
+"%s Skrollhjul, %s/%s: Finjustera\n"
 "%s: Återställ"
 
 msgid "Zoom In"
@@ -6930,6 +6659,9 @@ msgstr "Zooma ut"
 
 msgid "Reset Zoom"
 msgstr "Återställ zoom"
+
+msgid "Zoom Factor"
+msgstr "Zoomfaktor"
 
 msgid "Line and column numbers."
 msgstr "Rad- och kolumnnummer."
@@ -7065,9 +6797,6 @@ msgstr "Godot Engine-bidragsgivare"
 msgid "Double-click to open in browser."
 msgstr "Dubbelklicka för att öppna i webbläsare."
 
-msgid "No distractions for this, close that game first."
-msgstr "Inga distraktioner för detta, stäng spelet först."
-
 msgid "Thanks from the Godot community!"
 msgstr "Tack från Godot-gemenskapen!"
 
@@ -7100,6 +6829,30 @@ msgstr "Komponenter"
 msgid "Licenses"
 msgstr "Licenser"
 
+msgid ""
+"Scroll Left\n"
+"Hold Ctrl to scroll to the begin.\n"
+"Hold Shift to scroll one page."
+msgstr ""
+"Rulla vänster\n"
+"Håll in Ctrl för att rulla till början.\n"
+"Håll in Shift för att rulla en sida åt gången."
+
+msgid "Scroll Left"
+msgstr "Rulla vänster"
+
+msgid ""
+"Scroll Right\n"
+"Hold Ctrl to scroll to the end.\n"
+"Hold Shift to scroll one page."
+msgstr ""
+"Rulla höger\n"
+"Håll in Ctrl för att rulla till slutet.\n"
+"Håll in Shift för att rulla en sida åt gången."
+
+msgid "Scroll Right"
+msgstr "Rulla höger"
+
 msgid "Pin Bottom Panel Switching"
 msgstr "Fäst nederpanelens växling"
 
@@ -7120,6 +6873,150 @@ msgstr "Välj målsökväg:"
 msgid "Move"
 msgstr "Flytta"
 
+msgid "Network"
+msgstr "Nätverk"
+
+msgid "Select Current Folder"
+msgstr "Välj aktuell mapp"
+
+msgid "Cannot save file with an empty filename."
+msgstr "Kan inte spara fil med tomt namn."
+
+msgid "Cannot save file with a name starting with a dot."
+msgstr "Kan inte spara fil med namn som börjar med punkt."
+
+msgid ""
+"File \"%s\" already exists.\n"
+"Do you want to overwrite it?"
+msgstr ""
+"Filen \"%s\" finns redan.\n"
+"Vill du ersätta den?"
+
+msgid "Select This Folder"
+msgstr "Välj den här mappen"
+
+msgid "Show Package Contents"
+msgstr "Visa paketets innehåll"
+
+msgid "All Files"
+msgstr "Alla Filer (*)"
+
+msgid "Open a File"
+msgstr "Öppna en fil"
+
+msgid "Open File(s)"
+msgstr "Öppna fil(er)"
+
+msgid "Open a Directory"
+msgstr "Öppna en mapp"
+
+msgid "Open a File or Directory"
+msgstr "Öppna en fil/mapp"
+
+msgid "Save a File"
+msgstr "Spara en fil"
+
+msgid "The path specified is invalid."
+msgstr "Den angivna sökvägen är ogiltig."
+
+msgid "Could not create folder. File with that name already exists."
+msgstr "Kunde inte skapa mapp. En fil med samma namn finns redan."
+
+msgid "Could not create folder."
+msgstr "Kunde inte skapa mapp."
+
+msgid "Favorited folder does not exist anymore and will be removed."
+msgstr "Favoritmarkerad mapp finns inte längre och kommer att tas bort."
+
+msgid "Go Back"
+msgstr "Gå tillbaka"
+
+msgid "Go Forward"
+msgstr "Gå framåt"
+
+msgid "Go Up"
+msgstr "Gå uppåt"
+
+msgid "Toggle Hidden Files"
+msgstr "Växla visa dolda filer"
+
+msgid "Toggle Favorite"
+msgstr "Växla favorit"
+
+msgid "Toggle Mode"
+msgstr "Växla läge"
+
+msgid "Focus Path"
+msgstr "Fokusera sökväg"
+
+msgid "Focus Filter"
+msgstr "Fokusera filter"
+
+msgid "Move Favorite Up"
+msgstr "Flytta upp favorit"
+
+msgid "Move Favorite Down"
+msgstr "Flytta ned favorit"
+
+msgid "Go to previous folder."
+msgstr "Gå till föregående mapp."
+
+msgid "Go to next folder."
+msgstr "Gå till nästa mapp."
+
+msgid "Go to parent folder."
+msgstr "Gå till föräldramapp."
+
+msgid "Refresh files."
+msgstr "Ladda om filer."
+
+msgid "(Un)favorite current folder."
+msgstr "(Av)favoritmarkera aktuell mapp."
+
+msgid "Current Drive"
+msgstr "Aktuell enhet"
+
+msgid "Create a new folder."
+msgstr "Skapa ny mapp."
+
+msgid "Directories & Files:"
+msgstr "Mappar & filer:"
+
+msgid "Toggle the visibility of hidden files."
+msgstr "Växla visning av dolda filer."
+
+msgid "Sort files"
+msgstr "Sortera filer"
+
+msgid "Toggle the visibility of the filter for file names."
+msgstr "Växla visning av dolda filer."
+
+msgid "Preview:"
+msgstr "Förhandsvisning:"
+
+msgid "Filter:"
+msgstr "Filter:"
+
+msgid "Filename Filter:"
+msgstr "Filter för filnamn:"
+
+msgid "File:"
+msgstr "Fil:"
+
+msgid "File Type Filter"
+msgstr "Filtypsfilter"
+
+msgid ""
+"Remove the selected files? For safety only files and empty directories can be "
+"deleted from here. (Cannot be undone.)\n"
+"Depending on your filesystem configuration, the files will either be moved to "
+"the system trash or deleted permanently."
+msgstr ""
+"Ta bort valda filer? För säkerhets skull kan bara filer och tomma mappar tas "
+"bort härifrån. (Kan inte ångras)\n"
+"Beroende på filsystemskonfigurationen blir filerna antingen lagda i systemets "
+"papperskorg eller permanent raderade."
+
 msgid "No sub-resources found."
 msgstr "Inga under-resurser hittades."
 
@@ -7134,15 +7031,6 @@ msgstr "Välj resurs"
 
 msgid "Select Scene"
 msgstr "Välj scen"
-
-msgid "Recursion detected, Instant Preview failed."
-msgstr "Rekursion upptäckt, direktförhandsvisning misslyckades."
-
-msgid "Instant Preview"
-msgstr "Direktförhandsvisning"
-
-msgid "Selected resource will be previewed in the editor before accepting."
-msgstr "Den valda resursen förhandsvisas i editorn innan den accepteras."
 
 msgid "Fuzzy Search"
 msgstr "Fuzzy‑sökning"
@@ -7171,11 +7059,12 @@ msgstr "Rutnätssteg"
 msgid "List view"
 msgstr "Listvy"
 
-msgid "Hold %s to round to integers."
-msgstr "Håll ned %s för att avrunda till heltal."
-
-msgid "Hold Shift for more precise changes."
-msgstr "Håll ned Shift för mer precisa ändringar."
+msgid ""
+"Hold %s to round to integers.\n"
+"Hold Shift for more precise changes."
+msgstr ""
+"Håll in %s för att avrunda till heltal.\n"
+"Håll in Skift för mer exakta ändringar."
 
 msgid "No notifications."
 msgstr "Inga notiser."
@@ -7270,8 +7159,11 @@ msgstr ""
 msgid "Error opening scene"
 msgstr "Fel när scenen skulle öppnas"
 
-msgid "Advanced Import Settings for %s '%s'"
-msgstr "Avancerade importinställningar för %s '%s'"
+msgid "Advanced Import Settings for AnimationLibrary '%s'"
+msgstr "Avancerade importinställningar för AnimationLibrary \"%s\""
+
+msgid "Advanced Import Settings for Scene '%s'"
+msgstr "Avancerade importinställningar för scenen \"%s\""
 
 msgid "Select folder to extract material resources"
 msgstr "Välj mapp för att extrahera materialresurser"
@@ -7469,9 +7361,6 @@ msgstr ""
 
 msgid "Music Playback:"
 msgstr "Musikuppspelning:"
-
-msgid "Preview:"
-msgstr "Förhandsvisning:"
 
 msgid "New Configuration"
 msgstr "Ny konfiguration"
@@ -7908,14 +7797,6 @@ msgstr "Lager"
 msgid "<empty>"
 msgstr "<tom>"
 
-msgctxt "Ease Type"
-msgid "Linear"
-msgstr "Linjär"
-
-msgctxt "Ease Type"
-msgid "Zero"
-msgstr "Noll"
-
 msgid "Temporary Euler may be changed implicitly!"
 msgstr "Temporär Euler kan komma att ändras indirekt!"
 
@@ -8035,30 +7916,6 @@ msgstr "Lägg till översättning"
 msgid "Lock/Unlock Component Ratio"
 msgstr "Lås/lås upp komponentförhållande"
 
-msgid "This %s is used in %d place."
-msgid_plural "This %s is used in %d places."
-msgstr[0] "Denna %s används på %d plats."
-msgstr[1] "Denna %s används på %d platser."
-
-msgid "This %s is external to scene."
-msgstr "Denna %s är extern till scenen."
-
-msgid ""
-"The %s cannot be edited in the inspector and can't be made unique directly."
-msgstr "%s kan inte redigeras i inspektorn och kan inte göras unik direkt."
-
-msgid "Left-click to make it unique."
-msgstr "Vänsterklicka för att göra den unik."
-
-msgid "It is possible to make its subresources unique."
-msgstr "Det är möjligt att göra dess underresurser unika."
-
-msgid "Right-click to make them unique."
-msgstr "Högerklicka för att göra dem unika."
-
-msgid "In order to duplicate it, make its parent Resource unique."
-msgstr "För att duplicera den, gör dess överordnade resurs unik."
-
 msgid ""
 "The selected resource (%s) does not match any type expected for this property "
 "(%s)."
@@ -8076,24 +7933,8 @@ msgstr ""
 msgid "Inspect"
 msgstr "Inspektera"
 
-msgid ""
-"Hold %s while drag-and-dropping from the FileSystem dock or another resource "
-"picker to automatically make a dropped resource unique."
-msgstr ""
-"Håll ned %s medan du drar och släpper från FileSystem‑dockan eller en annan "
-"resursväljare för att automatiskt göra en släppt resurs unik."
-
-msgid "This Resource is already unique."
-msgstr "Denna resurs är redan unik."
-
 msgid "Make Unique (Recursive)"
 msgstr "Gör unik (rekursivt)"
-
-msgid "In order to duplicate recursively, make its parent Resource unique."
-msgstr "För att duplicera rekursivt, gör dess överordnade resurs unik."
-
-msgid "Subresources have already been made unique."
-msgstr "Underresurserna har redan gjorts unika."
 
 msgid "Paste as Unique"
 msgstr "Klistra in som unik"
@@ -8109,9 +7950,6 @@ msgstr "Duplicera resurser"
 
 msgid "New"
 msgstr "Nytt"
-
-msgid "Number of Linked Resources."
-msgstr "Antal länkade resurser."
 
 msgid "Assign Resource"
 msgstr "Tilldela resurs"
@@ -8167,10 +8005,6 @@ msgstr "Välj virtuell metod"
 msgid "Select Method"
 msgstr "Välj metod"
 
-msgid "The assigned tool button callback can't be used with multiple nodes."
-msgstr ""
-"Den tilldelade verktygsknappens callback kan inte användas med flera noder."
-
 msgid ""
 "Name: %s\n"
 "Path: %s\n"
@@ -8218,12 +8052,11 @@ msgid "Script extension must match chosen language extension (.%s)."
 msgstr "Skripttillägg måste överensstämma med det valda språkets tillägg (.%s)."
 
 msgid ""
-"Consider enabling GDScript warnings for this plugin by adding an entry for it "
-"to the project setting Debug > GDScript > Warnings > Directory Rules."
+"C# doesn't support activating the plugin on creation because the project must "
+"be built first."
 msgstr ""
-"Överväg att aktivera GDScript‑varningar för detta plugin genom att lägga till "
-"en post för det i projektinställningen Debug > GDScript > Warnings > "
-"Directory Rules."
+"C# stödjer inte aktivering av plugin vid skapelse eftersom projektet måste "
+"byggas först."
 
 msgid "Edit a Plugin"
 msgstr "Redigera ett plugin"
@@ -8298,6 +8131,9 @@ msgstr ""
 "Valfritt: Ange skriptfilens namn. Om fältet lämnas tomt används undermappens "
 "namn som standard."
 
+msgid "Activate now?"
+msgstr "Aktivera nu?"
+
 msgid "Plugin name is valid."
 msgstr "Pluginnamnet är giltigt."
 
@@ -8354,9 +8190,6 @@ msgstr ""
 "Var vänlig välj en \"project.godot\"-fil, en mapp där en finns eller en "
 "\".zip\"-fil."
 
-msgid "The path specified is invalid."
-msgstr "Den angivna sökvägen är ogiltig."
-
 msgid ""
 "The directory name specified contains invalid characters or trailing "
 "whitespace."
@@ -8398,9 +8231,6 @@ msgid ""
 msgstr ""
 "Den angivna sökvägen är inte tom. Du rekommenderas starkt att välja en tom "
 "mapp."
-
-msgid "Cannot duplicate a project into itself."
-msgstr "Kan inte duplicera ett projekt till sig självt."
 
 msgid "New Game Project"
 msgstr "Nytt spelprojekt"
@@ -8515,9 +8345,6 @@ msgstr "Projektinstallationssökväg:"
 msgid "Renderer:"
 msgstr "Renderare:"
 
-msgid "More information"
-msgstr "Mer information"
-
 msgid ""
 "RenderingDevice-based methods not available on this GPU:\n"
 "%s\n"
@@ -8555,8 +8382,8 @@ msgstr "Projektet använder funktioner som inte stöds av det aktuella bygget:"
 msgid "Error: Project is missing on the filesystem."
 msgstr "Fel: Projektet saknas från filsystemet."
 
-msgid "Toggle Favorite"
-msgstr "Växla favorit"
+msgid "Add to favorites"
+msgstr "Lägg till i favoriter"
 
 msgid "Open in file manager"
 msgstr "Öppna i filhanterare"
@@ -8575,21 +8402,6 @@ msgstr "Skannar efter projekt..."
 
 msgid "Missing Project"
 msgstr "Projekt saknas"
-
-msgid "Open in Editor (Verbose Mode)"
-msgstr "Öppna i redigeraren (utförligt läge)"
-
-msgid "Open in Editor (Recovery Mode)"
-msgstr "Öppna i redigeraren (återställningsläge)"
-
-msgid "Run Project"
-msgstr "Kör projekt"
-
-msgid "Manage Tags"
-msgstr "Hantera etiketter"
-
-msgid "Remove from Project List"
-msgstr "Ta bort från projektlistan"
 
 msgid "New Window"
 msgstr "Nytt fönster"
@@ -8863,20 +8675,23 @@ msgstr ""
 msgid "Tag name can't be empty."
 msgstr "Namnet får inte vara tomt."
 
+msgid "Tag name can't contain spaces."
+msgstr "Namnet får inte innehålla blanksteg."
+
 msgid "Tag name can't begin or end with underscore."
 msgstr "Namnet får inte innehålla blanksteg eller avslutas med understreck."
 
-msgid "Tag name can't contain consecutive underscores or spaces."
-msgstr "Taggnamn får inte innehålla flera understreck eller mellanslag i följd."
+msgid "Tag name can't contain consecutive underscores."
+msgstr "Namnet får inte innehålla upprepade understreck."
 
 msgid "These characters are not allowed in tags: %s."
 msgstr "Följande tecken är otillåtna i etiketter: %s."
 
+msgid "Tag name must be lowercase."
+msgstr "Namnet måste skrivas med gemener."
+
 msgid "About Godot"
 msgstr "Om Godot"
-
-msgid "Window"
-msgstr "Fönster"
 
 msgid "Settings"
 msgstr "Inställningar"
@@ -8933,14 +8748,17 @@ msgstr "Redigera i felsökningsläge (verbose)"
 msgid "Edit in recovery mode"
 msgstr "Redigera i återställningsläge"
 
+msgid "Run Project"
+msgstr "Kör projekt"
+
+msgid "Manage Tags"
+msgstr "Hantera etiketter"
+
 msgid "Remove Project"
 msgstr "Ta bort projekt"
 
 msgid "Remove Missing"
 msgstr "Ta bort saknade"
-
-msgid "Donate"
-msgstr "Donera"
 
 msgid "Asset Library"
 msgstr "Asset-bibliotek"
@@ -9022,9 +8840,6 @@ msgstr "Etiketter formateras automatiskt med stor bokstav när de visas."
 msgid "New Tag Name"
 msgstr "Namn för etikett"
 
-msgid "example_tag (will display as Example Tag)"
-msgstr "example_tag (visas som Example Tag)"
-
 msgid "Create Tag"
 msgstr "Skapa ny etikett"
 
@@ -9040,11 +8855,8 @@ msgstr "Snabbinställningar"
 msgid "Language"
 msgstr "Språk"
 
-msgid "Style"
-msgstr "Stil"
-
-msgid "Color Preset"
-msgstr "Färgförinställning"
+msgid "Interface Theme"
+msgstr "Gränssnittstema"
 
 msgid "Custom preset can be further configured in the editor."
 msgstr "Anpassad förinställning kan konfigureras ytterligare i redigeraren."
@@ -9060,9 +8872,6 @@ msgstr "Sök efter uppdateringar"
 
 msgid "Directory Naming Convention"
 msgstr "Sökvägsnamnkonvention"
-
-msgid "Edit All Settings"
-msgstr "Redigera alla inställningar"
 
 msgid ""
 "Settings changed! The project manager must be restarted for changes to take "
@@ -9115,23 +8924,17 @@ msgstr "Uppdaterar projektets resurser"
 msgid "Re-saving resource:"
 msgstr "Spara om resurs:"
 
-msgid "Run the project's main scene."
-msgstr "Kör projektets huvudscen."
+msgid "Play the project."
+msgstr "Kör projektet."
 
-msgid "Play the currently edited scene."
-msgstr "Spela upp den scen som för närvarande redigeras."
+msgid "Play the edited scene."
+msgstr "Kör den redigerade scenen."
 
 msgid "Play a custom scene."
 msgstr "Kör en anpassad scen."
 
-msgid "Reload the played scene that was being edited."
-msgstr "Ladda om den spelade scenen som redigerades."
-
-msgid "Reload the played custom scene."
-msgstr "Ladda om den spelade anpassade scenen."
-
-msgid "Reload the played main scene."
-msgstr "Ladda om den spelade huvudscenen."
+msgid "Reload the played scene."
+msgstr "Ladda om den körda scenen."
 
 msgid ""
 "Movie Maker mode is enabled, but no movie file path has been specified.\n"
@@ -9207,6 +9010,9 @@ msgstr "Inaktivera återställningsläge och öppna projektet igen."
 msgid "Recovery Mode is enabled. Click for more details."
 msgstr "Återställningsläge är aktiverat. Klicka för mer detaljer."
 
+msgid "Run the project's default scene."
+msgstr "Kör projektets standardscen."
+
 msgid "Pause the running project's execution for debugging."
 msgstr "Pausa exekvering av projekt för avlusning."
 
@@ -9219,23 +9025,29 @@ msgstr "Avbryter exekveringen av projektet som körs."
 msgid "Stop Running Project"
 msgstr "Avbryt projektkörning"
 
-msgid "Run Current Scene"
-msgstr "Kör nuvarande scen"
-
 msgid "Run Scene in Regular Mode"
 msgstr "Kör scenen i reguljärt läge"
 
 msgid "Run Scene in XR Mode"
 msgstr "Kör scenen i XR-läge"
 
-msgid "Run Specific Scene"
-msgstr "Kör specifik scen"
+msgid "Run the currently edited scene."
+msgstr "Kör scenen som redigeras just nu."
+
+msgid "Run Current Scene"
+msgstr "Kör nuvarande scen"
 
 msgid "Run in Regular Mode"
 msgstr "Kör i reguljärt läge"
 
 msgid "Run in XR Mode"
 msgstr "Kör i XR-läge"
+
+msgid "Run a specific scene."
+msgstr "Kör en specifik scen."
+
+msgid "Run Specific Scene"
+msgstr "Kör specifik scen"
 
 msgid "Enable Movie Maker Mode"
 msgstr "Aktivera Movie Maker‑läge"
@@ -9312,6 +9124,15 @@ msgstr "Tryck play för att starta spelet."
 msgid "Embedding is disabled."
 msgstr "Inbäddat läge är inaktiverat."
 
+msgid ""
+"Game embedding not available on Wayland.\n"
+"Wayland can be disabled in the Editor Settings (Run > Platforms > Linux/*BSD "
+"> Prefer Wayland)."
+msgstr ""
+"Spelinbäddning är inte tillgängligt på Wayland.\n"
+"Wayland kan inaktiveras i redigeringsinställningarna (Kör > Plattformar > "
+"Linux/*BSD > Föredra Wayland)."
+
 msgid "Game embedding not available on your OS."
 msgstr "Inbäddat läge för spel är ej tillgängligt för ditt operativsystem."
 
@@ -9347,39 +9168,19 @@ msgstr "Spelinbäddning är inte tillgängligt när spelet startar i helskärm."
 msgid "Game embedding not available in single window mode."
 msgstr "Spelinbäddning är inte tillgängligt i ettfönsterläge."
 
-msgid "Game embedding not available when the game starts in headless mode."
-msgstr "Spelinbäddning är inte tillgänglig när spelet startas i headless‑läge."
-
 msgid "Unmute game audio."
 msgstr "Slå på ljud för spel."
 
 msgid "Mute game audio."
 msgstr "Slå av spelets ljud."
 
-msgid "%s+Alt+RMB: Show list of all nodes at position clicked."
-msgstr "%s+Alt+HMB: Visa lista över alla noder vid den klickade positionen."
+msgid "Alt+RMB: Show list of all nodes at position clicked."
+msgstr ""
+"Alt+Högerklick: Visa en lista över alla noder på den klickade positionen, "
+"inklusive låsta."
 
 msgid "Suspend"
 msgstr "Avsluta"
-
-msgid ""
-"Force pause at SceneTree level. Stops all processing, but you can still "
-"interact with the project."
-msgstr ""
-"Tvinga paus på SceneTree‑nivå. Stoppar all bearbetning, men du kan "
-"fortfarande interagera med projektet."
-
-msgid "Change the game speed."
-msgstr "Ändra spelets hastighet."
-
-msgid "Speed State"
-msgstr "Hastighetstillstånd"
-
-msgid "Reset the game speed."
-msgstr "Återställ spelets hastighet."
-
-msgid "Reset Speed"
-msgstr "Återställ hastighet"
 
 msgid "Input"
 msgstr "Inmatning"
@@ -9400,20 +9201,11 @@ msgstr ""
 "Inaktivera spelinmatning och tillåt val av Node3D‑noder samt manipulering av "
 "3D‑kameran."
 
-msgid "Show list of selectable nodes at position clicked."
-msgstr "Visa lista över valbara noder på den klickade positionen."
-
 msgid "Toggle Selection Visibility"
 msgstr "Växla synlighet för val"
 
-msgid "Selection Options"
-msgstr "Markeringsalternativ"
-
-msgid "Don't Select Locked Nodes"
-msgstr "Markera inte låsta noder"
-
-msgid "Select Group Over Children"
-msgstr "Markera grupp före barn"
+msgid "Show list of selectable nodes at position clicked."
+msgstr "Visa lista över valbara noder på den klickade positionen."
 
 msgid "Override the in-game camera."
 msgstr "Åsidosätt spelets kamera."
@@ -9433,21 +9225,6 @@ msgstr "Manipulera i spelet"
 msgid "Manipulate From Editors"
 msgstr "Manipulera via editorer"
 
-msgid "Embedding Options"
-msgstr "Inbäddningsinställningar"
-
-msgid "Embed Game on Next Play"
-msgstr "Bädda in spelet vid nästa spel"
-
-msgid "Make Game Workspace Floating on Next Play"
-msgstr "Gör spelets arbetsyta flytande vid nästa spel"
-
-msgid "Embedded Window Sizing"
-msgstr "Inbäddad fönsterstorlek"
-
-msgid "Fixed Size"
-msgstr "Fast storlek"
-
 msgid ""
 "Embedded game size is based on project settings.\n"
 "The 'Keep Aspect' mode is used when the Game Workspace is smaller than the "
@@ -9457,18 +9234,24 @@ msgstr ""
 "Läget \"Behåll bildförhållande\" används när spelarbetsytan är mindre än "
 "önskad storlek."
 
-msgid "Keep Aspect Ratio"
-msgstr "Behåll bildförhållande"
+msgid "Embedded game size is based on project settings."
+msgstr "Storleken på det inbäddade spelet baseras på projektinställningarna."
 
 msgid "Keep the aspect ratio of the embedded game."
 msgstr "Behåll bildförhållandet för det inbäddade spelet."
 
-msgid "Stretch to Fit"
-msgstr "Sträck ut för att passa"
-
 msgid "Embedded game size stretches to fit the Game Workspace."
 msgstr ""
 "Det inbäddade spelets storlek sträcker sig för att passa spelets arbetsyta."
+
+msgid "Embedding Options"
+msgstr "Inbäddningsinställningar"
+
+msgid "Embed Game on Next Play"
+msgstr "Bädda in spelet vid nästa spel"
+
+msgid "Make Game Workspace Floating on Next Play"
+msgstr "Gör spelets arbetsyta flytande vid nästa spel"
 
 msgid "Game Workspace"
 msgstr "Spelets arbetsyta"
@@ -9581,35 +9364,23 @@ msgstr "Generera synlighetsrektangel"
 msgid "Load Emission Mask"
 msgstr "Läs in utstrålningsmask"
 
-msgid "Mask Texture"
-msgstr "Masktextur"
-
 msgid "Solid Pixels"
 msgstr "Fyllda pixlar"
 
 msgid "Border Pixels"
 msgstr "Gränspixlar"
 
-msgid "Mask Mode"
-msgstr "Maskläge"
+msgid "Directed Border Pixels"
+msgstr "Riktade gränspixlar"
 
-msgid "Generate"
-msgstr "Generera"
-
-msgid "Texture"
-msgstr "Textur"
-
-msgid "Direction Mode"
-msgstr "Riktningläge"
-
-msgid "Direction Texture"
-msgstr "Riktningstextur"
+msgid "Emission Mask"
+msgstr "Utstrålningsmask"
 
 msgid "Centered"
 msgstr "Centrerade"
 
-msgid "Copy Color from Mask Texture"
-msgstr "Kopiera färg från masktextur"
+msgid "Capture Colors from Pixel"
+msgstr "Fånga färger från pixel"
 
 msgid "Generating Visibility Rect (Waiting for Particle Simulation)"
 msgstr "Genererar synlighetsrektangel (Väntar på partikelsimulering)"
@@ -9619,28 +9390,6 @@ msgstr "Genererar..."
 
 msgid "Loading emission mask requires ParticleProcessMaterial."
 msgstr "För att ladda emissionsmasken krävs ParticleProcessMaterial."
-
-msgid "Failed to load mask texture."
-msgstr "Misslyckades med att läsa in masktextur."
-
-msgid "Failed to convert mask texture to RGBA8."
-msgstr "Misslyckades med att konvertera masktextur till RGBA8."
-
-msgid "Mask texture has an invalid size."
-msgstr "Masktexturen har en ogiltig storlek."
-
-msgid "Failed to load direction texture."
-msgstr "Misslyckades med att läsa in riktningstextur."
-
-msgid "Failed to convert direction texture to RGBA8."
-msgstr "Misslyckades med att konvertera riktningstextur till RGBA8."
-
-msgid ""
-"Direction texture has an invalid size. It must have the same size as the mask "
-"texture."
-msgstr ""
-"Riktningstexturen har en ogiltig storlek. Den måste ha samma storlek som "
-"masktexturen."
 
 msgid "GPUParticles2D"
 msgstr "GPUParticles2D"
@@ -9696,8 +9445,8 @@ msgstr "Markera punkter"
 msgid "Shift+Drag: Select Control Points"
 msgstr "Skift+dra: Markera kontrollpunkter"
 
-msgid "%s+Click: Add Point"
-msgstr "%s+Klick: Lägg till punkt"
+msgid "Click: Add Point"
+msgstr "Klicka: Lägg till punkt"
 
 msgid "Left Click: Split Segment (in curve)"
 msgstr "LMB: Dela segment (i kurva)"
@@ -9786,12 +9535,6 @@ msgstr "Transformera polygon"
 
 msgid "Paint Bone Weights"
 msgstr "Måla benvikter"
-
-msgid "Polygon"
-msgstr "Polygon"
-
-msgid "Toggle Polygon Dock"
-msgstr "Visa/dölj polygonfönster"
 
 msgid "Points"
 msgstr "Punkter"
@@ -9888,6 +9631,12 @@ msgstr "Rutsteg Y:"
 
 msgid "Sync Bones to Polygon"
 msgstr "Synka ben till polygon"
+
+msgid "Toggle Polygon Bottom Panel"
+msgstr "Växla polygonens nedre panel"
+
+msgid "Polygon"
+msgstr "Polygon"
 
 msgid "This skeleton has no bones, create some children Bone2D nodes."
 msgstr "Det här skelettet har inga ben, skapa några Bone2D-barnnoder."
@@ -10130,6 +9879,9 @@ msgstr "Välj"
 msgid "Drawing Rect:"
 msgstr "Ritar rektangel:"
 
+msgid "Can't transform scene tiles."
+msgstr "Kan inte transformera scenbrickor."
+
 msgid "Can't rotate patterns when using non-square tile grid."
 msgstr "Kan inte rotera mönster med ett icke-kvadratiskt rutnät."
 
@@ -10185,8 +9937,8 @@ msgstr "Markeringsverktyg"
 msgid "Shift: Draw line."
 msgstr "Skift: Rita linje."
 
-msgid "%s+Shift: Draw rectangle."
-msgstr "%s+Skift: Rita rektangel."
+msgid "Shift: Draw rectangle."
+msgstr "Skift: Rita rektangel."
 
 msgid "Paint Tool"
 msgstr "Brickmålare"
@@ -10322,12 +10074,6 @@ msgstr ""
 "Den redigerade TileMap- eller TileMapLayer-noden har ingen TileSet-resurs.\n"
 "Skapa eller läs in en TileSet-resurs i Brick-sätt-egenskapen i Granskaren."
 
-msgid "TileMap"
-msgstr "TileMap"
-
-msgid "Open TileMap Dock"
-msgstr "Öppna TileMap‑panel"
-
 msgid "Select Next Tile Map Layer"
 msgstr "Välj nästa TileMap-lager"
 
@@ -10342,6 +10088,9 @@ msgstr "Välj föregående lager"
 
 msgid "Select next layer"
 msgstr "Välj nästa lager"
+
+msgid "Select all layers"
+msgstr "Välj alla lager"
 
 msgid "Select all TileMapLayers in scene"
 msgstr "Välj alla TileMapLayer:s i den här scenen"
@@ -10795,12 +10544,6 @@ msgstr "Ta bort källa"
 msgid "Add atlas source"
 msgstr "Lägg till atlaskälla"
 
-msgid "TileSet"
-msgstr "TileSet"
-
-msgid "Open TileSet Dock"
-msgstr "Öppna TileSet‑panel"
-
 msgid "Tile Sources"
 msgstr "Brickkällor"
 
@@ -10890,15 +10633,17 @@ msgstr "Suddgummi"
 msgid "Picker Tool"
 msgstr "Väljare"
 
-msgid ""
-"Source ID: %d\n"
-"Texture path: %s"
-msgstr ""
-"Käll‑ID: %d\n"
-"Textursökväg: %s"
+msgid "TileMap"
+msgstr "TileMap"
 
-msgid "Source ID: %d"
-msgstr "Käll‑ID: %d"
+msgid "Toggle TileMap Bottom Panel"
+msgstr "Nedre TileMap-panel på/av"
+
+msgid "TileSet"
+msgstr "TileSet"
+
+msgid "Toggle TileSet Bottom Panel"
+msgstr "Nedre TileSet-panel på/av"
 
 msgid "Bone Picker:"
 msgstr "Benväljare:"
@@ -11115,60 +10860,6 @@ msgstr "Kunde inte skapa en förenklad kollisionsform."
 msgid "Couldn't create any collision shapes."
 msgstr "Kunde inte skapa några kollisionsformer alls."
 
-msgid "Couldn't create a bounding box shape."
-msgstr "Kunde inte skapa en begränsningsboxform."
-
-msgid "Couldn't create a capsule shape."
-msgstr "Kunde inte skapa en kapselform."
-
-msgid "Couldn't create a cylinder shape."
-msgstr "Kunde inte skapa en cylinderform."
-
-msgid "Couldn't create a sphere shape."
-msgstr "Kunde inte skapa en sfärform."
-
-msgid "Couldn't create a primitive collision shape."
-msgstr "Kunde inte skapa en primitiv kollisionsform."
-
-msgid "Create %s Collision Shape Sibling"
-msgstr "Skapa %s kollisionsformsyskon"
-
-msgid "Create %s Static Body Child"
-msgstr "Skapa %s statisk kroppsbarnnod"
-
-msgid "Trimesh"
-msgstr "Trimesh"
-
-msgid "Single Convex"
-msgstr "Enstaka konvex"
-
-msgid "Simplified Convex"
-msgstr "Förenklad konvex"
-
-msgid "Create %s Collision Shape Siblings"
-msgstr "Skapa %s kollisionsformsyskon"
-
-msgid "Create %s Static Body Children"
-msgstr "Skapa %s statiska kroppsbarnnoder"
-
-msgid "Multiple Convex"
-msgstr "Flerfaldig konvex"
-
-msgid "Bounding Box"
-msgstr "Begränsningsbox"
-
-msgid "Capsule"
-msgstr "Kapsel"
-
-msgid "Cylinder"
-msgstr "Cylinder"
-
-msgid "Sphere"
-msgstr "Sfär"
-
-msgid "Primitive"
-msgstr "Primitiv"
-
 msgid "Can't create a collision shape as sibling for the scene root."
 msgstr "Kan inte skapa en kollisionform som syskon till scenroten."
 
@@ -11301,6 +10992,9 @@ msgstr ""
 msgid "Collision Shape Type"
 msgstr "Kollisionsformtyp"
 
+msgid "Trimesh"
+msgstr "Trimesh"
+
 msgid ""
 "Creates a polygon-based collision shape.\n"
 "This is the most accurate (but slowest) option for collision detection."
@@ -11308,14 +11002,18 @@ msgstr ""
 "Skapar en polygonbaserad kollisionsform.\n"
 "Det mest exakta, men långsammaste, alternativet för kollisionsdetektering."
 
+msgid "Single Convex"
+msgstr "Enstaka konvex"
+
 msgid ""
 "Creates a single convex collision shape.\n"
-"This is the faster than the trimesh or multiple convex option, but is less "
-"accurate for collision detection."
+"This is the fastest (but least accurate) option for collision detection."
 msgstr ""
 "Skapar en enda konvex kollisionsform.\n"
-"Detta är snabbare än alternativet med trimesh eller flera konvexa former, men "
-"är mindre exakt för kollisionsdetektering."
+"Det snabbaste, men minst exakta, alternativet för kollisionsdetektering."
+
+msgid "Simplified Convex"
+msgstr "Förenklad konvex"
 
 msgid ""
 "Creates a simplified convex collision shape.\n"
@@ -11326,97 +11024,17 @@ msgstr ""
 "Liknar enstaka konvex kollisionsform, men kan resultera i enklare geometri i "
 "vissa fall på bekostnad av noggrannhet."
 
-msgid ""
-"Creates multiple convex collision shapes. These are decomposed from the "
-"original mesh.\n"
-"This is a performance and accuracy middle-ground between a single convex "
-"collision and a polygon-based trimesh collision."
-msgstr ""
-"Skapar flera konvexa kollisionsformer. Dessa bryts ned från det ursprungliga "
-"meshet.\n"
-"Detta är en kompromiss mellan prestanda och noggrannhet jämfört med en enda "
-"konvex kollisionsform och en polygonbaserad trimesh‑kollision."
+msgid "Multiple Convex"
+msgstr "Flerfaldig konvex"
 
 msgid ""
-"Creates an bounding box collision shape.\n"
-"This will use the mesh's AABB if the shape is not a built-in BoxMesh.\n"
-"This is faster than the convex collision shape option for collision detection."
+"Creates a polygon-based collision shape.\n"
+"This is a performance middle-ground between a single convex collision and a "
+"polygon-based collision."
 msgstr ""
-"Skapar en begränsningsbox‑kollisionsform.\n"
-"Den använder meshet AABB om formen inte är en inbyggd BoxMesh.\n"
-"Detta är snabbare än alternativet med konvex kollisionsform för "
-"kollisionsdetektering."
-
-msgid ""
-"Creates a capsule collision shape.\n"
-"This will use the mesh's AABB if the shape is not a built-in CapsuleMesh.\n"
-"This is faster than the convex collision shape option for collision detection."
-msgstr ""
-"Skapar en kapsel‑kollisionsform.\n"
-"Den använder meshet AABB om formen inte är en inbyggd CapsuleMesh.\n"
-"Detta är snabbare än alternativet med konvex kollisionsform för "
-"kollisionsdetektering."
-
-msgid ""
-"Creates a cylinder collision shape.\n"
-"This will use the mesh's AABB if the shape is not a built-in CylinderMesh.\n"
-"This is faster than the convex collision shape option for collision detection."
-msgstr ""
-"Skapar en cylinder‑kollisionsform.\n"
-"Den använder meshet AABB om formen inte är en inbyggd CylinderMesh.\n"
-"Detta är snabbare än alternativet med konvex kollisionsform för "
-"kollisionsdetektering."
-
-msgid ""
-"Creates a sphere collision shape.\n"
-"This will use the mesh's AABB if the shape is not a built-in SphereMesh.\n"
-"This is faster than the convex collision shape option for collision detection."
-msgstr ""
-"Skapar en sfär‑kollisionsform.\n"
-"Den använder meshet AABB om formen inte är en inbyggd SphereMesh.\n"
-"Detta är snabbare än alternativet med konvex kollisionsform för "
-"kollisionsdetektering."
-
-msgid ""
-"Creates a box, capsule, cylinder, or sphere primitive collision shape if the "
-"mesh is a primitive.\n"
-"The mesh must use the built-in BoxMesh, CapsuleMesh, CylinderMesh, or "
-"SphereMesh primitive.\n"
-"This is faster than the convex collision shape option for collision detection."
-msgstr ""
-"Skapar en box‑, kapsel‑, cylinder‑ eller sfär‑primitiv kollisionsform om "
-"meshet är en primitiv.\n"
-"Meshet måste använda den inbyggda BoxMesh, CapsuleMesh, CylinderMesh eller "
-"SphereMesh‑primitiven.\n"
-"Detta är snabbare än alternativet med konvex kollisionsform för "
-"kollisionsdetektering."
-
-msgid "Alignment Axis"
-msgstr "Justeringsaxel"
-
-msgid "Longest Axis"
-msgstr "Längsta axel"
-
-msgid "Create the shape along the longest axis of the mesh's AABB."
-msgstr "Skapa formen längs meshet AABB:s längsta axel."
-
-msgid "X-Axis"
-msgstr "X-axel"
-
-msgid "Create the shape along the local X-Axis."
-msgstr "Skapa formen längs den lokala X‑axeln."
-
-msgid "Y-Axis"
-msgstr "Y-axel"
-
-msgid "Create the shape along the local Y-Axis."
-msgstr "Skapa formen längs den lokala Y‑axeln."
-
-msgid "Z-Axis"
-msgstr "Z-axel"
-
-msgid "Create the shape along the local Z-Axis."
-msgstr "Skapa formen längs den lokala Z‑axeln."
+"Skapar en polygonbaserad konvex kollisionsform.\n"
+"En prestanda-medelväg mellan enstaka konvex- och trimesh-baserad "
+"kollisionsform."
 
 msgid "UV Channel Debug"
 msgstr "UV-kanal-avlusning"
@@ -11527,6 +11145,15 @@ msgstr "Käll-mesh:"
 msgid "Mesh Up Axis:"
 msgstr "Meshens upp-axel:"
 
+msgid "X-Axis"
+msgstr "X-axel"
+
+msgid "Y-Axis"
+msgstr "Y-axel"
+
+msgid "Z-Axis"
+msgstr "Z-axel"
+
 msgid "Random Rotation:"
 msgstr "Slumpad rotation:"
 
@@ -11593,8 +11220,8 @@ msgstr "Perspektiv bakifrån"
 msgid "[auto]"
 msgstr "[auto]"
 
-msgid "Reset Transform"
-msgstr "Återställ transform"
+msgid "Locked"
+msgstr "Låst"
 
 msgid "Grouped"
 msgstr "Grupperad"
@@ -11626,33 +11253,36 @@ msgstr ""
 "Håll in %s och släpp för att skriva över en specifik yta."
 
 msgid ""
-"This debug draw mode is only supported when using the Forward+ or Mobile "
-"renderer."
+"This debug draw mode is not supported when using the Compatibility rendering "
+"method."
 msgstr ""
-"Detta felsökningsritläge stöds endast vid användning av Forward+‑ eller "
-"Mobile‑renderaren."
+"Detta felsökningsritläge stöds inte när kompatibilitets‑renderingsmetoden "
+"används."
 
-msgid "This debug draw mode is only supported when using the Forward+ renderer."
+msgid ""
+"This debug draw mode is not supported when using the Mobile or Compatibility "
+"rendering methods."
 msgstr ""
-"Detta felsökningsritläge stöds endast vid användning av Forward+‑renderaren."
+"Det här felsökningsläget för ritningar stöds inte när renderingsmetoderna "
+"Mobil eller Kompatibilitet används."
 
-msgid "X: %s"
-msgstr "X: %s"
+msgid "X: %s\n"
+msgstr "X: %s\n"
 
-msgid "Y: %s"
-msgstr "Y: %s"
+msgid "Y: %s\n"
+msgstr "Y: %s\n"
 
-msgid "Z: %s"
-msgstr "Z: %s"
+msgid "Z: %s\n"
+msgstr "Z: %s\n"
 
-msgid "Size: %s (%.1fMP)"
-msgstr "Storlek: %s (%.1fMP)"
+msgid "Size: %s (%.1fMP)\n"
+msgstr "Storlek: %s (%.1fMP)\n"
 
-msgid "Objects: %d"
-msgstr "Objekt: %d"
+msgid "Objects: %d\n"
+msgstr "Objekt: %d\n"
 
-msgid "Primitives: %d"
-msgstr "Primitiver: %d"
+msgid "Primitives: %d\n"
+msgstr "Primitiver: %d\n"
 
 msgid "Draw Calls: %d"
 msgstr "Ritanrop: %d"
@@ -11825,15 +11455,6 @@ msgstr ""
 msgid "SDFGI Probes"
 msgstr "SDFGI-sonder"
 
-msgid ""
-"Left-click a SDFGI probe to display its occlusion information (white = not "
-"occluded, red = fully occluded).\n"
-"Requires SDFGI to be enabled in Environment to have a visible effect."
-msgstr ""
-"Vänsterklicka på en SDFGI‑prob för att visa dess ocklusionsinformation (vitt "
-"= inte ockluderad, rött = helt ockluderad).\n"
-"Kräver att SDFGI är aktiverat i Environment för att ha synlig effekt."
-
 msgid "Scene Luminance"
 msgstr "Scen-luminans"
 
@@ -11981,12 +11602,6 @@ msgstr "Orbitmodifierare för viewport 1"
 msgid "Viewport Orbit Modifier 2"
 msgstr "Orbitmodifierare för viewport 2"
 
-msgid "Viewport Orbit Snap Modifier 1"
-msgstr "Viewport‑orbit‑snappmodifierare 1"
-
-msgid "Viewport Orbit Snap Modifier 2"
-msgstr "Viewport‑orbit‑snappmodifierare 2"
-
 msgid "Viewport Pan Modifier 1"
 msgstr "Panoreringsmodifierare för viewport 1"
 
@@ -12063,9 +11678,8 @@ msgid "View Rotation Locked"
 msgstr "Synvinkel låst"
 
 msgid ""
-"To zoom further, change the camera's clipping planes (View → Settings...)"
-msgstr ""
-"För att zooma längre, ändra kamerans klippningsplan (Visa → Inställningar...)"
+"To zoom further, change the camera's clipping planes (View -> Settings...)"
+msgstr "För att zooma längre, ändra kamerans avklippsplan (View -> Settings…)"
 
 msgid "Overriding material..."
 msgstr "Överskriver material…"
@@ -12110,8 +11724,8 @@ msgstr "Lägg till förhandsvisningssol i scenen"
 msgid "Add Preview Environment to Scene"
 msgstr "Lägg till förhandsvisningsmiljö i scenen"
 
-msgid "%s+Drag: Rotate selected node around pivot."
-msgstr "%s+Drag: Rotera vald nod kring pivot."
+msgid "Drag: Rotate selected node around pivot."
+msgstr "Dra: Rotera vald nod kring pivotpunkten."
 
 msgid "Alt+RMB: Show list of all nodes at position clicked, including locked."
 msgstr ""
@@ -12121,8 +11735,8 @@ msgstr ""
 msgid "(Available in all modes.)"
 msgstr "(Tillgänglig i alla lägen)"
 
-msgid "%s+Drag: Use snap."
-msgstr "%s+Drag: Använd snapp."
+msgid "Drag: Use snap."
+msgstr "Dra: Använd snäpp."
 
 msgid ""
 "Scene contains\n"
@@ -12184,8 +11798,8 @@ msgstr "Ställ in tonmappningen i förhandsvisningens miljö"
 msgid "Set Preview Environment Global Illumination"
 msgstr "Ställ in global belysning i förhandsvisningens miljö"
 
-msgid "Transform Mode"
-msgstr "Transformläge"
+msgid "Select Mode"
+msgstr "Välj läge"
 
 msgid "Move Mode"
 msgstr "Flyttläge"
@@ -12195,9 +11809,6 @@ msgstr "Roteringsläge"
 
 msgid "Scale Mode"
 msgstr "Skalningsläge"
-
-msgid "Select Mode"
-msgstr "Välj läge"
 
 msgid "Lock selected node, preventing selection and movement."
 msgstr "Lås vald nod för att förhindra markering och förflyttning."
@@ -12372,23 +11983,14 @@ msgstr "Konfigurera vy…"
 msgid "Snap Settings"
 msgstr "Snäppinställningar"
 
-msgid "Translate Snap"
-msgstr "Translate‑snapp"
-
 msgid "Translate Snap:"
 msgstr "Förflyttningssteg:"
 
-msgid "Rotate Snap"
-msgstr "Rotationssnapp"
+msgid "Rotate Snap (deg.):"
+msgstr "Rotationssteg (°):"
 
-msgid "Rotate Snap:"
-msgstr "Rotationssnapp:"
-
-msgid "Scale Snap"
-msgstr "Skalningssnapp"
-
-msgid "Scale Snap:"
-msgstr "Skalningssnapp:"
+msgid "Scale Snap (%):"
+msgstr "Skalsteg (%):"
 
 msgid "Viewport Settings"
 msgstr "Vyinställningar"
@@ -12764,13 +12366,6 @@ msgstr "Infoga nyckel (baserat på mask) för alla ben."
 msgid "Insert Key (All Bones)"
 msgstr "Infoga nyckel (alla ben)"
 
-msgid "Insert key (based on mask) for modified bones with an existing track."
-msgstr ""
-"Infoga nyckel (baserat på mask) för modifierade ben med ett befintligt spår."
-
-msgid "Insert new key (based on mask) for all modified bones."
-msgstr "Infoga ny nyckel (baserat på mask) för alla modifierade ben."
-
 msgid "Bone Transform"
 msgstr "Ben-transform"
 
@@ -12862,18 +12457,6 @@ msgstr "Ta bort horisontell stödlinje"
 msgid "Create Horizontal and Vertical Guides"
 msgstr "Skapa horisontella och vertikala stödlinjer"
 
-msgid "Add Node Here..."
-msgstr "Lägg till nod här..."
-
-msgid "Instantiate Scene Here..."
-msgstr "Instansiera scen här..."
-
-msgid "Paste Node(s) Here"
-msgstr "Klistra in nod(er) här"
-
-msgid "Move Node(s) Here"
-msgstr "Flytta nod(er) hit"
-
 msgid "Set CanvasItem \"%s\" Pivot Offset to (%d, %d)"
 msgstr "Sätt rotationsaxel-förskjutning för CanvasItem \"%s\" till (%d; %d)"
 
@@ -12904,6 +12487,18 @@ msgstr "Flytta %d CanvasItems"
 msgid "Move CanvasItem \"%s\" to (%d, %d)"
 msgstr "Flytta CanvasItem \"%s\" till (%d; %d)"
 
+msgid "Add Node Here..."
+msgstr "Lägg till nod här..."
+
+msgid "Instantiate Scene Here..."
+msgstr "Instansiera scen här..."
+
+msgid "Paste Node(s) Here"
+msgstr "Klistra in nod(er) här"
+
+msgid "Move Node(s) Here"
+msgstr "Flytta nod(er) hit"
+
 msgid "px"
 msgstr "px"
 
@@ -12919,8 +12514,8 @@ msgstr "Vrider:"
 msgid "Alt+Drag: Move selected node."
 msgstr "Alt+dra: Flytta vald nod."
 
-msgid "%s+Alt+Drag: Scale selected node."
-msgstr "%s+Alt+Dra: Skala vald nod."
+msgid "Alt+Drag: Scale selected node."
+msgstr "Alt+Dra: Skala om vald nod."
 
 msgid "V: Set selected node's pivot position."
 msgstr "V: Ställ in vald nods pivotpunkt."
@@ -13091,9 +12686,6 @@ msgstr "Centrera markering"
 
 msgid "Frame Selection"
 msgstr "Inrama markering"
-
-msgid "Auto Resample CanvasItems"
-msgstr "Auto‑resampla CanvasItems"
 
 msgid "Preview Canvas Scale"
 msgstr "Förhandsvisa canvas-skala"
@@ -13325,9 +12917,6 @@ msgstr "Redigera…"
 msgid "Go to Method"
 msgstr "Gå till metod"
 
-msgid "Select a single node or resource to edit its signals."
-msgstr "Välj en enskild nod eller resurs för att redigera dess signaler."
-
 msgid "Load Curve Preset"
 msgstr "Läs in kurvförinställning"
 
@@ -13387,9 +12976,6 @@ msgstr "Stäng alla flikar"
 
 msgid "Add a new scene."
 msgstr "Lägg till en ny scen."
-
-msgid "Show Opened Scenes List"
-msgstr "Visa lista över öppnade scener"
 
 msgid "Add Gradient Point"
 msgstr "Lägg till gradientpunkt"
@@ -14100,20 +13686,14 @@ msgstr ""
 "En typ som associerats med en inbyggd klass kan inte märkas som en variant av "
 "en annan typ."
 
-msgid "Theme"
-msgstr "Tema"
-
-msgid "Toggle Theme Dock"
-msgstr "Växla temapanel"
-
 msgid "Theme:"
 msgstr "Tema:"
 
 msgid "Manage Items..."
 msgstr "Hantera objekt..."
 
-msgid "Add, remove, organize, and import Theme items."
-msgstr "Lägg till, ta bort, organisera och importera temaposter."
+msgid "Add, remove, organize and import Theme items."
+msgstr "Lägg till, ta bort, organisera och importera temaobjekt."
 
 msgid "Add Preview"
 msgstr "Lägg till förhandsvisning"
@@ -14123,6 +13703,12 @@ msgstr "Standard-förhandsvisning"
 
 msgid "Select UI Scene:"
 msgstr "Välj UI-scen:"
+
+msgid "Theme"
+msgstr "Tema"
+
+msgid "Toggle Theme Bottom Panel"
+msgstr "Nedre tema-panel på/av"
 
 msgid ""
 "Toggle the control picker, allowing to visually select control types for edit."
@@ -14211,6 +13797,9 @@ msgstr "Läs in scenen på nytt för att återspegla dess senaste tillstånd."
 msgid "Preview is not available for this shader mode."
 msgstr "Förhandsvisning är inte tillgänglig för detta shader‑läge."
 
+msgid "Sphere"
+msgstr "Sfär"
+
 msgid "Box"
 msgstr "Box"
 
@@ -14298,6 +13887,9 @@ msgstr "Minsta antal siffror för räknaren."
 msgid "Post-Process"
 msgstr "Efterbehandling"
 
+msgid "Style"
+msgstr "Stil"
+
 msgid "PascalCase to snake_case"
 msgstr "PascalCase till snake_case"
 
@@ -14349,14 +13941,14 @@ msgstr "Resurs-urklipp är tomt!"
 msgid "Paste Resource"
 msgstr "Klistra in resurs"
 
+msgid "Load Resource"
+msgstr "Läs in resurs"
+
 msgid "ResourcePreloader"
 msgstr "ResourcePreloader"
 
-msgid "Toggle ResourcePreloader Dock"
-msgstr "Växla ResourcePreloader‑panel"
-
-msgid "Load Resource"
-msgstr "Läs in resurs"
+msgid "Toggle ResourcePreloader Bottom Panel"
+msgstr "Nedre resursförinläsning-panel på/av"
 
 msgid "Pick Root Node Type"
 msgstr "Välj rotnods-typ"
@@ -14565,9 +14157,6 @@ msgstr "Lägg till bildruta"
 msgid "Unable to load images"
 msgstr "Kunde inte läsa in bilder"
 
-msgid "(empty)"
-msgstr "(tom)"
-
 msgid "ERROR: Couldn't load frame resource!"
 msgstr "Fel: Kunde inte läsa in bildrute-resurs!"
 
@@ -14583,12 +14172,6 @@ msgstr "Lägg till tom"
 msgid "Move Frame"
 msgstr "Förflytta bildruta"
 
-msgid "Cut Animation"
-msgstr "Klipp animation"
-
-msgid "Paste Animation"
-msgstr "Klistra in animation"
-
 msgid "Delete Animation?"
 msgstr "Radera animation?"
 
@@ -14598,17 +14181,11 @@ msgstr "Ändra animationens bildfrekvens"
 msgid "Set Frame Duration"
 msgstr "Ställ in bildrute-tid"
 
-msgid "SpriteFrames"
-msgstr "SpriteFrames"
-
-msgid "Open SpriteFrames Dock"
-msgstr "Öppna SpriteFrames‑panel"
+msgid "(empty)"
+msgstr "(tom)"
 
 msgid "Animations:"
 msgstr "Animationer:"
-
-msgid "Copy Animation"
-msgstr "Kopiera animation"
 
 msgid "Delete Animation"
 msgstr "Radera animationer"
@@ -14624,6 +14201,21 @@ msgstr "Resursen har inga animationer."
 
 msgid "Animation Frames:"
 msgstr "Animationsbildrutor:"
+
+msgid "Play selected animation backwards from current pos. (A)"
+msgstr "Spela vald animation baklänges från nuvarande position. (A)"
+
+msgid "Play selected animation backwards from end. (Shift+A)"
+msgstr "Spela vald animation baklänges från slutet. (Skift+A)"
+
+msgid "Pause/stop animation playback. (S)"
+msgstr "Pausa uppspelning av animation. (S)"
+
+msgid "Play selected animation from start. (Shift+D)"
+msgstr "Spela vald animation från början. (Skift+D)"
+
+msgid "Play selected animation from current pos. (D)"
+msgstr "Spela vald animation från nuvarande position. (D)"
 
 msgid "Load Sheet"
 msgstr "Ladda ark"
@@ -14643,11 +14235,11 @@ msgstr "Bildrute-tid:"
 msgid "Zoom Reset"
 msgstr "Återställ zoom"
 
-msgid "Add Frame from File"
+msgid "Add frame from file"
 msgstr "Lägg till bildruta från fil"
 
-msgid "Add Frames from Sprite Sheet"
-msgstr "Lägg till bildrutor från sprite‑ark"
+msgid "Add frames from sprite sheet"
+msgstr "Lägg till bildrutor från spritesheet"
 
 msgid "Copy Frame(s)"
 msgstr "Kopiera bildrutor"
@@ -14709,9 +14301,6 @@ msgstr "Välj inga"
 msgid "Toggle Settings Panel"
 msgstr "Inställningspanel på/av"
 
-msgid "Zoom to Fit"
-msgstr "Zooma för att passa"
-
 msgid "Horizontal"
 msgstr "Vågrät"
 
@@ -14742,6 +14331,12 @@ msgstr "Autodela"
 msgid "Create Frames from Sprite Sheet"
 msgstr "Skapa bildrutor från spritesheet"
 
+msgid "SpriteFrames"
+msgstr "SpriteFrames"
+
+msgid "Toggle SpriteFrames Bottom Panel"
+msgstr "Nedre SpriteFrames-panel på/av"
+
 msgid "Toggle color channel preview selection."
 msgstr "Slå på/av förhandsvisning av vald färgkanal."
 
@@ -14763,11 +14358,11 @@ msgstr "Minne: %s"
 msgid "No Mipmaps"
 msgstr "Inga mipmaps"
 
-msgid "Set Margin"
-msgstr "Ställ in marginal"
-
 msgid "Set Region Rect"
 msgstr "Ställ in region-rektangel"
+
+msgid "Set Margin"
+msgstr "Ställ in marginal"
 
 msgid "Region Editor"
 msgstr "Region-redigerare"
@@ -14807,6 +14402,9 @@ msgstr "Redigera region"
 
 msgid "Write your logic in the _run() method."
 msgstr "Skriv din logik i _run()-metoden."
+
+msgid "The current scene already has a root node."
+msgstr "Den aktuella scenen har redan en rot-nod."
 
 msgid "Find in Files"
 msgstr "Sök i filer"
@@ -14857,21 +14455,11 @@ msgstr "Ersätt..."
 msgid "Replace in Files"
 msgstr "Ersätt i filer"
 
-msgid "Keep Results"
-msgstr "Behåll resultat"
-
-msgid "Keep these results and show subsequent results in a new window"
-msgstr ""
-"Behåll dessa resultat och visa efterföljande resultat i ett nytt fönster"
-
 msgid "Replace all (no undo)"
 msgstr "Ersätt alla (kan ej ångras)"
 
 msgid "Searching..."
 msgstr "Söker…"
-
-msgid "Replace all matches in file"
-msgstr "Ersätt alla träffar i fil"
 
 msgid "Remove result"
 msgstr "Ta bort resultat"
@@ -14884,9 +14472,6 @@ msgstr "%d träffar i %d fil"
 
 msgid "%d matches in %d files"
 msgstr "%d träffar i %d filer"
-
-msgid "Toggle Search Results Bottom Panel"
-msgstr "Nedre sökresultat-panel på/av"
 
 msgid "Path is empty."
 msgstr "Sökvägen är tom."
@@ -15170,6 +14755,9 @@ msgstr "Gå till nästa redigerade dokument."
 msgid "Discard"
 msgstr "Förkasta"
 
+msgid "Toggle Search Results Bottom Panel"
+msgstr "Nedre sökresultat-panel på/av"
+
 msgid "Script Editor"
 msgstr "Skriptredigerare"
 
@@ -15184,9 +14772,6 @@ msgstr "Öppna stängda skript igen"
 
 msgid "Clear Recent Scripts"
 msgstr "Rensa senaste skript"
-
-msgid "Replace in Files..."
-msgstr "Ersätt i filer…"
 
 msgid "Uppercase"
 msgstr "Versaler"
@@ -15332,6 +14917,9 @@ msgstr "Konvertera indrag till tabbar"
 msgid "Auto Indent"
 msgstr "Automatiskt indrag"
 
+msgid "Replace in Files..."
+msgstr "Ersätt i filer…"
+
 msgid "Contextual Help"
 msgstr "Kontextuell hjälp"
 
@@ -15420,6 +15008,9 @@ msgstr "Åtgärd"
 msgid "Deadzone"
 msgstr "Dödzon"
 
+msgid "Invalid name."
+msgstr "Ogiltigt namn."
+
 msgid "Must be a valid Unicode identifier."
 msgstr "Måste vara en giltig Unicode-identifierare."
 
@@ -15458,9 +15049,6 @@ msgstr "Arrangera om Autoloads"
 
 msgid "Can't add Autoload:"
 msgstr "Kan inte lägga till Autoload:"
-
-msgid "%s is an invalid name."
-msgstr "%s är ett ogiltigt namn."
 
 msgid "%s is an invalid path. File does not exist."
 msgstr "%s är en ogiltig sökväg. Filen finns inte."
@@ -15771,8 +15359,8 @@ msgstr "3D-redigerare"
 msgid "Scene Tree Editing"
 msgstr "Scenträdsredigering"
 
-msgid "Node Dock (deprecated)"
-msgstr "Nodpanel (föråldrad)"
+msgid "Node Dock"
+msgstr "Nod-flik"
 
 msgid "FileSystem Dock"
 msgstr "FileSystem-docka"
@@ -15785,12 +15373,6 @@ msgstr "Historik-flik"
 
 msgid "Game View"
 msgstr "Spelvy"
-
-msgid "Signals Dock"
-msgstr "Signalpanel"
-
-msgid "Groups Dock"
-msgstr "Grupperpanel"
 
 msgid "Allows to view and edit 3D scenes."
 msgstr "Tillåter 3D-scener att visas och redigeras."
@@ -15825,14 +15407,6 @@ msgstr "Ger en översikt över redigerarens- och varje scens ångringshistorik."
 
 msgid "Provides tools for selecting and debugging nodes at runtime."
 msgstr "Tillhandahåller verktyg för att välja och felsöka noder vid körning."
-
-msgid "Allows to work with signals of the node selected in the Scene dock."
-msgstr ""
-"Gör det möjligt att arbeta med signaler för den nod som valts i Scenpanelen."
-
-msgid "Allows to manage groups of the node selected in the Scene dock."
-msgstr ""
-"Gör det möjligt att hantera grupper för den nod som valts i Scenpanelen."
 
 msgid "(current)"
 msgstr "(aktuell)"
@@ -15916,11 +15490,11 @@ msgstr "Importera profil(er)"
 msgid "Manage Editor Feature Profiles"
 msgstr "Hantera redigerar-funktionsprofil"
 
-msgid "Select Existing Layout:"
+msgid "Select existing layout:"
 msgstr "Välj befintlig layout:"
 
-msgid "Or enter new layout name."
-msgstr "Eller ange nytt layoutnamn."
+msgid "Or enter new layout name"
+msgstr "Eller ange nytt layoutnamn"
 
 msgid "New layout name"
 msgstr "Nytt layoutnamn"
@@ -15952,9 +15526,6 @@ msgstr "Filtrera inställningar"
 msgid "Advanced Settings"
 msgstr "Avancerade inställningar"
 
-msgid "The Project Manager must be restarted for changes to take effect."
-msgstr "Projekt­hanteraren måste startas om för att ändringar ska börja gälla."
-
 msgid "The editor must be restarted for changes to take effect."
 msgstr "Redigeraren måste startas om för att ändringarna ska träda i kraft."
 
@@ -15964,8 +15535,8 @@ msgstr "Kortkommandon"
 msgid "Binding"
 msgstr "Bindning"
 
-msgid "Overridden in project"
-msgstr "Åsidosatt i projekt"
+msgid "Overridden in project: %s"
+msgstr "Överskrivet i projektet: %s"
 
 msgid "Go to the override in the Project Settings."
 msgstr "Gå till överskrivningen i Projektinställningar."
@@ -16208,14 +15779,11 @@ msgstr "N/A"
 msgid "Open Shader / Choose Location"
 msgstr "Öppna shader / välj plats"
 
-msgid "Invalid shader type selected."
-msgstr "Ogiltig skadertyp vald."
-
 msgid "Invalid base path."
 msgstr "Ogiltig grundsökväg."
 
-msgid "Invalid extension for selected shader type."
-msgstr "Ogiltig filändelse för vald skadertyp."
+msgid "Wrong extension chosen."
+msgstr "Fel filtillägg valt."
 
 msgid "Note: Built-in shaders can't be edited using an external editor."
 msgstr "Obs! Inbyggda skript kan inte redigeras med en extern redigerare."
@@ -16259,20 +15827,26 @@ msgstr "Läs in shaderfil..."
 msgid "Load Shader Include File..."
 msgstr "Läs in inkluderbar shaderfil..."
 
+msgid "Save File"
+msgstr "Spara fil"
+
 msgid "Open File in Inspector"
 msgstr "Öppna fil i Granskare"
 
 msgid "Inspect Native Shader Code..."
 msgstr "Kontrollera nativ shaderkod..."
 
-msgid "Copy Shader Path"
-msgstr "Kopiera skadersökväg"
+msgid "Close File"
+msgstr "Stäng fil"
 
 msgid "Shader Editor"
 msgstr "Shaderredigerare"
 
-msgid "Toggle Shader Editor Dock"
-msgstr "Växla skadereditorpanel"
+msgid "Make the shader editor floating."
+msgstr "Gör den här fliken flytande."
+
+msgid "Toggle Shader Editor Bottom Panel"
+msgstr "Nedre shaderredigerar-panel på/av"
 
 msgid "No valid shader stages found."
 msgstr "Inga giltiga shader-stadier hittades."
@@ -16290,8 +15864,8 @@ msgstr ""
 msgid "ShaderFile"
 msgstr "ShaderFile"
 
-msgid "Toggle ShaderFile Dock"
-msgstr "Växla ShaderFile-panel"
+msgid "Toggle ShaderFile Bottom Panel"
+msgstr "Nedre ShaderFile-panel på/av"
 
 msgid "Set Shader Global Variable"
 msgstr "Ställ in shader-globalvariabel"
@@ -16625,14 +16199,8 @@ msgstr "Kopiera parametrar från material"
 msgid "Paste Parameters To Material"
 msgstr "Klistra in parametrar till material"
 
-msgid "Forward+/Mobile"
-msgstr "Forward+/Mobil"
-
-msgid ""
-"Only supported in the Forward+ and Mobile rendering methods, not "
-"Compatibility."
-msgstr ""
-"Stöds endast i renderingsmetoderna Forward+ och Mobil, inte i Kompatibilitet."
+msgid "High-end node"
+msgstr "High end-nod"
 
 msgid "Create Shader Node"
 msgstr "Skapa shader-nod"
@@ -17632,22 +17200,6 @@ msgstr "Redigera visuell egenskap: %s"
 msgid "Visual Shader Mode Changed"
 msgstr "VisualShader-läge ändrat"
 
-msgid ""
-"Cannot convert VisualShader to GDShader because VisualShader has embedded "
-"subresources."
-msgstr ""
-"Kan inte konvertera VisualShader till GDShader eftersom VisualShader "
-"innehåller inbäddade delresurser."
-
-msgid ""
-"Visual Shader conversion cannot convert external dependencies. Resource "
-"references from Nodes will have to be rebound as ShaderParameters on a "
-"Material."
-msgstr ""
-"Konvertering av VisualShader kan inte konvertera externa beroenden. "
-"Resursreferenser från noder måste bindas om som ShaderParameters på ett "
-"material."
-
 msgctxt "Locale"
 msgid "Script:"
 msgstr "Skriftsystem:"
@@ -17701,12 +17253,6 @@ msgstr "Inaktivera förhandsgranskning av översättning"
 msgid "Previewing translation. Click to disable."
 msgstr "Förhandsgranskar översättningen. Klicka för att inaktivera."
 
-msgid "No Translations Configured"
-msgstr "Inga översättningar konfigurerade"
-
-msgid "You can add translations in the Project Settings."
-msgstr "Du kan lägga till översättningar i Projektinställningar."
-
 msgid "Add %d Translation"
 msgid_plural "Add %d Translations"
 msgstr[0] "Lägg till %d översättning"
@@ -17731,16 +17277,13 @@ msgstr "Ta bort resursersättning"
 msgid "Remove Resource Remap Option"
 msgstr "Ta bort resursersättnings-alternativ"
 
-msgid "Add %d file for template generation"
-msgid_plural "Add %d files for template generation"
-msgstr[0] "Lägg till %d fil för mallgenerering"
-msgstr[1] "Lägg till %d filer för mallgenerering"
+msgid "Add %d file for POT generation"
+msgid_plural "Add %d files for POT generation"
+msgstr[0] "Lägg till %d fil för POT-generering"
+msgstr[1] "Lägg till %d filer för POT-generering"
 
-msgid "Remove file from template generation"
-msgstr "Ta bort fil från mallgenerering"
-
-msgid "Rearrange Localization Items"
-msgstr "Ordna om lokaliseringsobjekt"
+msgid "Remove file from POT generation"
+msgstr "Ta bort fil från POT-generering"
 
 msgid "Removed"
 msgstr "Borttagen"
@@ -17763,21 +17306,21 @@ msgstr "Resurser:"
 msgid "Remaps by Locale:"
 msgstr "Ersättningar efter språkzon:"
 
-msgid "Template Generation"
-msgstr "Mallgenerering"
+msgid "POT Generation"
+msgstr "POT-generering"
 
 msgid "Files with translation strings:"
 msgstr "Filer med översättningssträngar:"
 
-msgid "Add Built-in Strings"
-msgstr "Lägg till inbyggda strängar"
+msgid "Generate POT"
+msgstr "Generera POT"
+
+msgid "Add Built-in Strings to POT"
+msgstr "Lägg till inbyggda strängar i POT"
 
 msgid "Add strings from built-in components such as certain Control nodes."
 msgstr ""
 "Lägg till strängar från inbyggda komponenter såsom vissa kontroll-noder."
-
-msgid "No translatable strings found."
-msgstr "Inga översättningsbara strängar hittades."
 
 msgid ""
 "No VCS plugins are available in the project. Install a VCS plugin to use VCS "
@@ -17816,14 +17359,14 @@ msgstr "Datum:"
 msgid "Subtitle:"
 msgstr "Undertext:"
 
-msgid "File:"
-msgstr "Fil:"
-
 msgid "Do you want to remove the %s branch?"
 msgstr "Vill du ta bort %s-grenen?"
 
 msgid "Do you want to remove the %s remote?"
 msgstr "Vill du ta bort %s-remoten?"
+
+msgid "Open Version Control Dock"
+msgstr "Öppna versionskontrolldocka"
 
 msgid "Toggle Version Control Bottom Panel"
 msgstr "Nedre versionshantering-panel på/av"
@@ -17872,9 +17415,6 @@ msgstr "Ange SSH privatnyckel-sökväg"
 
 msgid "SSH Passphrase"
 msgstr "SSH lösenfras"
-
-msgid "Open Version Control Dock"
-msgstr "Öppna versionskontrolldocka"
 
 msgid "Detect new changes"
 msgstr "Sök efter nya ändringar"
@@ -18110,8 +17650,8 @@ msgstr "Värde-argument är en tidigare friad instans."
 msgid "Export Scene to glTF 2.0 File"
 msgstr "Exportera scen till glTF 2.0-fil"
 
-msgid "Export Settings"
-msgstr "Exporteringsinställningar"
+msgid "Export Settings:"
+msgstr "Exportinställningar:"
 
 msgid "glTF 2.0 Scene..."
 msgstr "glTF 2.0-scen..."
@@ -18176,9 +17716,6 @@ msgstr "GridMap radera markering"
 
 msgid "GridMap Fill Selection"
 msgstr "GridMap fyll markering"
-
-msgid "GridMap Move Selection"
-msgstr "Flytta markering i GridMap"
 
 msgid "GridMap Paste Selection"
 msgstr "GridMap klistra in markering"
@@ -18286,14 +17823,14 @@ msgstr "Automatisk"
 msgid "Edit Transitions"
 msgstr "Redigera övergångar"
 
-msgid "Using any clip → %s."
-msgstr "Använder valfri klipp → %s."
+msgid "Using Any Clip -> %s."
+msgstr "Använd valfritt klipp -> %s."
 
-msgid "Using %s → Any clip."
-msgstr "Använder %s → valfritt clip."
+msgid "Using %s -> Any Clip."
+msgstr "Använd %s -> valfritt klipp."
 
-msgid "Using all clips → Any clip."
-msgstr "Använder alla clips → valfritt clip."
+msgid "Using All Clips -> Any Clip."
+msgstr "Använd alla klipp -> Valfritt klipp."
 
 msgid "No transition available."
 msgstr "Inga tillgängliga övergångar."
@@ -18455,28 +17992,25 @@ msgstr ""
 "Var vänlig installera .NET SDK 6.0 eller senare från https://"
 "dotnet.microsoft.com/en-us/download och starta om Godot."
 
-msgctxt "Network"
-msgid "Down"
-msgstr "Ned"
-
-msgctxt "Network"
-msgid "Up"
-msgstr "Upp"
-
 msgid "%d (%s)"
 msgstr "%d (%s)"
 
 msgid "%s/s"
 msgstr "%s/s"
 
+msgctxt "Network"
+msgid "Down"
+msgstr "Ned"
+
 msgid "Incoming Bandwidth"
 msgstr "Inkommande RPC"
 
+msgctxt "Network"
+msgid "Up"
+msgstr "Upp"
+
 msgid "Outgoing Bandwidth"
 msgstr "Utgående bandbredd"
-
-msgid "Node"
-msgstr "Nod"
 
 msgid "Incoming RPC"
 msgstr "Inkommande RPC"
@@ -18536,18 +18070,6 @@ msgstr ""
 "Lägg till egenskaper med alternativen ovan, eller\n"
 "dra in dem från Granskaren och släpp dem här."
 
-msgctxt "Replication Mode"
-msgid "Never"
-msgstr "Aldrig"
-
-msgctxt "Replication Mode"
-msgid "Always"
-msgstr "Alltid"
-
-msgctxt "Replication Mode"
-msgid "On Change"
-msgstr "Vid ändring"
-
 msgid "Please select a MultiplayerSynchronizer first."
 msgstr "Välj en MultiplayerSynchronizer först."
 
@@ -18578,6 +18100,18 @@ msgstr "Ta bort egenskap"
 
 msgid "Property of this type not supported."
 msgstr "Den här egenskapstypen stöds inte."
+
+msgctxt "Replication Mode"
+msgid "Never"
+msgstr "Aldrig"
+
+msgctxt "Replication Mode"
+msgid "Always"
+msgstr "Alltid"
+
+msgctxt "Replication Mode"
+msgid "On Change"
+msgstr "Vid ändring"
 
 msgid ""
 "A valid NodePath must be set in the \"Spawn Path\" property in order for "
@@ -18727,256 +18261,6 @@ msgstr "Bakar NavigationMesh ..."
 msgid "Toggles whether the noise preview is computed in 3D space."
 msgstr "Växla 3D-rymd-beräkning av brus-förhandsvisning."
 
-msgid "Classes"
-msgstr "Klasser"
-
-msgid "Filter Classes"
-msgstr "Filtrera klasser"
-
-msgid "A Count"
-msgstr "A Count"
-
-msgid "B Count"
-msgstr "B Count"
-
-msgid "Delta"
-msgstr "Delta"
-
-msgid "A: %s"
-msgstr "A: %s"
-
-msgid "B: %s"
-msgstr "B: %s"
-
-msgid "Objects"
-msgstr "Objekt"
-
-msgid "A Objects"
-msgstr "A Objekt"
-
-msgid "B Objects"
-msgstr "B Objekt"
-
-msgid "Nodes"
-msgstr "Noder"
-
-msgid "A Nodes"
-msgstr "A-noder"
-
-msgid "Combine Diff"
-msgstr "Kombinera Diff"
-
-msgid "B Nodes"
-msgstr "B-noder"
-
-msgid "Orphan Nodes"
-msgstr "Föräldralösa noder"
-
-msgid "Snapshot A"
-msgstr "Ögonblicksbild A"
-
-msgid "Snapshot B"
-msgstr "Ögonblicksbild B"
-
-msgid "Filter Objects"
-msgstr "Filterobjekt"
-
-msgid "Snapshot"
-msgstr "Ögonblicksbild"
-
-msgid "Inbound References"
-msgstr "Inkommande referenser"
-
-msgid "Outbound References"
-msgstr "Utgående referenser"
-
-msgid "Object's class"
-msgstr "Objektets klass"
-
-msgid "Object"
-msgstr "Objekt"
-
-msgid "Object's name"
-msgstr "Objektets namn"
-
-msgid "In"
-msgstr "I"
-
-msgid "Number of inbound references"
-msgstr "Antal inkommande referenser"
-
-msgid "Out"
-msgstr "Ut"
-
-msgid "Number of outbound references"
-msgstr "Antal utgående referenser"
-
-msgid "A"
-msgstr "A"
-
-msgid "Other object referencing this object"
-msgstr "Annat objekt som refererar till detta objekt"
-
-msgid "Property of other object referencing this object"
-msgstr "Egenskap hos annat objekt som refererar till detta objekt"
-
-msgid "Property of this object referencing other object"
-msgstr "Egenskap hos detta objekt som refererar till annat objekt"
-
-msgid "Other object being referenced"
-msgstr "Annat objekt som refereras"
-
-msgid "RefCounted"
-msgstr "RefCounted"
-
-msgid "Filter RefCounteds"
-msgstr "Filtrera RefCounteds"
-
-msgid "Native Refs"
-msgstr "Inbyggda Refs"
-
-msgid "ObjectDB Refs"
-msgstr "ObjectDB-referenser"
-
-msgid "Total Refs"
-msgstr "Totala Refs"
-
-msgid "ObjectDB Cycles"
-msgstr "ObjectDB-cykler"
-
-msgid "References not owned by the ObjectDB"
-msgstr "Referenser som inte ägs av ObjectDB"
-
-msgid "References owned by the ObjectDB"
-msgstr "Referenser som ägs av ObjectDB"
-
-msgid "ObjectDB References + Native References"
-msgstr "ObjectDB‑referenser + inbyggda referenser"
-
-msgid "Cycles detected in the ObjectDB"
-msgstr "Cykler upptäckta i ObjectDB"
-
-msgid "Native References: %d"
-msgstr "Inhemska referenser: %d"
-
-msgid "ObjectDB References: %d"
-msgstr "ObjectDB‑referenser: %d"
-
-msgid "Total References: %d"
-msgstr "Totalt antal referenser: %d"
-
-msgid "ObjectDB Cycles: %d"
-msgstr "ObjectDB-cykler: %d"
-
-msgid "[center]ObjectDB References[center]"
-msgstr "[center]ObjectDB-referenser[center]"
-
-msgid "Duplicate?"
-msgstr "Duplicera?"
-
-msgid ""
-"Was the same reference returned by multiple getters on the source object?"
-msgstr "Returnerades samma referens av flera getters på källobjektet?"
-
-msgid "Sort By %s (Ascending)"
-msgstr "Sortera efter %s (stigande)"
-
-msgid "Sort By %s (Descending)"
-msgstr "Sortera efter %s (fallande)"
-
-msgid "Summary"
-msgstr "Summering"
-
-msgid "ObjectDB Snapshot Summary"
-msgstr "Sammanfattning av ObjectDB‑ögonblicksbild"
-
-msgid "Press 'Take ObjectDB Snapshot' to snapshot the ObjectDB."
-msgstr ""
-"Tryck på 'Ta ObjectDB‑ögonblicksbild' för att ta en ögonblicksbild av "
-"ObjectDB."
-
-msgid ""
-"Memory in Godot is either owned natively by the engine or owned by the "
-"ObjectDB."
-msgstr "Minnet i Godot ägs antingen inbyggt av motorn eller av ObjectDB."
-
-msgid "ObjectDB Snapshots capture only memory owned by the ObjectDB."
-msgstr "ObjectDB‑ögonblicksbilder fångar endast minne som ägs av ObjectDB."
-
-msgid "Overview"
-msgstr "Översikt"
-
-msgid "RefCounteds"
-msgstr "RefCounteds"
-
-msgid "Timestamp:"
-msgstr "Tidstämpel:"
-
-msgid "Game Version:"
-msgstr "Spelversion:"
-
-msgid "Editor Version:"
-msgstr "Editorversion:"
-
-msgid "Memory Used:"
-msgstr "Minne använt:"
-
-msgid "Max Memory Used:"
-msgstr "Maximalt använt minne:"
-
-msgid "Total Objects:"
-msgstr "Totalt antal objekt:"
-
-msgid "Total Nodes:"
-msgstr "Totalt antal noder:"
-
-msgid ""
-"Multiple root nodes [i](possible call to 'remove_child' without 'queue_free')"
-"[/i]"
-msgstr ""
-"Flera rotnoder [i](möjligt anrop till ’remove_child’ utan ’queue_free’)[/i]"
-
-msgid ""
-"RefCounted objects only referenced in cycles [i](cycles often indicate a "
-"memory leaks)[/i]"
-msgstr ""
-"RefCounted‑objekt refereras endast i cykler [i](cykler indikerar ofta "
-"minnesläckor)[/i]"
-
-msgid ""
-"Scripted objects not referenced by any other objects [i](unreferenced objects "
-"may indicate a memory leak)[/i]"
-msgstr ""
-"Scriptade objekt refereras inte av några andra objekt [i](orefererade objekt "
-"kan indikera en minnesläcka)[/i]"
-
-msgid "Generating Snapshot"
-msgstr "Genererar ögonblicksbild"
-
-msgid "Receiving Snapshot (0/%s MiB)"
-msgstr "Tar emot ögonblicksbild (0/%s MiB)"
-
-msgid "Receiving Snapshot (%s/%s MiB)"
-msgstr "Tar emot ögonblicksbild (%s/%s MiB)"
-
-msgid "Visualizing Snapshot"
-msgstr "Visualiserar ögonblicksbild"
-
-msgid "Take ObjectDB Snapshot"
-msgstr "Ta ObjectDB‑ögonblicksbild"
-
-msgid "Invalid snapshot name."
-msgstr "Ogiltigt namn på ögonblicksbild."
-
-msgid "Snapshot rename failed"
-msgstr "Bytet av namn på ögonblicksbild misslyckades"
-
-msgid "ObjectDB Profiler"
-msgstr "ObjectDB‑profilerare"
-
-msgid "Diff Against:"
-msgstr "Jämför med:"
-
 msgid "Rename Action"
 msgstr "Byt namn på åtgärd"
 
@@ -19031,12 +18315,6 @@ msgstr "OpenXR-åtgärdskarta:"
 
 msgid "Remove interaction profile"
 msgstr "Ta bort interaktionsprofil"
-
-msgid "OpenXR Action Map"
-msgstr "OpenXR-åtgärdskarta"
-
-msgid "Toggle OpenXR Action Map Dock"
-msgstr "Växla OpenXR‑åtgardskartsdocka"
 
 msgid "Add Action Set"
 msgstr "Lägg till åtgärds-sätt"
@@ -19120,6 +18398,12 @@ msgstr ""
 msgid "Binding modifiers for:"
 msgstr "Bindningsmodifierare för:"
 
+msgid "OpenXR Action Map"
+msgstr "OpenXR-åtgärdskarta"
+
+msgid "Toggle OpenXR Action Map Bottom Panel"
+msgstr "Nedre OpenXR-åtgärdskarta-panel på/av"
+
 msgid "Remove action from interaction profile"
 msgstr "Ta bort åtgärd från interaktionsprofil"
 
@@ -19195,24 +18479,6 @@ msgstr ""
 msgid "OpenXR visibility mask must have an XRCamera3D node as their parent."
 msgstr "OpenXR-kompositionslager måste ha en XROrigin3D-nod som sin förälder."
 
-msgid "Building Android Project (gradle)"
-msgstr "Bygger Android projekt (gradle)"
-
-msgid "> Connecting to Gradle Build Environment..."
-msgstr "> Ansluter till Gradle‑byggmiljö..."
-
-msgid "Unable to connect to Gradle Build Environment service"
-msgstr "Det går inte att ansluta till tjänsten för Gradle‑byggmiljö"
-
-msgid "> Starting Gradle build..."
-msgstr "> Startar Gradle‑bygge..."
-
-msgid "Failed to execute Gradle command"
-msgstr "Misslyckades med att köra Gradle‑kommando"
-
-msgid "> Copying Gradle artifacts..."
-msgstr "> Kopierar Gradle‑artefakter..."
-
 msgid "Package name is missing."
 msgstr "Packetnamnet saknas."
 
@@ -19245,10 +18511,6 @@ msgstr "\"Använd Gradle Build\" krävs för att aktivera \"Drag för att stäng
 
 msgid "\"Use Gradle Build\" must be enabled to use the plugins."
 msgstr "\"Use Gradle Build\" måste vara på för att använda pluginnen."
-
-msgid "Support for \"Use Gradle Build\" on Android is currently experimental."
-msgstr ""
-"Stöd för ”Använd Gradle‑bygge” på Android är för närvarande experimentellt."
 
 msgid ""
 "\"Compress Native Libraries\" is only valid when \"Use Gradle Build\" is "
@@ -19308,16 +18570,6 @@ msgstr ""
 "\"Use Gradle Build\" måste vara aktiverat för att avaktivera \"Show In App "
 "Library\"."
 
-msgid "Mirror Android devices"
-msgstr "Spegla Android‑enheter"
-
-msgid ""
-"If enabled, \"scrcpy\" is used to start the project and automatically stream "
-"device display (or virtual display) content."
-msgstr ""
-"Om aktiverat används ”scrcpy” för att starta projektet och automatiskt "
-"strömma enhetens skärminnehåll (eller virtuellt skärminnehåll)."
-
 msgid "Exporting APK..."
 msgstr "Exporterar APK..."
 
@@ -19332,13 +18584,6 @@ msgstr "Kunde inte installera på enhet: %s"
 
 msgid "Running on device..."
 msgstr "Kör på enhet..."
-
-msgid ""
-"Could not start scrcpy executable. Configure scrcpy path in the Editor "
-"Settings (Export > Android > scrcpy > Path)."
-msgstr ""
-"Kunde inte starta scrcpy‑programfilen. Konfigurera sökvägen till scrcpy i "
-"Editorinställningar (Export > Android > scrcpy > Path)."
 
 msgid "Could not execute on device."
 msgstr "Kunde inte köra på enhet."
@@ -19366,6 +18611,9 @@ msgstr ""
 
 msgid "Exporting to Android when using C#/.NET is experimental."
 msgstr "Export till Android med C#/.NET är experimentellt."
+
+msgid "Gradle build is not supported for the Android editor."
+msgstr "Gradle-bygget stöds inte för Android-redigeraren."
 
 msgid "Custom Android source template not found."
 msgstr "Anpassat Android-källmall hittades inte."
@@ -19570,6 +18818,9 @@ msgstr "Kunde inte exportera projektfiler till ett gradle projekt."
 msgid "Could not write expansion package file!"
 msgstr "Kunde inte skriva expansionspaketfil!"
 
+msgid "Building Android Project (gradle)"
+msgstr "Bygger Android projekt (gradle)"
+
 msgid "Building of Android project failed, check output for the error:"
 msgstr "Bygget av Android-projektet misslyckades, se utmatningen för fel:"
 
@@ -19699,9 +18950,6 @@ msgstr "Laddar upp skript..."
 msgid "Starting project..."
 msgstr "Startar projekt..."
 
-msgid "All Files"
-msgstr "Alla Filer (*)"
-
 msgid "Invalid bundle identifier:"
 msgstr "Ogiltig paketidentifierare:"
 
@@ -19788,21 +19036,6 @@ msgid "Photo library access is enabled, but usage description is not specified."
 msgstr ""
 "Fotobiblioteksåtkomst är påslagen, men användningsbeskrivning är inte "
 "specificerad."
-
-msgid "Liquid Glass Icons"
-msgstr "Ikoner i flytande glas"
-
-msgid "Could not start 'actool' executable."
-msgstr "Kunde inte starta 'actool'‑programfilen."
-
-msgid "Could not read 'actool' version."
-msgstr "Kunde inte läsa versionen av 'actool'."
-
-msgid "At least version 26.0 of 'actool' is required (version %f found)."
-msgstr "Minst version 26.0 av 'actool' krävs (version %f hittades)."
-
-msgid "Could not export liquid glass icon:"
-msgstr "Kunde inte exportera ikon i flytande glas:"
 
 msgid "Notarization"
 msgstr "Notarisering"
@@ -20249,10 +19482,10 @@ msgstr ""
 "påslaget."
 
 msgid ""
-"Particle trails are only available when using the Forward+ or Mobile renderer."
+"Particle trails are only available when using the Forward+ or Mobile "
+"renderers."
 msgstr ""
-"Partikelspår är endast tillgängliga när Forward+‑ eller Mobile‑renderaren "
-"används."
+"Partikelspår är bara tillgängliga med Forward+ eller mobil renderings-backend."
 
 msgid ""
 "Particle sub-emitters are not available when using the Compatibility renderer."
@@ -20537,9 +19770,9 @@ msgstr ""
 "CPUParticles3D-animation kräver ett StandardMaterial3D vars billboardläge "
 "ställts in till \"Partikelbillboard\"."
 
-msgid "Decals are only available when using the Forward+ or Mobile renderer."
+msgid "Decals are only available when using the Forward+ or Mobile renderers."
 msgstr ""
-"Dekaler är endast tillgängliga när Forward+‑ eller Mobile‑renderaren används."
+"Dekaler är bara tillgängliga med Forward+ eller mobil renderings-backend."
 
 msgid ""
 "The decal has no textures loaded into any of its texture properties, and will "
@@ -20612,10 +19845,10 @@ msgstr ""
 
 msgid ""
 "Particle sub-emitters are only available when using the Forward+ or Mobile "
-"renderer."
+"renderers."
 msgstr ""
-"Partikel‑subemitterare är endast tillgängliga när Forward+‑ eller "
-"Mobile‑renderaren används."
+"Partikel-under-utstrålare är endast tillgängliga när renderarna Forward+ "
+"eller Mobile används."
 
 msgid ""
 "The Bake Mask has no bits enabled, which means baking will not produce any "
@@ -20625,12 +19858,6 @@ msgstr ""
 "Bakmasken har inga bit:ar påslagna, och bakning kommer därför inte att "
 "producera någon kollision för den här GPUParticlesCollisionSDF3D.\n"
 "Slå på minst en bit i bakmask-egenskapen för att lösa det här."
-
-msgid ""
-"Detecting settings with no target set! IterateIK3D must have a target to work."
-msgstr ""
-"Upptäcker inställningar utan angivet mål! IterateIK3D måste ha ett mål för "
-"att fungera."
 
 msgid "A light's scale does not affect the visual size of the light."
 msgstr "En ljuskällas skala påverkar inte den visuella storleken av ljuset."
@@ -20976,12 +20203,6 @@ msgstr ""
 "Skeleton3D‑nod är inte angiven! SkeletonModifier3D måste vara ett underordnat "
 "objekt till Skeleton3D."
 
-msgid ""
-"Detecting settings with no Path3D set! SplineIK3D must have a Path3D to work."
-msgstr ""
-"Upptäcker inställningar utan angiven Path3D! SplineIK3D måste ha en Path3D "
-"för att fungera."
-
 msgid "Parent node should be a SpringBoneSimulator3D node."
 msgstr "Överordnad nod bör vara en SpringBoneSimulator3D‑nod."
 
@@ -20991,19 +20212,6 @@ msgid ""
 msgstr ""
 "En SpriteFrames‑resurs måste skapas eller anges i egenskapen ”Sprite Frames” "
 "för att AnimatedSprite3D ska kunna visa bildrutor."
-
-msgid ""
-"Detecting settings with no target set! TwoBoneIK3D must have a target to work."
-msgstr ""
-"Upptäcker inställningar utan angivet mål! TwoBoneIK3D måste ha ett mål för "
-"att fungera."
-
-msgid ""
-"Detecting settings with no pole target set! TwoBoneIK3D must have a pole "
-"target to work."
-msgstr ""
-"Upptäcker inställningar utan angivet polmål! TwoBoneIK3D måste ha ett polmål "
-"för att fungera."
 
 msgid ""
 "The GeometryInstance3D visibility range's End distance is set to a non-zero "
@@ -21039,17 +20247,17 @@ msgstr ""
 
 msgid ""
 "GeometryInstance3D transparency is only available when using the Forward+ "
-"renderer."
+"rendering method."
 msgstr ""
-"GeometryInstance3D‑transparens är endast tillgänglig när Forward+‑renderaren "
-"används."
+"GeometryInstance3D‑transparens är endast tillgänglig när "
+"Forward+‑renderingsmetoden används."
 
 msgid ""
 "GeometryInstance3D visibility range transparency fade is only available when "
-"using the Forward+ renderer."
+"using the Forward+ rendering method."
 msgstr ""
-"GeometryInstance3D‑synlighetsområdets transparensavtoning är endast "
-"tillgänglig när Forward+‑renderaren används."
+"GeometryInstance3D visibility range transparency fade är endast tillgänglig "
+"när Forward+‑renderingsmetoden används."
 
 msgid "Plotting Meshes"
 msgstr "Plotta mesh‑objekt"
@@ -21133,13 +20341,6 @@ msgid "XROrigin3D requires an XRCamera3D child node."
 msgstr "XROrigin3D kräver en XRCamera3D‑barnnod."
 
 msgid ""
-"Changing the scale on the XROrigin3D node is not supported. Change the World "
-"Scale instead."
-msgstr ""
-"Att ändra skalningen på noden **XROrigin3D** stöds inte. Ändra **World "
-"Scale** i stället."
-
-msgid ""
 "XR shaders are not enabled in project settings. Stereoscopic output is not "
 "supported unless they are enabled. Please enable `xr/shaders/enabled` to use "
 "stereoscopic output."
@@ -21162,24 +20363,6 @@ msgstr "Inget anslutet till inmatning '%s' av nod '%s'."
 
 msgid "No root AnimationNode for the graph is set."
 msgstr "Ingen rot‑AnimationNode har angetts för grafen."
-
-msgid ""
-"The AnimationTree is inactive.\n"
-"Activate it in the inspector to enable playback; check node warnings if "
-"activation fails."
-msgstr ""
-"AnimationTree är inaktiv.\n"
-"Aktivera den i inspektorn för att möjliggöra uppspelning; kontrollera "
-"nodvarningar om aktivering misslyckas."
-
-msgid ""
-"The AnimationTree node (or one of its parents) has its process mode set to "
-"Disabled.\n"
-"Change the process mode in the inspector to allow playback."
-msgstr ""
-"AnimationTree‑noden (eller någon av dess föräldrar) har sitt processläge satt "
-"till Inaktiverad.\n"
-"Ändra processläget i inspektorn för att tillåta uppspelning."
 
 msgid ""
 "ButtonGroup is intended to be used only with buttons that have toggle_mode "
@@ -21240,6 +20423,15 @@ msgid "%s can not be dropped here. Use %s to cancel."
 msgstr "%s kan inte släppas här. Använd %s för att avbryta."
 
 msgid ""
+"Please be aware that GraphEdit and GraphNode will undergo extensive "
+"refactoring in a future 4.x version involving compatibility-breaking API "
+"changes."
+msgstr ""
+"Observera att GraphEdit och GraphNode kommer att genomgå omfattande "
+"omstrukturering i en framtida 4.x‑version, vilket innebär API‑ändringar som "
+"bryter kompatibilitet."
+
+msgid ""
 "Labels with autowrapping enabled must have a custom minimum size configured "
 "to work correctly inside a container."
 msgstr ""
@@ -21252,14 +20444,6 @@ msgid ""
 msgstr ""
 "Det aktuella typsnittet stöder inte återgivning av ett eller flera tecken som "
 "används i denna Label‑texts innehåll."
-
-msgid ""
-"MSDF font pixel range is too small, some outlines/shadows will not render. "
-"Set MSDF pixel range to be at least %d to render all outlines/shadows."
-msgstr ""
-"MSDF‑typsnittets pixelomfång är för litet, vissa konturer/skuggor kommer inte "
-"att renderas. Ställ in MSDF‑pixelomfånget till minst %d för att rendera alla "
-"konturer/skuggor."
 
 msgid ""
 "The current theme style has shadows and/or rounded corners for popups, but "
@@ -21285,9 +20469,6 @@ msgstr ""
 "ScrollContainer är avsedd att fungera med en enda underordnad kontroll.\n"
 "Använd en container som underordnad kontroll (VBox, HBox, etc.) eller en "
 "kontroll och ange den anpassade minimistorleken manuellt."
-
-msgid "Drag to resize"
-msgstr "Dra för att ändra storlek"
 
 msgid ""
 "This node doesn't have a SubViewport as child, so it can't display its "
@@ -21663,22 +20844,13 @@ msgid "Varying '%s' cannot be passed for the '%s' parameter in that context."
 msgstr "Varying '%s' kan inte skickas som parameter '%s' i det sammanhanget."
 
 msgid ""
-"Unable to pass a multiview texture sampler as a parameter to a custom "
-"function. Consider sampling it in the main function and then passing the "
-"vector result to the custom function."
+"Unable to pass a multiview texture sampler as a parameter to custom function. "
+"Consider to sample it in the main function and then pass the vector result to "
+"it."
 msgstr ""
-"Det går inte att skicka en multiview‑texturesampler som parameter till en "
-"anpassad funktion. Överväg att sampla den i huvudfunktionen och sedan skicka "
-"vektorresultatet till den anpassade funktionen."
-
-msgid ""
-"Unable to pass RADIANCE texture sampler as a parameter to a custom function. "
-"Consider sampling it in the main function and then passing the vector result "
-"to the custom function."
-msgstr ""
-"Det går inte att skicka en **RADIANCE‑texturesampler** som parameter till en "
-"anpassad funktion. Överväg att sampla den i huvudfunktionen och sedan skicka "
-"vektorresultatet till den anpassade funktionen."
+"Det går inte att skicka en multiview‑texture‑sampler som parameter till en "
+"egen funktion. Överväg att sampla den i main‑funktionen och sedan skicka "
+"vektorresultatet dit."
 
 msgid "Unknown identifier in expression: '%s'."
 msgstr "Okänd identifierare i uttrycket: '%s'."

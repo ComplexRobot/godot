@@ -344,9 +344,8 @@ void ExtendGDScriptParser::parse_class_symbol(const GDScriptParser::ClassNode *p
 					if (res.is_valid() && !res->get_path().is_empty()) {
 						value_text = "preload(\"" + res->get_path() + "\")";
 						if (symbol.documentation.is_empty()) {
-							ExtendGDScriptParser *parser = GDScriptLanguageProtocol::get_singleton()->get_parse_result(res->get_path());
-							if (parser) {
-								symbol.documentation = parser->class_symbol.documentation;
+							if (HashMap<String, ExtendGDScriptParser *>::Iterator S = GDScriptLanguageProtocol::get_singleton()->get_workspace()->scripts.find(res->get_path())) {
+								symbol.documentation = S->value->class_symbol.documentation;
 							}
 						}
 					} else {
@@ -668,12 +667,6 @@ String ExtendGDScriptParser::get_text_for_lookup_symbol(const LSP::Position &p_c
 	int len = lines.size();
 	for (int i = 0; i < len; i++) {
 		if (i == p_cursor.line) {
-			// This code tries to insert the symbol into the preexisting code. Due to using a simple
-			// algorithm, the results might not always match the option semantically (e.g. different
-			// identifier name). This is fine because symbol lookup will prioritize the provided
-			// symbol name over the actual code. Establishing a syntactic target (e.g. identifier)
-			// is usually sufficient.
-
 			String line = lines[i];
 			String first_part = line.substr(0, p_cursor.character);
 			String last_part = line.substr(p_cursor.character, lines[i].length());
@@ -685,9 +678,6 @@ String ExtendGDScriptParser::get_text_for_lookup_symbol(const LSP::Position &p_c
 						first_part = line.substr(0, c);
 						first_part += p_symbol;
 						break;
-					} else if (c == 0) {
-						// No preexisting code that matches the option. Insert option in place.
-						first_part += p_symbol;
 					}
 				}
 			}
@@ -895,8 +885,8 @@ const Array &ExtendGDScriptParser::get_member_completions() {
 }
 
 Dictionary ExtendGDScriptParser::dump_function_api(const GDScriptParser::FunctionNode *p_func) const {
-	ERR_FAIL_NULL_V(p_func, Dictionary());
 	Dictionary func;
+	ERR_FAIL_NULL_V(p_func, func);
 	func["name"] = p_func->identifier->name;
 	func["return_type"] = p_func->get_datatype().to_string();
 	func["rpc_config"] = p_func->rpc_config;
@@ -919,8 +909,9 @@ Dictionary ExtendGDScriptParser::dump_function_api(const GDScriptParser::Functio
 }
 
 Dictionary ExtendGDScriptParser::dump_class_api(const GDScriptParser::ClassNode *p_class) const {
-	ERR_FAIL_NULL_V(p_class, Dictionary());
 	Dictionary class_api;
+
+	ERR_FAIL_NULL_V(p_class, class_api);
 
 	class_api["name"] = p_class->identifier != nullptr ? String(p_class->identifier->name) : String();
 	class_api["path"] = path;
@@ -1048,17 +1039,18 @@ Dictionary ExtendGDScriptParser::generate_api() const {
 	return api;
 }
 
-void ExtendGDScriptParser::parse(const String &p_code, const String &p_path) {
+Error ExtendGDScriptParser::parse(const String &p_code, const String &p_path) {
 	path = p_path;
 	lines = p_code.split("\n");
 
-	parse_result = GDScriptParser::parse(p_code, p_path, false);
+	Error err = GDScriptParser::parse(p_code, p_path, false);
 	GDScriptAnalyzer analyzer(this);
 
-	if (parse_result == OK) {
-		parse_result = analyzer.analyze();
+	if (err == OK) {
+		err = analyzer.analyze();
 	}
 	update_diagnostics();
 	update_symbols();
 	update_document_links(p_code);
+	return err;
 }

@@ -32,8 +32,6 @@
 
 #include "noise.h"
 
-#include "servers/rendering/rendering_server.h"
-
 NoiseTexture3D::NoiseTexture3D() {
 	noise = Ref<Noise>();
 
@@ -43,7 +41,7 @@ NoiseTexture3D::NoiseTexture3D() {
 NoiseTexture3D::~NoiseTexture3D() {
 	ERR_FAIL_NULL(RenderingServer::get_singleton());
 	if (texture.is_valid()) {
-		RS::get_singleton()->free_rid(texture);
+		RS::get_singleton()->free(texture);
 	}
 	if (noise_thread.is_started()) {
 		noise_thread.wait_to_finish();

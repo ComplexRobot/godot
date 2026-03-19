@@ -30,7 +30,6 @@
 
 #pragma once
 
-#include "scene/resources/gradient.h"
 #include "scene/resources/texture.h"
 
 class GradientTexture1D : public Texture2D {

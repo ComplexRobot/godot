@@ -31,7 +31,7 @@
 #include "audio_stream_polyphonic.h"
 #include "audio_stream_polyphonic.compat.inc"
 
-#include "servers/audio/audio_server.h"
+#include "servers/audio_server.h"
 
 constexpr uint64_t ID_MASK = 0xFFFFFFFF;
 constexpr uint64_t INDEX_SHIFT = 32;
@@ -255,7 +255,7 @@ AudioStreamPlaybackPolyphonic::ID AudioStreamPlaybackPolyphonic::play_stream(con
 				sp->bus = p_bus;
 
 				if (streams[i].stream_playback->get_sample_playback().is_valid()) {
-					AudioServer::get_singleton()->stop_playback_stream(streams[i].stream_playback);
+					AudioServer::get_singleton()->stop_playback_stream(sp);
 				}
 
 				streams[i].stream_playback->set_sample_playback(sp);

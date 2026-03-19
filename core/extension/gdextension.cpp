@@ -491,8 +491,6 @@ void GDExtension::_register_extension_class_internal(GDExtensionClassLibraryPtr 
 	}
 #endif
 
-	extension->gdextension.create_gdtype();
-
 	ClassDB::register_extension_class(&extension->gdextension);
 
 	if (p_extension_funcs->icon_path != nullptr) {
@@ -804,6 +802,9 @@ void GDExtension::_bind_methods() {
 	BIND_ENUM_CONSTANT(INITIALIZATION_LEVEL_EDITOR);
 }
 
+GDExtension::GDExtension() {
+}
+
 GDExtension::~GDExtension() {
 	if (is_library_open()) {
 		close_library();
@@ -887,7 +888,8 @@ bool GDExtensionResourceLoader::handles_type(const String &p_type) const {
 }
 
 String GDExtensionResourceLoader::get_resource_type(const String &p_path) const {
-	if (p_path.has_extension("gdextension")) {
+	String el = p_path.get_extension().to_lower();
+	if (el == "gdextension") {
 		return "GDExtension";
 	}
 	return "";
@@ -972,8 +974,6 @@ void GDExtension::_clear_extension(Extension *p_extension) {
 
 		obj->clear_internal_extension();
 	}
-
-	p_extension->gdextension.destroy_gdtype();
 }
 
 void GDExtension::track_instance_binding(Object *p_object) {

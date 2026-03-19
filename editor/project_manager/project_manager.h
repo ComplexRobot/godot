@@ -118,7 +118,6 @@ class ProjectManager : public Control {
 
 	void _show_about();
 	void _open_asset_library_confirmed();
-	void _project_list_menu_option(int p_option);
 
 	AcceptDialog *error_dialog = nullptr;
 
@@ -196,7 +195,6 @@ class ProjectManager : public Control {
 	void _rename_project();
 	void _duplicate_project();
 	void _duplicate_project_with_action(PostDuplicateAction p_action);
-	void _show_project_in_file_manager();
 	void _erase_project();
 	void _erase_missing_projects();
 	void _erase_project_confirm();

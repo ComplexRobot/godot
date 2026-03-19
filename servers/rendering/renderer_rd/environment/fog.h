@@ -35,7 +35,6 @@
 #include "servers/rendering/environment/renderer_fog.h"
 #include "servers/rendering/renderer_rd/cluster_builder_rd.h"
 #include "servers/rendering/renderer_rd/environment/gi.h"
-#include "servers/rendering/renderer_rd/pipeline_deferred_rd.h"
 #include "servers/rendering/renderer_rd/shaders/environment/volumetric_fog.glsl.gen.h"
 #include "servers/rendering/renderer_rd/shaders/environment/volumetric_fog_process.glsl.gen.h"
 #include "servers/rendering/renderer_rd/storage_rd/render_buffer_custom_data_rd.h"
@@ -182,9 +181,6 @@ private:
 			uint32_t temporal_frame;
 			float temporal_blend;
 
-			float sky_border_size[2];
-			float pad[2];
-
 			float cam_rotation[12];
 			float to_prev_view[16];
 			float radiance_inverse_xform[12];
@@ -193,7 +189,7 @@ private:
 		VolumetricFogProcessShaderRD process_shader;
 
 		RID process_shader_version;
-		PipelineDeferredRD process_pipelines[VOLUMETRIC_FOG_PROCESS_SHADER_MAX];
+		RID process_pipelines[VOLUMETRIC_FOG_PROCESS_SHADER_MAX];
 
 	} volumetric_fog;
 
@@ -203,7 +199,7 @@ private:
 		bool valid = false;
 		RID version;
 
-		PipelineDeferredRD pipeline;
+		RID pipeline;
 		Vector<ShaderCompiler::GeneratedCode::Texture> texture_uniforms;
 
 		Vector<uint32_t> ubo_offsets;
@@ -343,13 +339,13 @@ public:
 		~VolumetricFog();
 	};
 
-	void init_fog_shader(uint32_t p_max_directional_lights, int p_roughness_layers, bool p_is_using_radiance_octmap_array);
+	void init_fog_shader(uint32_t p_max_directional_lights, int p_roughness_layers, bool p_is_using_radiance_cubemap_array);
 	void free_fog_shader();
 
 	struct VolumetricFogSettings {
 		Vector2i rb_size;
 		double time;
-		bool is_using_radiance_octmap_array;
+		bool is_using_radiance_cubemap_array;
 		uint32_t max_cluster_elements;
 		bool volumetric_fog_filter_active;
 		RID shadow_sampler;

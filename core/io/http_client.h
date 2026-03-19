@@ -197,6 +197,7 @@ public:
 	virtual void set_http_proxy(const String &p_host, int p_port);
 	virtual void set_https_proxy(const String &p_host, int p_port);
 
+	HTTPClient() {}
 	virtual ~HTTPClient() {}
 };
 

@@ -49,7 +49,7 @@ class TextureLayeredEditor : public Control {
 	Label *info = nullptr;
 	Ref<TextureLayered> texture;
 
-	static inline Ref<Shader> shaders[3];
+	Ref<Shader> shaders[3];
 	Ref<ShaderMaterial> materials[3];
 
 	float x_rot = 0;
@@ -57,14 +57,12 @@ class TextureLayeredEditor : public Control {
 	Control *texture_rect = nullptr;
 
 	bool setting = false;
-	Vector2 original_mouse_pos;
-	bool use_rotation = false;
 
 	ColorChannelSelector *channel_selector = nullptr;
 
 	void _draw_outline();
 
-	void _make_materials();
+	void _make_shaders();
 	void _update_material(bool p_texture_changed);
 
 	void _layer_changed(double) {
@@ -87,9 +85,6 @@ protected:
 	virtual void gui_input(const Ref<InputEvent> &p_event) override;
 
 public:
-	static void init_shaders();
-	static void finish_shaders();
-
 	void edit(Ref<TextureLayered> p_texture);
 
 	TextureLayeredEditor();

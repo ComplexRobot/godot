@@ -48,6 +48,7 @@ protected:
 
 private:
 	Array find_symbols(const LSP::TextDocumentPositionParams &p_location, List<const LSP::DocumentSymbol *> &r_list);
+	LSP::TextDocumentItem load_document_item(const Variant &p_param);
 	void notify_client_show_symbol(const LSP::DocumentSymbol *symbol);
 
 public:
@@ -58,6 +59,7 @@ public:
 	void didSave(const Variant &p_param);
 
 	void reload_script(Ref<GDScript> p_to_reload_script);
+	void sync_script_content(const String &p_path, const String &p_content);
 	void show_native_symbol_in_editor(const String &p_symbol_id);
 
 	Variant nativeSymbol(const Dictionary &p_params);

@@ -799,6 +799,9 @@ private:
 
 	// local toggle for turning on and off thread safety in project settings
 	bool _thread_safe = BVH_THREAD_SAFE;
+
+public:
+	BVH_Manager() {}
 };
 
 #undef BVHTREE_CLASS

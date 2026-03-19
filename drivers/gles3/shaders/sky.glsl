@@ -59,18 +59,13 @@ layout(std140) uniform GlobalShaderUniformData { //ubo:1
 struct DirectionalLightData {
 	vec4 direction_energy;
 	vec4 color_size;
-	uint enabled_bake_mode;
-	float shadow_opacity;
-	float specular;
-	uint mask;
+	bool enabled;
 };
 
 layout(std140) uniform DirectionalLights { //ubo:4
 	DirectionalLightData data[MAX_DIRECTIONAL_LIGHT_DATA_STRUCTS];
 }
 directional_lights;
-
-#define DIRECTIONAL_LIGHT_ENABLED uint(1 << 0)
 
 /* clang-format off */
 
@@ -265,7 +260,7 @@ void main() {
 
 	color *= exposure;
 #ifdef APPLY_TONEMAPPING
-	color = apply_tonemapping(color);
+	color = apply_tonemapping(color, white);
 #endif
 	color = linear_to_srgb(color);
 

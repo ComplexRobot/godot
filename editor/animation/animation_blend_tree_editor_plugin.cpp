@@ -127,15 +127,6 @@ void AnimationNodeBlendTreeEditor::update_graph() {
 
 	visible_properties.clear();
 
-	// Store selected nodes before clearing the graph.
-	List<StringName> selected_nodes;
-	for (int i = 0; i < graph->get_child_count(); i++) {
-		GraphNode *gn = Object::cast_to<GraphNode>(graph->get_child(i));
-		if (gn && gn->is_selected()) {
-			selected_nodes.push_back(gn->get_name());
-		}
-	}
-
 	graph->set_scroll_offset(blend_tree->get_graph_offset() * EDSCALE);
 
 	graph->clear_connections();
@@ -313,17 +304,6 @@ void AnimationNodeBlendTreeEditor::update_graph() {
 	graph->set_minimap_opacity(graph_minimap_opacity);
 	float graph_lines_curvature = EDITOR_GET("editors/visual_editors/lines_curvature");
 	graph->set_connection_lines_curvature(graph_lines_curvature);
-
-	// Restore selected nodes after graph reconstruction.
-	for (const StringName &name : selected_nodes) {
-		for (int i = 0; i < graph->get_child_count(); i++) {
-			GraphNode *gn = Object::cast_to<GraphNode>(graph->get_child(i));
-			if (gn && gn->get_name() == name) {
-				gn->set_selected(true);
-				break;
-			}
-		}
-	}
 }
 
 void AnimationNodeBlendTreeEditor::_file_opened(const String &p_file) {
@@ -559,9 +539,6 @@ void AnimationNodeBlendTreeEditor::_delete_node_request(const String &p_which) {
 	undo_redo->add_do_method(this, "update_graph");
 	undo_redo->add_undo_method(this, "update_graph");
 	undo_redo->commit_action();
-
-	// Return selection to host BlendTree node.
-	EditorNode::get_singleton()->push_item(blend_tree.ptr(), "", true);
 }
 
 void AnimationNodeBlendTreeEditor::_delete_nodes_request(const TypedArray<StringName> &p_nodes) {
@@ -618,22 +595,6 @@ void AnimationNodeBlendTreeEditor::_node_selected(Object *p_node) {
 	ERR_FAIL_COND(anode.is_null());
 
 	EditorNode::get_singleton()->push_item(anode.ptr(), "", true);
-}
-
-void AnimationNodeBlendTreeEditor::_node_deselected(Object *p_node) {
-	// Check if no nodes are selected, return selection to host BlendTree node.
-	bool any_selected = false;
-	for (int i = 0; i < graph->get_child_count(); i++) {
-		GraphNode *gn = Object::cast_to<GraphNode>(graph->get_child(i));
-		if (gn && gn->is_selected()) {
-			any_selected = true;
-			break;
-		}
-	}
-
-	if (!any_selected) {
-		EditorNode::get_singleton()->push_item(blend_tree.ptr(), "", true);
-	}
 }
 
 void AnimationNodeBlendTreeEditor::_open_in_editor(const String &p_which) {
@@ -858,7 +819,7 @@ bool AnimationNodeBlendTreeEditor::_update_filters(const Ref<AnimationNode> &ano
 
 				if (base->has_node(accum)) {
 					Node *node = base->get_node(accum);
-					ti->set_icon(0, EditorNode::get_singleton()->get_object_icon(node));
+					ti->set_icon(0, EditorNode::get_singleton()->get_object_icon(node, "Node"));
 				}
 
 			} else {
@@ -982,7 +943,7 @@ void AnimationNodeBlendTreeEditor::_update_editor_settings() {
 
 void AnimationNodeBlendTreeEditor::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_READY: {
+		case NOTIFICATION_ENTER_TREE: {
 			_update_editor_settings();
 		} break;
 
@@ -1009,7 +970,11 @@ void AnimationNodeBlendTreeEditor::_notification(int p_what) {
 
 			String error;
 
-			error = tree->get_editor_error_message();
+			if (!tree->is_active()) {
+				error = TTR("AnimationTree is inactive.\nActivate to enable playback, check node warnings if activation fails.");
+			} else if (tree->is_state_invalid()) {
+				error = tree->get_invalid_state_reason();
+			}
 
 			if (error != error_label->get_text()) {
 				error_label->set_text(error);
@@ -1227,7 +1192,6 @@ AnimationNodeBlendTreeEditor::AnimationNodeBlendTreeEditor() {
 	graph->connect("connection_request", callable_mp(this, &AnimationNodeBlendTreeEditor::_connection_request), CONNECT_DEFERRED);
 	graph->connect("disconnection_request", callable_mp(this, &AnimationNodeBlendTreeEditor::_disconnection_request), CONNECT_DEFERRED);
 	graph->connect("node_selected", callable_mp(this, &AnimationNodeBlendTreeEditor::_node_selected));
-	graph->connect("node_deselected", callable_mp(this, &AnimationNodeBlendTreeEditor::_node_deselected));
 	graph->connect("scroll_offset_changed", callable_mp(this, &AnimationNodeBlendTreeEditor::_scroll_changed));
 	graph->connect("delete_nodes_request", callable_mp(this, &AnimationNodeBlendTreeEditor::_delete_nodes_request));
 	graph->connect("popup_request", callable_mp(this, &AnimationNodeBlendTreeEditor::_popup_request));

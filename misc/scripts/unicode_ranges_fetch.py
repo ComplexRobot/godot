@@ -4,11 +4,10 @@
 # the Unicode Character Database to the `char_range.inc` file.
 # NOTE: This script is deliberately not integrated into the build system;
 # you should run it manually whenever you want to update the data.
-from __future__ import annotations
 
 import os
 import sys
-from typing import Final
+from typing import Final, List, Set, Tuple
 from urllib.request import urlopen
 
 if __name__ == "__main__":
@@ -19,9 +18,9 @@ from methods import generate_copyright_header
 URL: Final[str] = "https://www.unicode.org/Public/16.0.0/ucd/Blocks.txt"
 
 
-ranges: list[tuple[str, str, str]] = []
+ranges: List[Tuple[str, str, str]] = []
 
-exclude_blocks: set[str] = {
+exclude_blocks: Set[str] = {
     "High Surrogates",
     "High Private Use Surrogates",
     "Low Surrogates",
@@ -34,13 +33,13 @@ exclude_blocks: set[str] = {
 
 
 def parse_unicode_data() -> None:
-    lines: list[str] = [line.decode("utf-8") for line in urlopen(URL)]
+    lines: List[str] = [line.decode("utf-8") for line in urlopen(URL)]
 
     for line in lines:
         if line.startswith("#") or not line.strip():
             continue
 
-        split_line: list[str] = line.split(";")
+        split_line: List[str] = line.split(";")
 
         char_range: str = split_line[0].strip()
         block: str = split_line[1].strip()
@@ -53,7 +52,7 @@ def parse_unicode_data() -> None:
         ranges.append((f"0x{range_start}", f"0x{range_end}", block))
 
 
-def make_array(array_name: str, ranges: list[tuple[str, str, str]]) -> str:
+def make_array(array_name: str, ranges: List[Tuple[str, str, str]]) -> str:
     result: str = f"static UniRange {array_name}[] = {{\n"
 
     for start, end, block in ranges:

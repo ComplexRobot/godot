@@ -37,7 +37,6 @@
 #include "scene/main/viewport.h"
 #include "scene/resources/curve_texture.h"
 #include "scene/resources/gradient_texture.h"
-#include "scene/resources/mesh.h"
 #include "scene/resources/particle_process_material.h"
 
 AABB CPUParticles3D::get_aabb() const {
@@ -1823,5 +1822,5 @@ CPUParticles3D::CPUParticles3D() {
 
 CPUParticles3D::~CPUParticles3D() {
 	ERR_FAIL_NULL(RenderingServer::get_singleton());
-	RS::get_singleton()->free_rid(multimesh);
+	RS::get_singleton()->free(multimesh);
 }

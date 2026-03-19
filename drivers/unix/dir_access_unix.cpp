@@ -52,10 +52,6 @@
 #include <mntent.h>
 #endif
 
-String DirAccessUnix::fix_path(const String &p_path) const {
-	return DirAccess::fix_path(p_path).simplify_path();
-}
-
 Error DirAccessUnix::list_dir_begin() {
 	list_dir_end(); //close any previous dir opening!
 

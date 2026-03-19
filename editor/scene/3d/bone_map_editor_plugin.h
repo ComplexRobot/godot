@@ -78,6 +78,7 @@ public:
 class BoneMapperItem : public VBoxContainer {
 	GDCLASS(BoneMapperItem, VBoxContainer);
 
+	int button_id = -1;
 	StringName profile_bone_name;
 
 	Ref<BoneMap> bone_map;

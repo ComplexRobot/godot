@@ -33,7 +33,6 @@
 #include "gdscript_lambda_callable.h"
 
 #include "core/os/os.h"
-#include "core/profiling/profiling.h"
 
 #ifdef DEBUG_ENABLED
 
@@ -412,7 +411,7 @@ void (*type_init_function_table[])(Variant *) = {
 		&&OPCODE_LINE,                                   \
 		&&OPCODE_END                                     \
 	};                                                   \
-	static_assert(std_size(switch_table_ops) == (OPCODE_END + 1), "Opcodes in jump table aren't the same as opcodes in enum.");
+	static_assert(std::size(switch_table_ops) == (OPCODE_END + 1), "Opcodes in jump table aren't the same as opcodes in enum.");
 
 #define OPCODE(m_op) \
 	m_op:
@@ -496,8 +495,6 @@ void (*type_init_function_table[])(Variant *) = {
 #define METHOD_CALL_ON_FREED_INSTANCE_ERROR(method_pointer) "Cannot call method '" + (method_pointer)->get_name() + "' on a previously freed instance."
 
 Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_args, int p_argcount, Callable::CallError &r_err, CallState *p_state) {
-	GodotProfileZoneScript(this, source, name, name, _initial_line);
-
 	OPCODES_TABLE;
 
 	if (!_code_ptr) {
@@ -578,7 +575,7 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 
 		const int non_vararg_arg_count = MIN(p_argcount, _argument_count);
 		for (int i = 0; i < non_vararg_arg_count; i++) {
-			if (!argument_types[i].has_type()) {
+			if (!argument_types[i].has_type) {
 				memnew_placement(&stack[i + FIXED_ADDRESSES_MAX], Variant(*p_args[i]));
 				continue;
 			}
@@ -1808,17 +1805,15 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 				const StringName native_type = _global_names_ptr[native_type_idx];
 
 				Array array;
-				array.set_typed(builtin_type, native_type, *script_type);
 				array.resize(argc);
 				for (int i = 0; i < argc; i++) {
-					// Use .set instead of operator[] to handle type conversion / validation.
-					array.set(i, *(instruction_args[i]));
+					array[i] = *(instruction_args[i]);
 				}
 
 				GET_INSTRUCTION_ARG(dst, argc);
 				*dst = Variant(); // Clear potential previous typed array.
 
-				*dst = array;
+				*dst = Array(array, builtin_type, native_type, *script_type);
 
 				ip += 4;
 			}
@@ -1832,7 +1827,7 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 
 				int argc = _code_ptr[ip + 1];
 				Dictionary dict;
-				dict.reserve(argc);
+
 				for (int i = 0; i < argc; i++) {
 					GET_INSTRUCTION_ARG(k, i * 2 + 0);
 					GET_INSTRUCTION_ARG(v, i * 2 + 1);
@@ -1869,20 +1864,18 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 				const StringName value_native_type = _global_names_ptr[value_native_type_idx];
 
 				Dictionary dict;
-				dict.set_typed(key_builtin_type, key_native_type, *key_script_type, value_builtin_type, value_native_type, *value_script_type);
-				dict.reserve(argc);
+
 				for (int i = 0; i < argc; i++) {
 					GET_INSTRUCTION_ARG(k, i * 2 + 0);
 					GET_INSTRUCTION_ARG(v, i * 2 + 1);
-					// Use .set instead of operator[] to handle type conversion / validation.
-					dict.set(*k, *v);
+					dict[*k] = *v;
 				}
 
 				GET_INSTRUCTION_ARG(dst, argc * 2);
 
 				*dst = Variant(); // Clear potential previous typed dictionary.
 
-				*dst = dict;
+				*dst = Dictionary(dict, key_builtin_type, key_native_type, *key_script_type, value_builtin_type, value_native_type, *value_script_type);
 
 				ip += 6;
 			}
@@ -1906,8 +1899,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 				int methodname_idx = _code_ptr[ip + 2];
 				GD_ERR_BREAK(methodname_idx < 0 || methodname_idx >= _global_names_count);
 				const StringName *methodname = &_global_names_ptr[methodname_idx];
-
-				GodotProfileZoneScriptSystemCall(methodname, source, name, *methodname, line);
 
 				GET_INSTRUCTION_ARG(base, argc);
 				Variant **argptrs = instruction_args;
@@ -2029,8 +2020,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 				GD_ERR_BREAK(_code_ptr[ip + 2] < 0 || _code_ptr[ip + 2] >= _methods_count);
 				MethodBind *method = _methods_ptr[_code_ptr[ip + 2]];
 
-				GodotProfileZoneScriptSystemCall(method, source, name, method->get_name(), line);
-
 				GET_INSTRUCTION_ARG(base, argc);
 
 #ifdef DEBUG_ENABLED
@@ -2116,8 +2105,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 				GD_ERR_BREAK(methodname_idx < 0 || methodname_idx >= _global_names_count);
 				const StringName *methodname = &_global_names_ptr[methodname_idx];
 
-				GodotProfileZoneScriptSystemCall(methodname, source, name, *methodname, line);
-
 				int argc = _code_ptr[ip + 3];
 				GD_ERR_BREAK(argc < 0);
 
@@ -2147,8 +2134,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 
 				GD_ERR_BREAK(_code_ptr[ip + 1] < 0 || _code_ptr[ip + 1] >= _methods_count);
 				MethodBind *method = _methods_ptr[_code_ptr[ip + 1]];
-
-				GodotProfileZoneScriptSystemCall(method, source, name, method->get_name(), line);
 
 				int argc = _code_ptr[ip + 2];
 				GD_ERR_BREAK(argc < 0);
@@ -2196,8 +2181,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 				GD_ERR_BREAK(_code_ptr[ip + 2] < 0 || _code_ptr[ip + 2] >= _methods_count);
 				MethodBind *method = _methods_ptr[_code_ptr[ip + 2]];
 
-				GodotProfileZoneScriptSystemCall(method, source, name, method->get_name(), line);
-
 				Variant **argptrs = instruction_args;
 
 #ifdef DEBUG_ENABLED
@@ -2234,8 +2217,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 				GD_ERR_BREAK(_code_ptr[ip + 2] < 0 || _code_ptr[ip + 2] >= _methods_count);
 				MethodBind *method = _methods_ptr[_code_ptr[ip + 2]];
 
-				GodotProfileZoneScriptSystemCall(method, source, name, method->get_name(), line);
-
 				Variant **argptrs = instruction_args;
 #ifdef DEBUG_ENABLED
 				uint64_t call_time = 0;
@@ -2271,8 +2252,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 
 				GD_ERR_BREAK(_code_ptr[ip + 2] < 0 || _code_ptr[ip + 2] >= _methods_count);
 				MethodBind *method = _methods_ptr[_code_ptr[ip + 2]];
-
-				GodotProfileZoneScriptSystemCall(method, source, name, method->get_name(), line);
 
 				GET_INSTRUCTION_ARG(base, argc);
 
@@ -2325,8 +2304,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 
 				GD_ERR_BREAK(_code_ptr[ip + 2] < 0 || _code_ptr[ip + 2] >= _methods_count);
 				MethodBind *method = _methods_ptr[_code_ptr[ip + 2]];
-
-				GodotProfileZoneScriptSystemCall(method, source, name, method->get_name(), line);
 
 				GET_INSTRUCTION_ARG(base, argc);
 #ifdef DEBUG_ENABLED
@@ -2498,8 +2475,6 @@ Variant GDScriptFunction::call(GDScriptInstance *p_instance, const Variant **p_a
 				}
 #endif
 				const StringName *methodname = &_global_names_ptr[self_fun];
-
-				GodotProfileZoneScriptSystemCall(methodname, source, name, *methodname, line);
 
 				Variant **argptrs = instruction_args;
 

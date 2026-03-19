@@ -34,11 +34,9 @@
 #include "editor/export/editor_export.h"
 
 class GDExtensionExportPlugin : public EditorExportPlugin {
-	GDSOFTCLASS(GDExtensionExportPlugin, EditorExportPlugin);
-
 protected:
-	virtual void _export_file(const String &p_path, const String &p_type, const HashSet<String> &p_features) override;
-	virtual String get_name() const override { return "GDExtension"; }
+	virtual void _export_file(const String &p_path, const String &p_type, const HashSet<String> &p_features);
+	virtual String get_name() const { return "GDExtension"; }
 };
 
 void GDExtensionExportPlugin::_export_file(const String &p_path, const String &p_type, const HashSet<String> &p_features) {

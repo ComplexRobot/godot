@@ -37,7 +37,6 @@
 #include "scene/3d/physics/joints/hinge_joint_3d.h"
 #include "scene/3d/physics/joints/pin_joint_3d.h"
 #include "scene/3d/physics/joints/slider_joint_3d.h"
-#include "scene/main/timer.h"
 
 #define BODY_A_RADIUS 0.25
 #define BODY_B_RADIUS 0.27
