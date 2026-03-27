@@ -32,6 +32,7 @@
 
 #ifdef GLES3_ENABLED
 
+#include "core/config/engine.h"
 #include "drivers/gles3/effects/copy_effects.h"
 #include "drivers/gles3/rasterizer_gles3.h"
 #include "drivers/gles3/rasterizer_util_gles3.h"
@@ -3345,7 +3346,7 @@ GLuint TextureStorage::render_target_get_depth(RID p_render_target) const {
 
 bool TextureStorage::render_target_get_depth_has_stencil(RID p_render_target) const {
 	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, 0);
+	ERR_FAIL_NULL_V(rt, false);
 
 	return rt->depth_has_stencil;
 }

@@ -30,6 +30,8 @@
 
 #include "animated_sprite_2d.h"
 
+#include "core/config/engine.h"
+#include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "scene/main/viewport.h"
 #include "servers/display/accessibility_server.h"
@@ -314,7 +316,6 @@ void AnimatedSprite2D::set_sprite_frames(const Ref<SpriteFrames> &p_frames) {
 	if (frames.is_valid()) {
 		frames->disconnect(CoreStringName(changed), callable_mp(this, &AnimatedSprite2D::_res_changed));
 	}
-	stop();
 	frames = p_frames;
 	if (frames.is_valid()) {
 		frames->connect(CoreStringName(changed), callable_mp(this, &AnimatedSprite2D::_res_changed));
@@ -333,6 +334,7 @@ void AnimatedSprite2D::set_sprite_frames(const Ref<SpriteFrames> &p_frames) {
 			}
 		}
 	}
+	stop();
 
 	notify_property_list_changed();
 	queue_redraw();
