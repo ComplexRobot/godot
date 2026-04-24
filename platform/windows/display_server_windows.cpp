@@ -125,6 +125,33 @@ static void track_mouse_leave_event(HWND hWnd) {
 	TrackMouseEvent(&tme);
 }
 
+static void update_ime_form_positions(HIMC p_himc, const Point2i &p_pos) {
+	if (p_himc == (HIMC) nullptr) {
+		return;
+	}
+
+	COMPOSITIONFORM cps = {};
+	cps.dwStyle = CFS_POINT;
+	cps.ptCurrentPos.x = p_pos.x;
+	cps.ptCurrentPos.y = p_pos.y;
+	ImmSetCompositionWindow(p_himc, &cps);
+
+	CANDIDATEFORM cf = {};
+	cf.dwIndex = 0;
+
+	cf.dwStyle = CFS_CANDIDATEPOS;
+	cf.ptCurrentPos.x = p_pos.x;
+	cf.ptCurrentPos.y = p_pos.y;
+	ImmSetCandidateWindow(p_himc, &cf);
+
+	cf.dwStyle = CFS_EXCLUDE;
+	cf.rcArea.left = p_pos.x;
+	cf.rcArea.right = p_pos.x;
+	cf.rcArea.top = p_pos.y;
+	cf.rcArea.bottom = p_pos.y;
+	ImmSetCandidateWindow(p_himc, &cf);
+}
+
 bool DisplayServerWindows::has_feature(DisplayServerEnums::Feature p_feature) const {
 	switch (p_feature) {
 #ifndef DISABLE_DEPRECATED
@@ -3197,11 +3224,7 @@ void DisplayServerWindows::window_set_ime_position(const Point2i &p_pos, Display
 		return;
 	}
 
-	COMPOSITIONFORM cps;
-	cps.dwStyle = CFS_POINT;
-	cps.ptCurrentPos.x = wd.im_position.x;
-	cps.ptCurrentPos.y = wd.im_position.y;
-	ImmSetCompositionWindow(himc, &cps);
+	update_ime_form_positions(himc, wd.im_position);
 	ImmReleaseContext(wd.hWnd, himc);
 }
 
@@ -3456,6 +3479,9 @@ DisplayServerWindows::ScreenHdrData DisplayServerWindows::_get_screen_hdr_data(D
 }
 
 void DisplayServerWindows::_winrt_adv_color_info_cb(DisplayServerEnums::WindowID p_id) {
+	if (!windows.has(p_id)) {
+		return;
+	}
 	WindowData &wd = windows[p_id];
 
 	DisplayServerWindows::ScreenHdrData data = _get_screen_hdr_data(p_id, true);
@@ -4746,6 +4772,7 @@ DisplayServerEnums::VSyncMode DisplayServerWindows::window_get_vsync_mode(Displa
 bool DisplayServerWindows::window_is_hdr_output_supported(DisplayServerEnums::WindowID p_window) const {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND_V(!windows.has(p_window), false);
 #if defined(RD_ENABLED)
 	if (rendering_device && !rendering_device->has_feature(RenderingDevice::Features::SUPPORTS_HDR_OUTPUT)) {
 		return false; // HDR output is not supported by the rendering device.
@@ -4760,6 +4787,7 @@ bool DisplayServerWindows::window_is_hdr_output_supported(DisplayServerEnums::Wi
 void DisplayServerWindows::window_request_hdr_output(const bool p_enable, DisplayServerEnums::WindowID p_window) {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND(!windows.has(p_window));
 #if defined(RD_ENABLED)
 	ERR_FAIL_COND_EDMSG(p_enable && (rendering_device && rendering_device->has_feature(RenderingDevice::Features::SUPPORTS_HDR_OUTPUT)) == false, "HDR output is not supported by the rendering device.");
 #endif
@@ -4774,6 +4802,7 @@ void DisplayServerWindows::window_request_hdr_output(const bool p_enable, Displa
 bool DisplayServerWindows::window_is_hdr_output_requested(DisplayServerEnums::WindowID p_window) const {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND_V(!windows.has(p_window), false);
 	const WindowData &wd = windows[p_window];
 	return wd.hdr_output_requested;
 }
@@ -4781,6 +4810,7 @@ bool DisplayServerWindows::window_is_hdr_output_requested(DisplayServerEnums::Wi
 bool DisplayServerWindows::window_is_hdr_output_enabled(DisplayServerEnums::WindowID p_window) const {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND_V(!windows.has(p_window), false);
 #if defined(RD_ENABLED)
 	if (rendering_context) {
 		return rendering_context->window_get_hdr_output_enabled(p_window);
@@ -4793,6 +4823,7 @@ bool DisplayServerWindows::window_is_hdr_output_enabled(DisplayServerEnums::Wind
 void DisplayServerWindows::window_set_hdr_output_reference_luminance(const float p_reference_luminance, DisplayServerEnums::WindowID p_window) {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND(!windows.has(p_window));
 	WindowData &wd = windows[p_window];
 
 	if (Math::is_equal_approx(wd.hdr_output_reference_luminance, p_reference_luminance)) {
@@ -4819,6 +4850,7 @@ void DisplayServerWindows::window_set_hdr_output_reference_luminance(const float
 float DisplayServerWindows::window_get_hdr_output_reference_luminance(DisplayServerEnums::WindowID p_window) const {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND_V(!windows.has(p_window), 0.0);
 	const WindowData &wd = windows[p_window];
 	return wd.hdr_output_reference_luminance;
 }
@@ -4826,6 +4858,7 @@ float DisplayServerWindows::window_get_hdr_output_reference_luminance(DisplaySer
 float DisplayServerWindows::window_get_hdr_output_current_reference_luminance(DisplayServerEnums::WindowID p_window) const {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND_V(!windows.has(p_window), 0.0);
 #if defined(RD_ENABLED)
 	if (rendering_context) {
 		return rendering_context->window_get_hdr_output_reference_luminance(p_window);
@@ -4838,6 +4871,7 @@ float DisplayServerWindows::window_get_hdr_output_current_reference_luminance(Di
 void DisplayServerWindows::window_set_hdr_output_max_luminance(const float p_max_luminance, DisplayServerEnums::WindowID p_window) {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND(!windows.has(p_window));
 	WindowData &wd = windows[p_window];
 
 	if (Math::is_equal_approx(wd.hdr_output_max_luminance, p_max_luminance)) {
@@ -4864,6 +4898,7 @@ void DisplayServerWindows::window_set_hdr_output_max_luminance(const float p_max
 float DisplayServerWindows::window_get_hdr_output_max_luminance(DisplayServerEnums::WindowID p_window) const {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND_V(!windows.has(p_window), 0.0);
 	const WindowData &wd = windows[p_window];
 	return wd.hdr_output_max_luminance;
 }
@@ -4871,6 +4906,7 @@ float DisplayServerWindows::window_get_hdr_output_max_luminance(DisplayServerEnu
 float DisplayServerWindows::window_get_hdr_output_current_max_luminance(DisplayServerEnums::WindowID p_window) const {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND_V(!windows.has(p_window), 0.0);
 #if defined(RD_ENABLED)
 	if (rendering_context) {
 		return rendering_context->window_get_hdr_output_max_luminance(p_window);
@@ -4883,6 +4919,7 @@ float DisplayServerWindows::window_get_hdr_output_current_max_luminance(DisplayS
 float DisplayServerWindows::window_get_output_max_linear_value(DisplayServerEnums::WindowID p_window) const {
 	_THREAD_SAFE_METHOD_
 
+	ERR_FAIL_COND_V(!windows.has(p_window), 1.0);
 #if defined(RD_ENABLED)
 	if (rendering_context) {
 		return rendering_context->window_get_output_max_linear_value(p_window);
@@ -6588,20 +6625,7 @@ LRESULT DisplayServerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 
 		} break;
 		case WM_IME_COMPOSITION: {
-			CANDIDATEFORM cf;
-			cf.dwIndex = 0;
-
-			cf.dwStyle = CFS_CANDIDATEPOS;
-			cf.ptCurrentPos.x = windows[window_id].im_position.x;
-			cf.ptCurrentPos.y = windows[window_id].im_position.y;
-			ImmSetCandidateWindow(windows[window_id].im_himc, &cf);
-
-			cf.dwStyle = CFS_EXCLUDE;
-			cf.rcArea.left = windows[window_id].im_position.x;
-			cf.rcArea.right = windows[window_id].im_position.x;
-			cf.rcArea.top = windows[window_id].im_position.y;
-			cf.rcArea.bottom = windows[window_id].im_position.y;
-			ImmSetCandidateWindow(windows[window_id].im_himc, &cf);
+			update_ime_form_positions(windows[window_id].im_himc, windows[window_id].im_position);
 
 			if (windows[window_id].ime_active) {
 				SetCaretPos(windows[window_id].im_position.x, windows[window_id].im_position.y);
