@@ -136,6 +136,13 @@ static void update_ime_form_positions(HIMC p_himc, const Point2i &p_pos) {
 	cps.ptCurrentPos.y = p_pos.y;
 	ImmSetCompositionWindow(p_himc, &cps);
 
+	LOGFONT logFont = {};
+
+	logFont.lfHeight = 1; // em height
+	logFont.lfQuality = CLEARTYPE_QUALITY;
+
+	ImmSetCompositionFontA(p_himc, &logFont);
+
 	CANDIDATEFORM cf = {};
 	cf.dwIndex = 0;
 
@@ -4773,11 +4780,21 @@ bool DisplayServerWindows::window_is_hdr_output_supported(DisplayServerEnums::Wi
 	_THREAD_SAFE_METHOD_
 
 	ERR_FAIL_COND_V(!windows.has(p_window), false);
+	bool renderer_supports_hdr_output = false;
+	bool surface_supports_hdr_output = false;
 #if defined(RD_ENABLED)
-	if (rendering_device && !rendering_device->has_feature(RenderingDevice::Features::SUPPORTS_HDR_OUTPUT)) {
-		return false; // HDR output is not supported by the rendering device.
+	if (rendering_device && rendering_device->has_feature(RenderingDevice::Features::SUPPORTS_HDR_OUTPUT)) {
+		renderer_supports_hdr_output = true;
+		surface_supports_hdr_output = rendering_device->screen_get_hdr_output_supported(p_window);
 	}
 #endif
+	if (!renderer_supports_hdr_output) {
+		return false;
+	}
+
+	if (!surface_supports_hdr_output) {
+		return false;
+	}
 
 	// The window supports HDR if the screen it is on supports HDR.
 	DisplayServerWindows::ScreenHdrData data = _get_screen_hdr_data(p_window, false);
@@ -4788,9 +4805,25 @@ void DisplayServerWindows::window_request_hdr_output(const bool p_enable, Displa
 	_THREAD_SAFE_METHOD_
 
 	ERR_FAIL_COND(!windows.has(p_window));
+	if (p_enable) {
+		bool renderer_supports_hdr_output = false;
+		bool surface_supports_hdr_output = false;
 #if defined(RD_ENABLED)
-	ERR_FAIL_COND_EDMSG(p_enable && (rendering_device && rendering_device->has_feature(RenderingDevice::Features::SUPPORTS_HDR_OUTPUT)) == false, "HDR output is not supported by the rendering device.");
+		if (rendering_device && rendering_device->has_feature(RenderingDevice::Features::SUPPORTS_HDR_OUTPUT)) {
+			renderer_supports_hdr_output = true;
+			surface_supports_hdr_output = rendering_device->screen_get_hdr_output_supported(p_window);
+		}
 #endif
+		if (!renderer_supports_hdr_output) {
+			WARN_PRINT("HDR output requested, but is not supported by the renderer or rendering device driver.");
+			return;
+		}
+
+		if (!surface_supports_hdr_output) {
+			WARN_PRINT("HDR output requested, but the window does not support an HDR format.");
+			return;
+		}
+	}
 
 	WindowData &wd = windows[p_window];
 	wd.hdr_output_requested = p_enable;
