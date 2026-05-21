@@ -2664,7 +2664,7 @@ void SceneTreeDock::_script_created(Ref<Script> p_script) {
 	}
 
 	if (p_script->is_built_in()) {
-		p_script->set_path(edited_scene->get_scene_file_path() + "::" + p_script->generate_scene_unique_id());
+		EditorNode::setup_built_in_resource(p_script, edited_scene->get_scene_file_path());
 	}
 
 	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
@@ -3178,6 +3178,9 @@ void SceneTreeDock::_create() {
 				} else if (smaller_path_to_top == path_length) {
 					if (only_one_top_node && top_node->get_parent() != n->get_parent()) {
 						only_one_top_node = false;
+					}
+					if (only_one_top_node && n->get_index(false) < top_node->get_index(false)) {
+						top_node = n;
 					}
 					if (center_parent) {
 						top_level_nodes.append(n);
@@ -4118,11 +4121,10 @@ void SceneTreeDock::_tree_rmb(const Vector2 &p_menu_pos) {
 	// Group "open_in_editor" with "show_in_file_system", if it is available.
 	if (is_tool_scene_open_inherited_available) {
 		menu->add_icon_item(get_editor_theme_icon(SNAME("Load")), TTR("Open in Editor"), TOOL_SCENE_OPEN_INHERITED);
-		// TODO: Missing shortcut?
+		menu->set_item_shortcut(-1, ED_GET_SHORTCUT("scene_tree/open_scene_in_editor"));
 	} else if (is_tool_scene_open_available) {
 		menu->add_icon_item(get_editor_theme_icon(SNAME("Load")), TTR("Open in Editor"), TOOL_SCENE_OPEN);
 		menu->set_item_shortcut(-1, ED_GET_SHORTCUT("scene_tree/open_scene_in_editor"));
-		// TODO: Use add_icon_shortcut() instead?
 	}
 
 	if (full_selection.size() == 1 && selection.front()->get()->is_instance()) {
@@ -4138,7 +4140,7 @@ void SceneTreeDock::_tree_rmb(const Vector2 &p_menu_pos) {
 	END_SECTION()
 
 #undef BEGIN_SECTION
-#undef END_SECTIOn
+#undef END_SECTION
 
 	Vector<String> p_paths;
 	Node *root = EditorNode::get_singleton()->get_edited_scene();

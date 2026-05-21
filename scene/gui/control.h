@@ -401,7 +401,6 @@ private:
 
 	// Focus.
 
-	bool _is_focusable() const;
 	void _window_find_focus_neighbor(const Vector2 &p_dir, Node *p_at, const Rect2 &p_rect, const Rect2 &p_clamp, real_t p_min, real_t &r_closest_dist_squared, Control **r_closest);
 	Control *_get_focus_neighbor(Side p_side, int p_count = 0);
 	bool _is_focus_mode_enabled() const;
@@ -459,6 +458,9 @@ protected:
 	void _grab_focus_bind_compat_110250();
 	static void _bind_compatibility_methods();
 #endif //DISABLE_DEPRECATED
+
+	// Focus.
+	bool _is_focusable() const;
 
 	// Node overrides.
 
@@ -762,6 +764,8 @@ public:
 
 	void set_accessibility_flow_to_nodes(const TypedArray<NodePath> &p_node_path);
 	TypedArray<NodePath> get_accessibility_flow_to_nodes() const;
+
+	virtual Transform2D get_accessibility_transform() const override { return get_transform(); }
 
 	// Rendering.
 
