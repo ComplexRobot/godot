@@ -4536,7 +4536,7 @@ void AnimationTrackEditor::_insert_track(bool p_reset_wanted, bool p_create_bezi
 	}
 }
 
-void AnimationTrackEditor::insert_transform_key(Node3D *p_node, const String &p_sub, const Animation::TrackType p_type, const Variant &p_value) {
+void AnimationTrackEditor::insert_transform_3d_key(Node3D *p_node, const String &p_sub, const Animation::TrackType p_type, const Variant &p_value) {
 	if (read_only) {
 		popup_read_only_dialog();
 		return;
@@ -4584,7 +4584,7 @@ void AnimationTrackEditor::insert_transform_key(Node3D *p_node, const String &p_
 	_query_insert(id);
 }
 
-bool AnimationTrackEditor::has_track(Node3D *p_node, const String &p_sub, const Animation::TrackType p_type) {
+bool AnimationTrackEditor::has_transform_3d_track(Node3D *p_node, const String &p_sub, const Animation::TrackType p_type) {
 	ERR_FAIL_NULL_V(root, false);
 	if (!keying) {
 		return false;
@@ -8694,6 +8694,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	track_copy_dialog->connect(SceneStringName(confirmed), callable_mp(this, &AnimationTrackEditor::_edit_menu_pressed).bind(EDIT_COPY_TRACKS_CONFIRM));
 
 	read_only_dialog = memnew(AcceptDialog);
+	read_only_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	read_only_dialog->set_title(TTRC("Key Insertion Error"));
 	read_only_dialog->set_text(TTRC("Imported Animation cannot be edited!"));
 	add_child(read_only_dialog);
@@ -9771,6 +9772,7 @@ AnimationMarkerEdit::AnimationMarkerEdit() {
 	marker_insert_color->get_popup()->connect("about_to_popup", callable_mp(EditorNode::get_singleton(), &EditorNode::setup_color_picker).bind(marker_insert_color->get_picker()));
 	marker_insert_vbox->add_child(_create_hbox_labeled_control(TTRC("Marker Color"), marker_insert_color));
 	marker_insert_error_dialog = memnew(AcceptDialog);
+	marker_insert_error_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	marker_insert_error_dialog->set_ok_button_text(TTRC("Close"));
 	marker_insert_error_dialog->set_title(TTRC("Error!"));
 	marker_insert_confirm->add_child(marker_insert_error_dialog);
@@ -9793,6 +9795,7 @@ AnimationMarkerEdit::AnimationMarkerEdit() {
 	marker_rename_vbox->add_child(marker_rename_new_name);
 
 	marker_rename_error_dialog = memnew(AcceptDialog);
+	marker_rename_error_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	marker_rename_error_dialog->set_ok_button_text(TTRC("Close"));
 	marker_rename_error_dialog->set_title(TTRC("Error!"));
 	marker_rename_confirm->add_child(marker_rename_error_dialog);

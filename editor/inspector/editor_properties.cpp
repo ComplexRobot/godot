@@ -2472,6 +2472,7 @@ EditorPropertyQuaternion::EditorPropertyQuaternion() {
 	warning->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	warning->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyQuaternion::_warning_pressed));
 	warning_dialog = memnew(AcceptDialog);
+	warning_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(warning_dialog);
 	warning_dialog->set_text(TTR("Temporary Euler will not be stored in the object with the original value. Instead, it will be stored as Quaternion with irreversible conversion.\nThis is due to the fact that the result of Euler->Quaternion can be determined uniquely, but the result of Quaternion->Euler can be multi-existent."));
 
@@ -3550,10 +3551,10 @@ void EditorPropertyResource::_update_preferred_shader() {
 		// Set preferred shader based on edited parent type.
 		if ((Object::cast_to<GPUParticles2D>(ed_object) || Object::cast_to<GPUParticles3D>(ed_object)) && ed_property == SNAME("process_material")) {
 			shader_picker->set_preferred_mode(Shader::MODE_PARTICLES);
-		} else if (Object::cast_to<FogVolume>(ed_object)) {
-			shader_picker->set_preferred_mode(Shader::MODE_FOG);
 		} else if (Object::cast_to<CanvasItem>(ed_object)) {
 			shader_picker->set_preferred_mode(Shader::MODE_CANVAS_ITEM);
+		} else if (Object::cast_to<FogVolume>(ed_object)) {
+			shader_picker->set_preferred_mode(Shader::MODE_FOG);
 		} else if (Object::cast_to<Node3D>(ed_object) || Object::cast_to<Mesh>(ed_object)) {
 			shader_picker->set_preferred_mode(Shader::MODE_SPATIAL);
 		} else if (Object::cast_to<Sky>(ed_object)) {
@@ -3669,6 +3670,7 @@ void EditorPropertyResource::update_property() {
 			if (!sub_inspector) {
 				sub_inspector = memnew(EditorInspector);
 				sub_inspector->set_vertical_scroll_mode(ScrollContainer::SCROLL_MODE_DISABLED);
+				sub_inspector->set_show_categories(true, true);
 				sub_inspector->set_use_doc_hints(true);
 
 				EditorInspector *parent_inspector = get_parent_inspector();
@@ -3717,6 +3719,7 @@ void EditorPropertyResource::update_property() {
 				sub_inspector->edit(res.ptr());
 				_update_property_bg();
 			}
+			sub_inspector->set_category_color_level(get_sub_inspector_color_level());
 
 		} else if (sub_inspector) {
 			set_bottom_editor(nullptr);

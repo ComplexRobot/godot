@@ -56,6 +56,36 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 #include "editor/scene/gui/control_editor_plugin.h"
 #endif // TOOLS_ENABLED
 
+class LayoutRecheckCallable : public CallableCustom {
+private:
+	ObjectID owner_id;
+	Callable callback;
+	uint32_t h;
+
+	static bool compare_equal(const CallableCustom *p_a, const CallableCustom *p_b) { return p_a == p_b; }
+	static bool compare_less(const CallableCustom *p_a, const CallableCustom *p_b) { return p_a < p_b; }
+
+public:
+	virtual bool is_valid() const override { return callback.is_valid(); }
+	virtual uint32_t hash() const override { return h; }
+	virtual String get_as_text() const override { return "LayoutRecheckCallable"; }
+	virtual CompareEqualFunc get_compare_equal_func() const override { return compare_equal; }
+	virtual CompareLessFunc get_compare_less_func() const override { return compare_less; }
+	virtual ObjectID get_object() const override { return ObjectID(); }
+	virtual StringName get_method() const override { return StringName(); }
+	virtual void call(const Variant **p_arguments, int p_argcount, Variant &r_return_value, Callable::CallError &r_call_error) const override {
+		Control *owner = Object::cast_to<Control>(ObjectDB::get_instance(owner_id));
+		if (owner && !owner->is_queued_for_deletion()) {
+			owner->call_on_all_layout_pending_finished(callback);
+		}
+	}
+
+	LayoutRecheckCallable(ObjectID p_owner_id, const Callable &p_callback) :
+			owner_id(p_owner_id), callback(p_callback) {
+		h = (uint32_t)hash_murmur3_one_64((uint64_t)this);
+	}
+};
+
 // Editor plugin interoperability.
 
 // TODO: Decouple controls from their editor plugin and get rid of this.
@@ -1747,10 +1777,14 @@ void Control::update_maximum_size() {
 	data.maximum_size_valid = false;
 
 	Size2 parent_max = data.propagate_maximum_size ? get_inner_combined_maximum_size().min(get_combined_maximum_size()) : Size2(-1, -1);
+	parent_max = parent_max.maxf(-1.0f);
 
 	for (Node *child : iterate_children()) {
 		Control *child_control = Object::cast_to<Control>(child);
 		if (child_control && !child_control->is_set_as_top_level() && child_control->data.maximum_size_valid) {
+			if (child_control->data.parent_maximum_size_cache == parent_max) {
+				continue;
+			}
 			child_control->data.parent_maximum_size_cache = parent_max;
 			child_control->update_maximum_size();
 		}
@@ -1871,10 +1905,11 @@ Size2 Control::get_inner_combined_maximum_size() const {
 }
 
 void Control::set_parent_maximum_size_cache(const Size2 &p_parent_max) {
-	if (data.parent_maximum_size_cache == p_parent_max) {
+	const Size2 normalized = p_parent_max.maxf(-1.0f);
+	if (data.parent_maximum_size_cache == normalized) {
 		return;
 	}
-	data.parent_maximum_size_cache = p_parent_max;
+	data.parent_maximum_size_cache = normalized;
 	update_maximum_size();
 }
 
@@ -2065,6 +2100,11 @@ void Control::grow_to_desired_size() {
 	}
 }
 
+bool Control::is_expanded_by_desired_size() const {
+	ERR_READ_THREAD_GUARD_V(false);
+	return data.expanded_by_desired_size;
+}
+
 void Control::add_child_notify(Node *p_child) {
 	CanvasItem::add_child_notify(p_child);
 
@@ -2125,11 +2165,16 @@ Control *Control::get_layout_pending_control_in_tree() const {
 void Control::call_on_all_layout_pending_finished(const Callable &p_callable) {
 	Control *pending_control = get_layout_pending_control_in_tree();
 	if (pending_control != nullptr) {
-		Callable recheck = callable_mp(this, &Control::call_on_all_layout_pending_finished).bind(p_callable);
-		pending_control->connect(SNAME("_layout_pending_finished"), recheck, CONNECT_ONE_SHOT | CONNECT_REFERENCE_COUNTED);
-	} else {
+		Callable recheck(memnew(LayoutRecheckCallable(get_instance_id(), p_callable)));
+		pending_control->connect(SNAME("_layout_pending_finished"), recheck, CONNECT_ONE_SHOT);
+	} else if (p_callable.is_valid()) {
 		p_callable.call();
 	}
+#ifdef DEBUG_ENABLED
+	else {
+		ERR_PRINT(vformat("Callable \"%s\" is invalid.", p_callable));
+	}
+#endif // DEBUG_ENABLED
 }
 
 void Control::_update_minimum_size_cache() const {

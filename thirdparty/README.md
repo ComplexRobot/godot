@@ -683,26 +683,23 @@ File extracted from upstream source:
 ## mbedtls
 
 - Upstream: https://github.com/Mbed-TLS/mbedtls
-- Version: 3.6.5 (e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df, 2025)
+- Version: 4.1.0 (0fe989b6b514192783c469039edd325fd0989806, 2026)
 - License: Apache 2.0
+
+Update instructions:
+
+- If you are updating from git sources and not an official release tarball you must first
+  run the following scripts from the mbedTLS source directory:
+  - `scripts/make_generated_files.py`
+  - `tf-psa-crypto/scripts/generate_config_checks.py`
+  - `tf-psa-crypto/scripts/generate_driver_wrappers.py`
 
 File extracted from upstream release tarball:
 
-- All `.h` from `include/mbedtls/` to `thirdparty/mbedtls/include/mbedtls/`
-  and all `.h` from `include/psa/` to `thirdparty/mbedtls/include/psa/`
-- From `library/` to `thirdparty/mbedtls/library/`:
-  - All `.c` and `.h` files
-  - Except `bignum_mod.c`, `block_cipher.c`, `ecp_curves_new.c`, `lmots.c`,
-    `lms.c`
-- The `LICENSE` file (edited to keep only the Apache 2.0 variant)
-- Added 2 files `godot_core_mbedtls_platform.c` and `godot_core_mbedtls_config.h`
-  providing configuration for light bundling with core
-- Added 2 files `godot_module_mbedtls_config.h` and `threading_alt.h`
-  to customize the build configuration when bundling the full library
-
-Patches:
-
-- `0001-msvc-2019-psa-redeclaration.patch` ([GH-90535](https://github.com/godotengine/godot/pull/90535))
+- Relevant headers and library files via the script in `thirdparty/mbedtls/extract_mbedtls_sources.py`
+- `LICENSE` (edited to keep only the Apache 2.0 variant)
+- Added 2 headers `godot_mbedtls_config.h` and `godot_psa_config.h` in `thirdparty/mbedtls/godot` for build configuration
+- Added `thirdparty/mbedtls/godot/godot_mbedtls_platform.cpp` to implement some mbedTLS platform functions using Godot-native APIs
 
 
 ## metal-cpp
@@ -720,7 +717,7 @@ Update instructions:
 ## meshoptimizer
 
 - Upstream: https://github.com/zeux/meshoptimizer
-- Version: 1.1.1 (b22872835dbabc56a6e4a366ea9917f62b7daf1a, 2026)
+- Version: 1.2 (9d9890c73011d75920af614485296d1e03e95448, 2026)
 - License: MIT
 
 Files extracted from upstream repository:
@@ -844,7 +841,7 @@ Collection of single-file libraries used in Godot components.
     - `polypartition-0002-shadow-warning.patch` ([GH-66808](https://github.com/godotengine/godot/pull/66808))
 - `qoa.{c,h}`
   * Upstream: https://github.com/phoboslab/qoa
-  * Version: git (ae07b57deb98127a5b40916cb57775823d7437d2, 2025)
+  * Version: git (1bf9bc04673df55dc554021b768006836f69d53a, 2026)
   * License: MIT
   * Modifications: Added implementation through `qoa.c`.
 - `r128.{c,h}`
@@ -892,7 +889,7 @@ Patches:
 ## openxr
 
 - Upstream: https://github.com/KhronosGroup/OpenXR-SDK
-- Version: 1.1.54 (c15d38cb4bb10a5b7e075f74493ff13896e2597a, 2025)
+- Version: 1.1.60 (64f2b37c8c6da3d83c9b4d11865ba1fb752cb8ec, 2026)
 - License: Apache 2.0
 
 Files extracted from upstream source:
