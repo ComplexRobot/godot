@@ -42,7 +42,7 @@
 // If tight, it grows strictly as much as needed.
 // Otherwise, it grows exponentially (the default and what you want in most cases).
 template <typename T, typename U = uint32_t, bool force_trivial = false, bool tight = false>
-class LocalVector {
+class _WARN_UNUSED_ LocalVector {
 	static_assert(!force_trivial, "force_trivial is no longer supported. Use resize_uninitialized instead.");
 
 private:
@@ -221,8 +221,8 @@ public:
 			return *this;
 		}
 
-		_FORCE_INLINE_ bool operator==(const Iterator &b) const { return elem_ptr == b.elem_ptr; }
-		_FORCE_INLINE_ bool operator!=(const Iterator &b) const { return elem_ptr != b.elem_ptr; }
+		_FORCE_INLINE_ bool operator==(const Iterator &p_other) const { return elem_ptr == p_other.elem_ptr; }
+		_FORCE_INLINE_ bool operator!=(const Iterator &p_other) const { return elem_ptr != p_other.elem_ptr; }
 
 		Iterator(T *p_ptr) { elem_ptr = p_ptr; }
 		Iterator() {}
@@ -246,8 +246,8 @@ public:
 			return *this;
 		}
 
-		_FORCE_INLINE_ bool operator==(const ConstIterator &b) const { return elem_ptr == b.elem_ptr; }
-		_FORCE_INLINE_ bool operator!=(const ConstIterator &b) const { return elem_ptr != b.elem_ptr; }
+		_FORCE_INLINE_ bool operator==(const ConstIterator &p_other) const { return elem_ptr == p_other.elem_ptr; }
+		_FORCE_INLINE_ bool operator!=(const ConstIterator &p_other) const { return elem_ptr != p_other.elem_ptr; }
 
 		ConstIterator(const T *p_ptr) { elem_ptr = p_ptr; }
 		ConstIterator() {}
@@ -314,13 +314,8 @@ public:
 	}
 
 	void ordered_insert(T p_val) {
-		U i;
-		for (i = 0; i < count; i++) {
-			if (p_val < data[i]) {
-				break;
-			}
-		}
-		insert(i, p_val);
+		U idx = span().bisect(p_val, false);
+		insert(idx, std::move(p_val));
 	}
 
 	Vector<uint8_t> to_byte_array() const { //useful to pass stuff to gpu or variant

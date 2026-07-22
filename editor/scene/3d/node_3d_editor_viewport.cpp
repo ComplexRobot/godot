@@ -72,7 +72,12 @@
 #include "scene/resources/gradient.h"
 #include "scene/resources/immediate_mesh.h"
 #include "scene/resources/packed_scene.h"
+#include "servers/physics_3d/physics_server_3d_types.h"
 #include "servers/rendering/rendering_server.h"
+
+#ifndef PHYSICS_3D_DISABLED
+#include "servers/physics_3d/direct_states/physics_direct_space_state_3d.h"
+#endif // PHYSICS_3D_DISABLED
 
 using namespace Node3DEditorConstants;
 
@@ -1031,7 +1036,7 @@ void Node3DEditorViewport::_vertex_snap_cancel() {
 		}
 	}
 	vertex_snap_original_positions.clear();
-	set_message(TTR("Vertex Snap Canceled."), 3);
+	set_message(TTR("Vertex snap canceled."), 3);
 	surface->queue_redraw();
 }
 
@@ -5416,13 +5421,14 @@ Vector3 Node3DEditorViewport::_get_instance_position(const Point2 &p_pos, Node3D
 		}
 	}
 
-	PhysicsDirectSpaceState3D::RayParameters ray_params;
+	PS3DT::RayParameters ray_params;
 	ray_params.exclude = col_obj_rids_to_exclude;
 	ray_params.from = world_pos;
 	ray_params.to = world_pos + world_ray * camera->get_far();
 
 	PhysicsDirectSpaceState3D *ss = get_tree()->get_root()->get_world_3d()->get_direct_space_state();
-	PhysicsDirectSpaceState3D::RayResult result;
+	PS3DT::RayResult result;
+
 	if (ss->intersect_ray(ray_params, result) && (preview_node->get_child_count() > 0 || !preview_node->is_inside_tree())) {
 		// Calculate an offset for the `p_node` such that the its bounding box is on top of and touching the contact surface's plane.
 

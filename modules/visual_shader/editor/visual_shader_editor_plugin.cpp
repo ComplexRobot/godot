@@ -6552,6 +6552,7 @@ VisualShaderEditor::VisualShaderEditor() {
 	int grid_pattern = EDITOR_GET("editors/visual_editors/grid_pattern");
 	graph->set_grid_pattern((GraphEdit::GridPattern)grid_pattern);
 	graph->set_show_zoom_label(true);
+	graph->set_snapping_distance_scale(EDSCALE);
 	main_box->add_child(graph);
 	SET_DRAG_FORWARDING_GCD(graph, VisualShaderEditor);
 	float graph_minimap_opacity = EDITOR_GET("editors/visual_editors/minimap_opacity");
@@ -7221,11 +7222,12 @@ VisualShaderEditor::VisualShaderEditor() {
 	const String input_param_for_texture_blit_shader_mode = TTR("'%s' input parameter for blit shader mode.") + translation_gdsl;
 	const String input_param_for_light_shader_mode = TTR("'%s' input parameter for light shader mode.") + translation_gdsl;
 	const String input_param_for_vertex_shader_mode = TTR("'%s' input parameter for vertex shader mode.") + translation_gdsl;
-	const String input_param_for_start_shader_mode = TTR("'%s' input parameter for start shader mode.") + translation_gdsl;
-	const String input_param_for_process_shader_mode = TTR("'%s' input parameter for process shader mode.") + translation_gdsl;
 	const String input_param_for_collide_shader_mode = TTR("'%s' input parameter for collide shader mode." + translation_gdsl);
-	const String input_param_for_start_and_process_shader_mode = TTR("'%s' input parameter for start and process shader modes.") + translation_gdsl;
-	const String input_param_for_process_and_collide_shader_mode = TTR("'%s' input parameter for process and collide shader modes.") + translation_gdsl;
+	// TODO: Check if we are missing registrations for these.
+	// const String input_param_for_start_shader_mode = TTR("'%s' input parameter for start shader mode.") + translation_gdsl;
+	// const String input_param_for_process_shader_mode = TTR("'%s' input parameter for process shader mode.") + translation_gdsl;
+	// const String input_param_for_start_and_process_shader_mode = TTR("'%s' input parameter for start and process shader modes.") + translation_gdsl;
+	// const String input_param_for_process_and_collide_shader_mode = TTR("'%s' input parameter for process and collide shader modes.") + translation_gdsl;
 	const String input_param_for_vertex_and_fragment_shader_mode = TTR("'%s' input parameter for vertex and fragment shader modes.") + translation_gdsl;
 
 	// NODE3D INPUTS
@@ -7529,7 +7531,7 @@ VisualShaderEditor::VisualShaderEditor() {
 	texture2d_node_option_idx = add_options.size();
 	add_options.push_back(AddOption("WorldPositionFromDepth", "Textures/Functions", "VisualShaderNodeWorldPositionFromDepth", TTR("Reconstructs the World Position of the Node from the depth texture."), {}, VisualShaderNode::PORT_TYPE_VECTOR_3D, TYPE_FLAGS_FRAGMENT, Shader::MODE_SPATIAL));
 	texture2d_node_option_idx = add_options.size();
-	add_options.push_back(AddOption("ScreenNormalWorldSpace", "Textures/Functions", "VisualShaderNodeScreenNormalWorldSpace", TTR("Unpacks the Screen Normal Texture in World Space"), {}, VisualShaderNode::PORT_TYPE_VECTOR_3D, TYPE_FLAGS_FRAGMENT, Shader::MODE_SPATIAL));
+	add_options.push_back(AddOption("ScreenNormalWorldSpace", "Textures/Functions", "VisualShaderNodeScreenNormalWorldSpace", TTR("Unpacks the Screen Normal Texture in World Space."), {}, VisualShaderNode::PORT_TYPE_VECTOR_3D, TYPE_FLAGS_FRAGMENT, Shader::MODE_SPATIAL));
 	texture2d_node_option_idx = add_options.size();
 	add_options.push_back(AddOption("Texture2D", "Textures/Functions", "VisualShaderNodeTexture", TTR("Perform the 2D texture lookup."), {}, VisualShaderNode::PORT_TYPE_VECTOR_4D));
 	texture2d_array_node_option_idx = add_options.size();
@@ -7574,7 +7576,7 @@ VisualShaderEditor::VisualShaderEditor() {
 	add_options.push_back(AddOption("DistanceFade", "Utility", "VisualShaderNodeDistanceFade", TTR("The distance fade effect fades out each pixel based on its distance to another object."), {}, VisualShaderNode::PORT_TYPE_SCALAR, TYPE_FLAGS_FRAGMENT, Shader::MODE_SPATIAL));
 	add_options.push_back(AddOption("ProximityFade", "Utility", "VisualShaderNodeProximityFade", TTR("The proximity fade effect fades out each pixel based on its distance to another object."), {}, VisualShaderNode::PORT_TYPE_SCALAR, TYPE_FLAGS_FRAGMENT, Shader::MODE_SPATIAL));
 	add_options.push_back(AddOption("RandomRange", "Utility", "VisualShaderNodeRandomRange", TTR("Returns a random value between the minimum and maximum input values."), {}, VisualShaderNode::PORT_TYPE_SCALAR));
-	add_options.push_back(AddOption("RotationByAxis", "Utility", "VisualShaderNodeRotationByAxis", TTR("Builds a rotation matrix from the given axis and angle, multiply the input vector by it and returns both this vector and a matrix."), {}, VisualShaderNode::PORT_TYPE_VECTOR_3D));
+	add_options.push_back(AddOption("RotationByAxis", "Utility", "VisualShaderNodeRotationByAxis", TTR("Builds a rotation matrix from the given axis and angle, multiplies the input vector by it, and returns both this vector and a matrix."), {}, VisualShaderNode::PORT_TYPE_VECTOR_3D));
 
 	// VECTOR
 

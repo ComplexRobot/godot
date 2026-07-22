@@ -559,19 +559,24 @@ void CowData<T>::_ref(const CowData &p_from) {
 		return; // self assign, do nothing.
 	}
 
-	_unref(); // Resets _ptr to nullptr.
+	// Keep _ptr valid at all times. old_data will unref as it goes out of scope.
+	// This isn't strictly necessary but makes us a bit more resilient to multithread misuse.
+	CowData old_data;
+	old_data._ptr = _ptr;
 
-	if (!p_from._ptr) {
-		return; //nothing to do
-	}
-
-	if (p_from._get_refcount()->conditional_increment() > 0) { // could reference
+	if (p_from._ptr && p_from._get_refcount()->conditional_increment() > 0) {
 		_ptr = p_from._ptr;
+	} else {
+		// New data is null or we cannot copy.
+		_ptr = nullptr;
 	}
 }
 
 template <typename T>
 CowData<T>::CowData(std::initializer_list<T> p_init) {
+	if (!p_init.size()) {
+		return;
+	}
 	CRASH_COND(_alloc_exact(p_init.size()));
 
 	copy_arr_placement(_ptr, p_init.begin(), p_init.size());
@@ -580,6 +585,9 @@ CowData<T>::CowData(std::initializer_list<T> p_init) {
 
 template <typename T>
 CowData<T>::CowData(Span<T> p_span) {
+	if (p_span.is_empty()) {
+		return;
+	}
 	CRASH_COND(_alloc_exact(p_span.size()));
 
 	copy_arr_placement(_ptr, p_span.begin(), p_span.size());

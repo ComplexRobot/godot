@@ -49,6 +49,7 @@
 #include "scene/gui/separator.h"
 #include "scene/gui/spin_box.h"
 #include "scene/main/scene_tree.h"
+#include "scene/resources/2d/navigation_mesh_source_geometry_data_2d.h"
 #include "servers/navigation_2d/navigation_server_2d.h"
 #include "servers/rendering/rendering_server.h"
 
@@ -965,6 +966,7 @@ GenericTilePolygonEditor::GenericTilePolygonEditor() {
 	button_advanced_menu->get_popup()->add_item(TTR("Flip Vertically"), FLIP_VERTICALLY, Key::V);
 	button_advanced_menu->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &GenericTilePolygonEditor::_advanced_menu_item_pressed));
 	button_advanced_menu->set_focus_mode(FOCUS_ALL);
+	button_advanced_menu->set_shortcut_context(this);
 	toolbar->add_child(button_advanced_menu);
 
 	toolbar->add_child(memnew(VSeparator));

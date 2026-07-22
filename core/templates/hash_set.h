@@ -46,7 +46,7 @@
 template <typename TKey,
 		typename Hasher = HashMapHasherDefault,
 		typename Comparator = HashMapComparatorDefault<TKey>>
-class HashSet {
+class _WARN_UNUSED_ HashSet {
 public:
 	static constexpr uint32_t MIN_CAPACITY_INDEX = 2; // Use a prime.
 	static constexpr float MAX_OCCUPANCY = 0.75;
@@ -350,8 +350,8 @@ public:
 			return *this;
 		}
 
-		_FORCE_INLINE_ bool operator==(const Iterator &b) const { return _keys == b._keys && _key_idx == b._key_idx; }
-		_FORCE_INLINE_ bool operator!=(const Iterator &b) const { return _keys != b._keys || _key_idx != b._key_idx; }
+		_FORCE_INLINE_ bool operator==(const Iterator &p_other) const { return _keys == p_other._keys && _key_idx == p_other._key_idx; }
+		_FORCE_INLINE_ bool operator!=(const Iterator &p_other) const { return _keys != p_other._keys || _key_idx != p_other._key_idx; }
 
 		_FORCE_INLINE_ explicit operator bool() const {
 			return _keys != nullptr;

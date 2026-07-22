@@ -66,7 +66,7 @@ template <typename TKey, typename TValue,
 		typename Hasher = HashMapHasherDefault,
 		typename Comparator = HashMapComparatorDefault<TKey>,
 		typename Allocator = DefaultTypedAllocator<HashMapElement<TKey, TValue>>>
-class HashMap : private Allocator {
+class _WARN_UNUSED_ HashMap : private Allocator {
 public:
 	static constexpr uint32_t MIN_CAPACITY_INDEX = 2; // Use a prime.
 	static constexpr float MAX_OCCUPANCY = 0.75;
@@ -444,14 +444,14 @@ public:
 			return *this;
 		}
 
-		_FORCE_INLINE_ bool operator==(const ConstIterator &b) const { return E == b.E; }
-		_FORCE_INLINE_ bool operator!=(const ConstIterator &b) const { return E != b.E; }
+		_FORCE_INLINE_ bool operator==(const ConstIterator &p_other) const { return E == p_other.E; }
+		_FORCE_INLINE_ bool operator!=(const ConstIterator &p_other) const { return E != p_other.E; }
 
 		_FORCE_INLINE_ explicit operator bool() const {
 			return E != nullptr;
 		}
 
-		_FORCE_INLINE_ ConstIterator(const HashMapElement<TKey, TValue> *p_E) { E = p_E; }
+		_FORCE_INLINE_ ConstIterator(const HashMapElement<TKey, TValue> *p_element) { E = p_element; }
 		_FORCE_INLINE_ ConstIterator() {}
 		_FORCE_INLINE_ ConstIterator(const ConstIterator &p_it) { E = p_it.E; }
 		_FORCE_INLINE_ void operator=(const ConstIterator &p_it) {
@@ -480,14 +480,14 @@ public:
 			return *this;
 		}
 
-		_FORCE_INLINE_ bool operator==(const Iterator &b) const { return E == b.E; }
-		_FORCE_INLINE_ bool operator!=(const Iterator &b) const { return E != b.E; }
+		_FORCE_INLINE_ bool operator==(const Iterator &p_other) const { return E == p_other.E; }
+		_FORCE_INLINE_ bool operator!=(const Iterator &p_other) const { return E != p_other.E; }
 
 		_FORCE_INLINE_ explicit operator bool() const {
 			return E != nullptr;
 		}
 
-		_FORCE_INLINE_ Iterator(HashMapElement<TKey, TValue> *p_E) { E = p_E; }
+		_FORCE_INLINE_ Iterator(HashMapElement<TKey, TValue> *p_element) { E = p_element; }
 		_FORCE_INLINE_ Iterator() {}
 		_FORCE_INLINE_ Iterator(const Iterator &p_it) { E = p_it.E; }
 		_FORCE_INLINE_ void operator=(const Iterator &p_it) {

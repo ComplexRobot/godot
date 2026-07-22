@@ -206,7 +206,7 @@ String EditorExportPlatformAppleEmbedded::get_export_option_warning(const Editor
 			if (OS::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
 				return TTR("\"Shader Baker\" doesn't work with the Compatibility renderer.");
 			} else if (OS::get_singleton()->get_current_rendering_method() != export_renderer) {
-				return vformat(TTR("The editor is currently using a different renderer than what the target platform will use. \"Shader Baker\" won't be able to include core shaders. Switch to \"%s\" renderer temporarily to fix this."), export_renderer);
+				return vformat(TTR("The editor is currently using a different renderer than what the target platform will use. \"Shader Baker\" won't be able to include core shaders. Switch to the \"%s\" renderer temporarily to fix this."), export_renderer);
 			}
 		}
 	}
@@ -2207,8 +2207,6 @@ Error EditorExportPlatformAppleEmbedded::_export_project_helper(const Ref<Editor
 	if (ep.step("Making .xcarchive", 3)) {
 		return ERR_SKIP;
 	}
-
-	String platform_name = get_platform_name();
 
 	String archive_path = p_path.get_basename() + ".xcarchive";
 	List<String> archive_args;

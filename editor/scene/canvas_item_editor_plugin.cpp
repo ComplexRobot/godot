@@ -1000,8 +1000,6 @@ void CanvasItemEditor::_selection_menu_hide() {
 }
 
 void CanvasItemEditor::_add_node_pressed(int p_result) {
-	List<Node *> nodes_to_move;
-
 	switch (p_result) {
 		case ADD_NODE: {
 			SceneTreeDock::get_singleton()->open_add_child_dialog();
@@ -1010,11 +1008,28 @@ void CanvasItemEditor::_add_node_pressed(int p_result) {
 			SceneTreeDock::get_singleton()->open_instance_child_dialog();
 		} break;
 		case ADD_PASTE: {
-			nodes_to_move = SceneTreeDock::get_singleton()->paste_nodes();
-			[[fallthrough]];
-		}
+			EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
+			undo_redo->create_action_for_history(TTR("Paste Node(s) at Position"), EditorNode::get_editor_data().get_current_edited_scene_history_id());
+
+			List<Node *> pasted_nodes = SceneTreeDock::get_singleton()->paste_nodes();
+			if (pasted_nodes.is_empty()) {
+				_reset_create_position();
+				return;
+			}
+
+			for (Node *node : pasted_nodes) {
+				CanvasItem *ci = Object::cast_to<CanvasItem>(node);
+				if (ci) {
+					Transform2D xform = ci->get_global_transform_with_canvas().affine_inverse() * ci->get_transform();
+					undo_redo->add_do_method(ci, "_edit_set_position", xform.xform(node_create_position));
+					undo_redo->add_undo_method(ci, "_edit_set_position", ci->_edit_get_position());
+				}
+			}
+			undo_redo->commit_action();
+			_reset_create_position();
+		} break;
 		case ADD_MOVE: {
-			nodes_to_move = EditorNode::get_singleton()->get_editor_selection()->get_top_selected_node_list();
+			List<Node *> nodes_to_move = EditorNode::get_singleton()->get_editor_selection()->get_top_selected_node_list();
 			if (nodes_to_move.is_empty()) {
 				return;
 			}
@@ -5731,11 +5746,11 @@ CanvasItemEditor::CanvasItemEditor() {
 	panner->set_callbacks(callable_mp(this, &CanvasItemEditor::_pan_callback), callable_mp(this, &CanvasItemEditor::_zoom_callback));
 
 	viewport = memnew(CanvasItemEditorViewport(this));
-	viewport_scrollable->add_child(viewport);
 	viewport->set_mouse_filter(MOUSE_FILTER_PASS);
 	viewport->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
 	viewport->set_clip_contents(true);
 	viewport->set_focus_mode(FOCUS_ALL);
+	viewport_scrollable->add_child(viewport);
 	viewport->connect(SceneStringName(draw), callable_mp(this, &CanvasItemEditor::_draw_viewport));
 	viewport->connect(SceneStringName(gui_input), callable_mp(this, &CanvasItemEditor::_gui_input_viewport));
 	viewport->connect(SceneStringName(focus_exited), callable_mp(panner.ptr(), &ViewPanner::release_pan_key));
@@ -6192,7 +6207,7 @@ CanvasItemEditorPlugin::CanvasItemEditorPlugin() {
 }
 
 void CanvasItemEditorViewport::_on_mouse_exit() {
-	if (!texture_node_type_selector->is_visible()) {
+	if (!texture_node_type_selector->is_visible() && preview_node->get_parent()) {
 		_remove_preview();
 	}
 }
@@ -6387,10 +6402,6 @@ void CanvasItemEditorViewport::_create_audio_node(Node *p_parent, const String &
 }
 
 void CanvasItemEditorViewport::_create_mesh_node(Node *p_parent, const String &p_path, const Point2 &p_point) {
-	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
-
-	Ref<Mesh> mesh = ResourceCache::get_ref(p_path);
-
 	MeshInstance2D *child = memnew(MeshInstance2D);
 
 	// Adjust casing according to project setting. The file name is expected to be in snake_case, but will work for others.
@@ -6399,41 +6410,14 @@ void CanvasItemEditorViewport::_create_mesh_node(Node *p_parent, const String &p
 		child->set_name(node_name);
 	}
 
-	if (p_parent) {
-		undo_redo->add_do_method(p_parent, "add_child", child, true);
-		undo_redo->add_do_method(child, "set_owner", EditorNode::get_singleton()->get_edited_scene());
-		undo_redo->add_do_reference(child);
-		undo_redo->add_undo_method(p_parent, "remove_child", child);
-	} else { // If no parent is selected, set as root node of the scene.
-		undo_redo->add_do_method(EditorNode::get_singleton(), "set_edited_scene", child);
-		undo_redo->add_do_method(child, "set_owner", EditorNode::get_singleton()->get_edited_scene());
-		undo_redo->add_do_reference(child);
-		undo_redo->add_undo_method(EditorNode::get_singleton(), "set_edited_scene", (Object *)nullptr);
-	}
-
-	if (p_parent) {
-		String new_name = p_parent->validate_child_name(child);
-		EditorDebuggerNode *ed = EditorDebuggerNode::get_singleton();
-		undo_redo->add_do_method(ed, "live_debug_create_node", EditorNode::get_singleton()->get_edited_scene()->get_path_to(p_parent), child->get_class(), new_name);
-		undo_redo->add_undo_method(ed, "live_debug_remove_node", NodePath(String(EditorNode::get_singleton()->get_edited_scene()->get_path_to(p_parent)) + "/" + new_name));
-	}
-
-	undo_redo->add_do_property(child, "mesh", mesh);
-
 	// Compute the global position
 	Transform2D xform = canvas_item_editor->get_canvas_transform();
 	Point2 target_position = xform.affine_inverse().xform(p_point);
 
-	// There's nothing to be used as source position, so snapping will work as absolute if enabled.
-	target_position = canvas_item_editor->snap_point(target_position);
+	_add_node_to_scene(p_parent, child, target_position);
 
-	CanvasItem *parent_ci = Object::cast_to<CanvasItem>(p_parent);
-	Point2 local_target_pos = parent_ci ? parent_ci->get_global_transform().affine_inverse().xform(target_position) : target_position;
-
-	undo_redo->add_do_method(child, "set_position", local_target_pos);
-
-	EditorSelection *editor_selection = EditorNode::get_singleton()->get_editor_selection();
-	undo_redo->add_do_method(editor_selection, "add_node", child);
+	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
+	undo_redo->add_do_property(child, "mesh", ResourceCache::get_ref(p_path));
 }
 
 bool CanvasItemEditorViewport::_create_instance(Node *p_parent, const String &p_path, const Point2 &p_point) {
@@ -6564,7 +6548,12 @@ void CanvasItemEditorViewport::_perform_drop_data() {
 	}
 }
 
-void CanvasItemEditorViewport::_show_tooltip(const String &p_title, const String &p_description) const {
+void CanvasItemEditorViewport::set_hint_label(const String &p_title, const String &p_description) const {
+	if (p_title.is_empty() && p_description.is_empty()) {
+		tooltip_panel->hide();
+		return;
+	}
+
 	tooltip_panel->set_text(
 			vformat("[font_size=%s][b][color=%s]%s[/color][/b][/font_size]\n%s",
 					get_theme_default_font_size() + 2,
@@ -6630,12 +6619,12 @@ bool CanvasItemEditorViewport::can_drop_data(const Point2 &p_point, const Varian
 
 	String title = TTRN("Can't drop the file...", "Can't drop the files...", files.size());
 	if (!error_message.is_empty()) {
-		_show_tooltip(title, error_message);
+		set_hint_label(title, error_message);
 		canvas_item_editor->update_viewport();
 		return false;
 	}
 	if (instantiate_type == 0) {
-		_show_tooltip(title, TTR("This file format is not supported."));
+		set_hint_label(title, TTR("This file format is not supported."));
 		return false;
 	}
 
@@ -6691,7 +6680,7 @@ bool CanvasItemEditorViewport::can_drop_data(const Point2 &p_point, const Varian
 	}
 	desc += "[/ul]";
 
-	_show_tooltip(title, desc);
+	set_hint_label(title, desc);
 
 	return true;
 }

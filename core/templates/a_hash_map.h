@@ -80,7 +80,7 @@ class Variant;
 template <typename TKey, typename TValue,
 		typename Hasher = HashMapHasherDefault,
 		typename Comparator = HashMapComparatorDefault<TKey>>
-class AHashMap {
+class _WARN_UNUSED_ AHashMap {
 public:
 	// Must be a power of two.
 	static constexpr uint32_t INITIAL_CAPACITY = 16;
@@ -447,8 +447,8 @@ public:
 			return *this;
 		}
 
-		_FORCE_INLINE_ bool operator==(const ConstIterator &b) const { return pair == b.pair; }
-		_FORCE_INLINE_ bool operator!=(const ConstIterator &b) const { return pair != b.pair; }
+		_FORCE_INLINE_ bool operator==(const ConstIterator &p_other) const { return pair == p_other.pair; }
+		_FORCE_INLINE_ bool operator!=(const ConstIterator &p_other) const { return pair != p_other.pair; }
 
 		_FORCE_INLINE_ explicit operator bool() const {
 			return pair != end;
@@ -496,8 +496,8 @@ public:
 			return *this;
 		}
 
-		_FORCE_INLINE_ bool operator==(const Iterator &b) const { return pair == b.pair; }
-		_FORCE_INLINE_ bool operator!=(const Iterator &b) const { return pair != b.pair; }
+		_FORCE_INLINE_ bool operator==(const Iterator &p_other) const { return pair == p_other.pair; }
+		_FORCE_INLINE_ bool operator!=(const Iterator &p_other) const { return pair != p_other.pair; }
 
 		_FORCE_INLINE_ explicit operator bool() const {
 			return pair != end;
