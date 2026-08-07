@@ -260,7 +260,7 @@ void SceneTreeDock::shortcut_input(const Ref<InputEvent> &p_event) {
 	} else if (ED_IS_SHORTCUT("scene_tree/delete", p_event)) {
 		_tool_selected(TOOL_ERASE);
 	} else {
-		Callable custom_callback = EditorContextMenuPluginManager::get_singleton()->match_custom_shortcut(EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TREE, p_event);
+		const Callable custom_callback = EditorContextMenuPluginManager::get_singleton()->match_custom_shortcut(EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TREE, p_event);
 		if (custom_callback.is_valid()) {
 			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, _get_selection_array());
 		} else {
@@ -348,7 +348,7 @@ void SceneTreeDock::_perform_instantiate_scenes(const Vector<String> &p_files, N
 		if (!edited_scene->get_scene_file_path().is_empty()) {
 			if (_cyclical_dependency_exists(edited_scene->get_scene_file_path(), instantiated_scene)) {
 				accept->set_text(vformat(TTR("Cannot instantiate the scene '%s' because the current scene exists within one of its nodes."), p_files[i]));
-				accept->popup_centered();
+				callable_mp((Window *)accept, &Window::popup_centered).call_deferred(Size2i());
 				error = true;
 				break;
 			}
@@ -390,9 +390,6 @@ void SceneTreeDock::_perform_instantiate_scenes(const Vector<String> &p_files, N
 
 	undo_redo->commit_action();
 	_push_item(instances[instances.size() - 1]);
-	for (int i = 0; i < instances.size(); i++) {
-		emit_signal(SNAME("node_created"), instances[i]);
-	}
 }
 
 void SceneTreeDock::_perform_create_audio_stream_players(const Vector<String> &p_files, Node *p_parent, int p_pos) {
@@ -649,11 +646,6 @@ void SceneTreeDock::_tool_selected(int p_tool, bool p_confirm_override) {
 				break;
 			}
 
-			if (reset_create_dialog && !p_confirm_override) {
-				create_dialog->set_base_type("Node");
-				reset_create_dialog = false;
-			}
-
 			// Prefer nodes that inherit from the current scene root.
 			Node *current_edited_scene_root = EditorNode::get_singleton()->get_edited_scene();
 			if (current_edited_scene_root) {
@@ -673,9 +665,6 @@ void SceneTreeDock::_tool_selected(int p_tool, bool p_confirm_override) {
 			}
 
 			create_dialog->popup_create(true);
-			if (!p_confirm_override) {
-				emit_signal(SNAME("add_node_used"));
-			}
 		} break;
 		case TOOL_INSTANTIATE: {
 			if (!profile_allow_editing) {
@@ -689,9 +678,6 @@ void SceneTreeDock::_tool_selected(int p_tool, bool p_confirm_override) {
 			}
 
 			EditorNode::get_singleton()->get_quick_open_dialog()->popup_dialog({ "PackedScene" }, callable_mp(this, &SceneTreeDock::_quick_open));
-			if (!p_confirm_override) {
-				emit_signal(SNAME("add_node_used"));
-			}
 		} break;
 		case TOOL_EXPAND_COLLAPSE: {
 			Tree *tree = scene_tree->get_scene_tree();
@@ -812,11 +798,6 @@ void SceneTreeDock::_tool_selected(int p_tool, bool p_confirm_override) {
 
 			if (!_validate_no_instance_selected(full_selection)) {
 				break;
-			}
-
-			if (reset_create_dialog) {
-				create_dialog->set_base_type("Node");
-				reset_create_dialog = false;
 			}
 
 			Node *selected = scene_tree->get_selected();
@@ -3073,8 +3054,7 @@ void SceneTreeDock::_selection_changed() {
 }
 
 Node *SceneTreeDock::_do_create(Node *p_parent) {
-	Variant c = create_dialog->instantiate_selected();
-	Node *child = Object::cast_to<Node>(c);
+	Node *child = create_dialog->instantiate_selected<Node>();
 	ERR_FAIL_NULL_V(child, nullptr);
 
 	String new_name = p_parent->validate_child_name(child);
@@ -3129,8 +3109,6 @@ void SceneTreeDock::_post_do_create(Node *p_child) {
 		}
 		control->set_size(ms);
 	}
-
-	emit_signal(SNAME("node_created"), p_child);
 }
 
 void SceneTreeDock::_create() {
@@ -3162,10 +3140,7 @@ void SceneTreeDock::_create() {
 		for (Node *n : full_selection) {
 			ERR_FAIL_NULL(n);
 
-			Variant c = create_dialog->instantiate_selected();
-
-			ERR_FAIL_COND(!c);
-			Node *new_node = Object::cast_to<Node>(c);
+			Node *new_node = create_dialog->instantiate_selected<Node>();
 			ERR_FAIL_NULL(new_node);
 			replace_node(n, new_node);
 		}
@@ -4105,11 +4080,10 @@ void SceneTreeDock::_tree_rmb(const Vector2 &p_menu_pos) {
 
 					menu->add_check_item(TTRC("Editable Children"), TOOL_SCENE_EDITABLE_CHILDREN);
 					menu->set_item_shortcut(-1, ED_GET_SHORTCUT("scene_tree/toggle_editable_children"));
+					menu->set_item_checked(-1, editable);
 
 					menu->add_check_item(TTRC("Load as Placeholder"), TOOL_SCENE_USE_PLACEHOLDER);
-
-					menu->set_item_checked(menu->get_item_idx_from_text(TTR("Editable Children")), editable);
-					menu->set_item_checked(menu->get_item_idx_from_text(TTR("Load as Placeholder")), placeholder);
+					menu->set_item_checked(-1, placeholder);
 				}
 				is_tool_scene_open_available = true;
 			}
@@ -4418,16 +4392,6 @@ void SceneTreeDock::attach_shader_to_selected(int p_preferred_mode) {
 void SceneTreeDock::open_shader_dialog(const Ref<ShaderMaterial> &p_for_material, int p_preferred_mode) {
 	selected_shader_material = p_for_material;
 	attach_shader_to_selected(p_preferred_mode);
-}
-
-void SceneTreeDock::open_add_child_dialog() {
-	create_dialog->set_base_type("CanvasItem");
-	_tool_selected(TOOL_NEW, true);
-	reset_create_dialog = true;
-}
-
-void SceneTreeDock::open_instance_child_dialog() {
-	_tool_selected(TOOL_INSTANTIATE, true);
 }
 
 List<Node *> SceneTreeDock::paste_nodes(bool p_paste_as_sibling) {
@@ -4988,8 +4952,6 @@ void SceneTreeDock::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("replace_node"), &SceneTreeDock::_replace_node);
 
 	ADD_SIGNAL(MethodInfo("remote_tree_selected"));
-	ADD_SIGNAL(MethodInfo("add_node_used"));
-	ADD_SIGNAL(MethodInfo("node_created", PropertyInfo(Variant::OBJECT, "node", PROPERTY_HINT_RESOURCE_TYPE, Node::get_class_static())));
 }
 
 SceneTreeDock *SceneTreeDock::singleton = nullptr;

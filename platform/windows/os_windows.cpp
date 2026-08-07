@@ -49,7 +49,6 @@
 #include "drivers/windows/net_socket_winsock.h"
 #include "drivers/windows/thread_windows.h"
 #include "main/main.h"
-#include "servers/audio/audio_server.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/text/text_server.h"
 
@@ -2523,6 +2522,36 @@ String OS_Windows::expand_path(const String &p_path) const {
 		String home = get_environment("USERPROFILE");
 		if (!home.is_empty()) {
 			path = home + path.substr(1);
+		}
+	}
+
+	int pos = 0;
+
+	while (true) {
+		int left = path.find_char('%', pos);
+		if (left == -1) {
+			break;
+		}
+
+		int right = path.find_char('%', left + 1);
+		if (right == -1) {
+			break;
+		}
+
+		String var = path.substr(left + 1, right - left - 1);
+
+		if (var.is_empty()) {
+			pos = right + 1;
+			continue;
+		}
+
+		String value = get_environment(var);
+
+		if (!value.is_empty()) {
+			path = path.substr(0, left) + value + path.substr(right + 1);
+			pos = left + value.length();
+		} else {
+			pos = right + 1;
 		}
 	}
 

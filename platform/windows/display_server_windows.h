@@ -551,6 +551,10 @@ class DisplayServerWindows : public DisplayServer {
 	HWND _find_window_from_process_id(ProcessID p_pid, HWND p_current_hwnd);
 
 	void initialize_tts() const;
+	void process_raw_input();
+	Vector2 _get_raw_mouse_motion(const RAWINPUT &p_raw, DisplayServerEnums::WindowID p_window_id);
+	void _process_raw_mouse_motion(const Vector2 &p_relative, bool p_left_button_down, DisplayServerEnums::WindowID p_window_id);
+	void _process_raw_input_event(const RAWINPUT &p_raw, DisplayServerEnums::WindowID p_window_id);
 
 	struct ScreenHdrData {
 		bool hdr_supported = false;
@@ -620,6 +624,7 @@ public:
 	virtual Size2i screen_get_size(int p_screen = DisplayServerEnums::SCREEN_OF_MAIN_WINDOW) const override;
 	virtual Rect2i screen_get_usable_rect(int p_screen = DisplayServerEnums::SCREEN_OF_MAIN_WINDOW) const override;
 	virtual int screen_get_dpi(int p_screen = DisplayServerEnums::SCREEN_OF_MAIN_WINDOW) const override;
+	virtual float screen_get_scale(int p_screen = DisplayServerEnums::SCREEN_OF_MAIN_WINDOW) const override;
 	virtual float screen_get_refresh_rate(int p_screen = DisplayServerEnums::SCREEN_OF_MAIN_WINDOW) const override;
 	virtual Color screen_get_pixel(const Point2i &p_position) const override;
 	virtual Ref<Image> screen_get_image(int p_screen = DisplayServerEnums::SCREEN_OF_MAIN_WINDOW) const override;
