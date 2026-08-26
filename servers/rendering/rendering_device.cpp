@@ -834,6 +834,24 @@ Error RenderingDevice::hit_sbt_range_update(RID p_hit_sbt, HitShaderBindingTable
 /**** BUFFER MANAGEMENT ****/
 /***************************/
 
+RDD::MemoryAllocationType RenderingDevice::_get_buffer_alloc_type(bool p_has_initial_data, Thread::ID p_thread_id) const {
+	bool gpu_mappable = false;
+
+	if (p_has_initial_data && driver->has_feature(SUPPORTS_GPU_MAPPABLE_BUFFER)) {
+		// Integrated GPUs have no cost when copying to GPU mappable buffers.
+		if (device.type == RenderingContextDriver::DEVICE_TYPE_INTEGRATED_GPU) {
+			gpu_mappable = true;
+		} else {
+			// Discrete GPUs can have extra cost when copying to GPU mappable buffers. Avoid that work on the render thread.
+			if (p_thread_id != render_thread_id) {
+				gpu_mappable = true;
+			}
+		}
+	}
+
+	return gpu_mappable ? RDD::MEMORY_ALLOCATION_TYPE_GPU_MAPPABLE : RDD::MEMORY_ALLOCATION_TYPE_GPU;
+}
+
 RenderingDevice::Buffer *RenderingDevice::_get_buffer_from_owner(RID p_buffer) {
 	Buffer *buffer = nullptr;
 	if (vertex_buffer_owner.owns(p_buffer)) {
@@ -852,30 +870,41 @@ RenderingDevice::Buffer *RenderingDevice::_get_buffer_from_owner(RID p_buffer) {
 }
 
 Error RenderingDevice::_buffer_initialize(Buffer *p_buffer, Span<uint8_t> p_data, uint32_t p_required_align) {
-	uint32_t transfer_worker_offset;
-	TransferWorker *transfer_worker = _acquire_transfer_worker(p_data.size(), p_required_align, transfer_worker_offset);
-	p_buffer->transfer_worker_index = transfer_worker->index;
+	if (p_buffer->alloc_type == RDD::MEMORY_ALLOCATION_TYPE_GPU_MAPPABLE) {
+		// Copy directly to the buffer if available.
+		uint8_t *data_ptr = driver->buffer_map(p_buffer->driver_id);
+		ERR_FAIL_NULL_V(data_ptr, ERR_CANT_CREATE);
 
-	{
-		MutexLock lock(transfer_worker->operations_mutex);
-		p_buffer->transfer_worker_operation = ++transfer_worker->operations_counter;
+		memcpy(data_ptr, p_data.ptr(), p_data.size());
+
+		driver->buffer_unmap(p_buffer->driver_id);
+	} else {
+		// Otherwise, use a transfer worker.
+		uint32_t transfer_worker_offset;
+		TransferWorker *transfer_worker = _acquire_transfer_worker(p_data.size(), p_required_align, transfer_worker_offset);
+		p_buffer->transfer_worker_index = transfer_worker->index;
+
+		{
+			MutexLock lock(transfer_worker->operations_mutex);
+			p_buffer->transfer_worker_operation = ++transfer_worker->operations_counter;
+		}
+
+		// Copy to the worker's staging buffer.
+		uint8_t *data_ptr = driver->buffer_map(transfer_worker->staging_buffer);
+		ERR_FAIL_NULL_V(data_ptr, ERR_CANT_CREATE);
+
+		memcpy(data_ptr + transfer_worker_offset, p_data.ptr(), p_data.size());
+		driver->buffer_unmap(transfer_worker->staging_buffer);
+
+		// Copy from the staging buffer to the real buffer.
+		RDD::BufferCopyRegion region;
+		region.src_offset = transfer_worker_offset;
+		region.dst_offset = 0;
+		region.size = p_data.size();
+		driver->command_copy_buffer(transfer_worker->command_buffer, transfer_worker->staging_buffer, p_buffer->driver_id, region);
+
+		_release_transfer_worker(transfer_worker);
 	}
-
-	// Copy to the worker's staging buffer.
-	uint8_t *data_ptr = driver->buffer_map(transfer_worker->staging_buffer);
-	ERR_FAIL_NULL_V(data_ptr, ERR_CANT_CREATE);
-
-	memcpy(data_ptr + transfer_worker_offset, p_data.ptr(), p_data.size());
-	driver->buffer_unmap(transfer_worker->staging_buffer);
-
-	// Copy from the staging buffer to the real buffer.
-	RDD::BufferCopyRegion region;
-	region.src_offset = transfer_worker_offset;
-	region.dst_offset = 0;
-	region.size = p_data.size();
-	driver->command_copy_buffer(transfer_worker->command_buffer, transfer_worker->staging_buffer, p_buffer->driver_id, region);
-
-	_release_transfer_worker(transfer_worker);
 
 	return OK;
 }
@@ -944,10 +973,7 @@ Error RenderingDevice::_staging_buffer_allocate(StagingBuffers &p_staging_buffer
 					// Guess we did.. ok, let's see if we can insert a new block.
 					if ((uint64_t)p_staging_buffers.blocks.size() * p_staging_buffers.block_size < p_staging_buffers.max_size) {
 						// We can, so we are safe.
-						Error err = _insert_staging_block(p_staging_buffers);
-						if (err) {
-							return err;
-						}
+						RETURN_IF_ERROR(_insert_staging_block(p_staging_buffers));
 						// Claim for this frame.
 						p_staging_buffers.blocks.write[p_staging_buffers.current].frame_used = frames_drawn;
 					} else {
@@ -972,10 +998,7 @@ Error RenderingDevice::_staging_buffer_allocate(StagingBuffers &p_staging_buffer
 			// This block may still be in use, let's not touch it unless we have to, so.. can we create a new one?
 			if ((uint64_t)p_staging_buffers.blocks.size() * p_staging_buffers.block_size < p_staging_buffers.max_size) {
 				// We are still allowed to create a new block, so let's do that and insert it for current pos.
-				Error err = _insert_staging_block(p_staging_buffers);
-				if (err) {
-					return err;
-				}
+				RETURN_IF_ERROR(_insert_staging_block(p_staging_buffers));
 				// Claim for this frame.
 				p_staging_buffers.blocks.write[p_staging_buffers.current].frame_used = frames_drawn;
 			} else {
@@ -1107,10 +1130,7 @@ Error RenderingDevice::_buffer_update(Buffer *p_buffer, RID p_buffer_id, uint32_
 		uint32_t block_write_amount;
 		StagingRequiredAction required_action;
 
-		Error err = _staging_buffer_allocate(upload_staging_buffers, MIN(to_submit, upload_staging_buffers.block_size), required_align, block_write_offset, block_write_amount, required_action);
-		if (err) {
-			return err;
-		}
+		RETURN_IF_ERROR(_staging_buffer_allocate(upload_staging_buffers, MIN(to_submit, upload_staging_buffers.block_size), required_align, block_write_offset, block_write_amount, required_action));
 
 		if (!command_buffer_copies_vector.is_empty() && required_action == STAGING_REQUIRED_ACTION_FLUSH_AND_STALL_ALL) {
 			if (_buffer_make_mutable(p_buffer, p_buffer_id)) {
@@ -1356,10 +1376,7 @@ Error RenderingDevice::buffer_get_data_async(RID p_buffer, const Callable &p_cal
 	uint32_t to_submit = p_size;
 	uint32_t submit_from = 0;
 	while (to_submit > 0) {
-		Error err = _staging_buffer_allocate(download_staging_buffers, MIN(to_submit, download_staging_buffers.block_size), required_align, block_write_offset, block_write_amount, required_action);
-		if (err) {
-			return err;
-		}
+		RETURN_IF_ERROR(_staging_buffer_allocate(download_staging_buffers, MIN(to_submit, download_staging_buffers.block_size), required_align, block_write_offset, block_write_amount, required_action));
 
 		const bool flush_frames = (get_data_request.frame_local_count > 0) && required_action == STAGING_REQUIRED_ACTION_FLUSH_AND_STALL_ALL;
 		if (flush_frames) {
@@ -1474,7 +1491,9 @@ RID RenderingDevice::storage_buffer_create(uint32_t p_size_bytes, Span<uint8_t> 
 		buffer.usage.set_flag(RDD::BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT);
 	}
 
-	buffer.driver_id = driver->buffer_create(buffer.size, buffer.usage, RDD::MEMORY_ALLOCATION_TYPE_GPU, frames_drawn);
+	buffer.alloc_type = _get_buffer_alloc_type(!p_data.is_empty(), Thread::get_caller_id());
+
+	buffer.driver_id = driver->buffer_create(buffer.size, buffer.usage, buffer.alloc_type, frames_drawn);
 	ERR_FAIL_COND_V(!buffer.driver_id, RID());
 
 	// Storage buffers are assumed to be mutable.
@@ -3864,7 +3883,10 @@ RID RenderingDevice::vertex_buffer_create(uint32_t p_size_bytes, Span<uint8_t> p
 	if (p_creation_bits.has_flag(BUFFER_CREATION_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT)) {
 		buffer.usage.set_flag(RDD::BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT);
 	}
-	buffer.driver_id = driver->buffer_create(buffer.size, buffer.usage, RDD::MEMORY_ALLOCATION_TYPE_GPU, frames_drawn);
+
+	buffer.alloc_type = _get_buffer_alloc_type(!p_data.is_empty(), Thread::get_caller_id());
+
+	buffer.driver_id = driver->buffer_create(buffer.size, buffer.usage, buffer.alloc_type, frames_drawn);
 	ERR_FAIL_COND_V(!buffer.driver_id, RID());
 
 	// Vertex buffers are assumed to be immutable unless they don't have initial data or they've been marked for storage explicitly.
@@ -4079,7 +4101,10 @@ RID RenderingDevice::index_buffer_create(uint32_t p_index_count, IndexBufferForm
 	if (p_creation_bits.has_flag(BUFFER_CREATION_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT)) {
 		index_buffer.usage.set_flag(RDD::BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT);
 	}
-	index_buffer.driver_id = driver->buffer_create(index_buffer.size, index_buffer.usage, RDD::MEMORY_ALLOCATION_TYPE_GPU, frames_drawn);
+
+	index_buffer.alloc_type = _get_buffer_alloc_type(!p_data.is_empty(), Thread::get_caller_id());
+
+	index_buffer.driver_id = driver->buffer_create(index_buffer.size, index_buffer.usage, index_buffer.alloc_type, frames_drawn);
 	ERR_FAIL_COND_V(!index_buffer.driver_id, RID());
 
 	// Index buffers are assumed to be immutable unless they don't have initial data.
@@ -4342,7 +4367,10 @@ RID RenderingDevice::uniform_buffer_create(uint32_t p_size_bytes, Span<uint8_t> 
 		// stick to the known/intended use cases and scream if we deviate from it.
 		buffer.usage.clear_flag(RDD::BUFFER_USAGE_TRANSFER_TO_BIT);
 	}
-	buffer.driver_id = driver->buffer_create(buffer.size, buffer.usage, RDD::MEMORY_ALLOCATION_TYPE_GPU, frames_drawn);
+
+	buffer.alloc_type = _get_buffer_alloc_type(!p_data.is_empty(), Thread::get_caller_id());
+
+	buffer.driver_id = driver->buffer_create(buffer.size, buffer.usage, buffer.alloc_type, frames_drawn);
 	ERR_FAIL_COND_V(!buffer.driver_id, RID());
 
 	// Uniform buffers are assumed to be immutable unless they don't have initial data.

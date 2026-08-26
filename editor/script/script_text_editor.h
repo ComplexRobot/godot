@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "core/object/editor_language.h"
 #include "editor/gui/code_editor.h"
 #include "editor/script/script_editor_base.h"
 #include "editor/script/script_editor_plugin.h"
@@ -63,9 +64,9 @@ class ScriptTextEditor : public CodeEditorBase {
 	Label *drag_info_label = nullptr;
 
 	Vector<String> functions;
-	List<ScriptLanguage::Warning> warnings;
-	List<ScriptLanguage::ScriptError> errors;
-	HashMap<String, List<ScriptLanguage::ScriptError>> depended_errors;
+	List<EditorLanguage::Warning> warnings;
+	List<EditorLanguage::ScriptError> errors;
+	HashMap<String, List<EditorLanguage::ScriptError>> depended_errors;
 	HashSet<int> safe_lines;
 
 	List<Connection> missing_connections;
@@ -96,11 +97,6 @@ class ScriptTextEditor : public CodeEditorBase {
 	Color warning_underline_color = Color(1, 1, 1);
 	Color error_underline_color = Color(1, 1, 1);
 
-	PopupPanel *color_panel = nullptr;
-	ColorPicker *color_picker = nullptr;
-	Vector3i color_position;
-	String color_args;
-
 	bool theme_loaded = false;
 
 	enum {
@@ -114,16 +110,6 @@ class ScriptTextEditor : public CodeEditorBase {
 		SHOW_TOOLTIP_AT_CARET,
 		HELP_CONTEXTUAL,
 		LOOKUP_SYMBOL,
-	};
-
-	enum COLOR_MODE {
-		MODE_RGB,
-		MODE_STRING,
-		MODE_HSV,
-		MODE_OKHSL,
-		MODE_RGB8,
-		MODE_HEX,
-		MODE_MAX
 	};
 
 	class EditMenusScTE : public EditMenusCEB {
@@ -175,7 +161,7 @@ protected:
 	Array _inline_object_parse(const String &p_text);
 	void _inline_object_draw(const Dictionary &p_info, const Rect2 &p_rect);
 	void _inline_object_handle_click(const Dictionary &p_info, const Rect2 &p_rect);
-	String _picker_color_stringify(const Color &p_color, COLOR_MODE p_mode);
+	void _open_picker();
 	void _picker_color_changed(const Color &p_color);
 	void _update_color_constructor_options();
 	void _update_background_color();
@@ -184,7 +170,6 @@ protected:
 	void _notification(int p_what);
 
 	void _edit_option_toggle_inline_comment();
-	void _color_changed(const Color &p_color);
 
 	void _lookup_symbol(const String &p_symbol, int p_row, int p_column);
 	void _validate_symbol(const String &p_symbol);
@@ -201,7 +186,8 @@ protected:
 
 	void _goto_line(int p_line);
 
-	void _make_ste_context_menu(bool p_selection, bool p_color, bool p_foldable, bool p_open_docs, bool p_goto_definition, const Vector2 &p_pos);
+	void _make_ste_context_menu(bool p_selection, bool p_color, bool p_foldable, bool p_open_docs, const Vector2 &p_pos);
+	Dictionary _get_context_data() const;
 
 	virtual void _text_edit_gui_input(const Ref<InputEvent> &p_ev) override;
 	virtual bool _edit_option(int p_op) override;

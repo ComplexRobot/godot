@@ -68,6 +68,7 @@
 #include "scene/gui/rich_text_label.h"
 #include "scene/gui/split_container.h"
 #include "scene/gui/subviewport_container.h"
+#include "scene/main/node.h"
 #include "scene/main/scene_tree.h"
 #include "scene/resources/gradient.h"
 #include "scene/resources/immediate_mesh.h"
@@ -1502,18 +1503,19 @@ bool Node3DEditorViewport::_transform_gizmo_select(const Vector2 &p_screenpos, b
 
 	if (spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_TRANSFORM || spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_MOVE) {
 		int col_axis = -1;
-		real_t col_d = 1e20;
+		real_t col_cost = 1e20;
 
 		for (int i = 0; i < 3; i++) {
-			const Vector3 grabber_pos = gt.origin + gt.basis.get_column(i).normalized() * gizmo_scale * (GIZMO_ARROW_OFFSET + (GIZMO_ARROW_SIZE * 0.5));
-			const real_t grabber_radius = gizmo_scale * GIZMO_ARROW_SIZE;
+			const Vector3 grabber_pos = gt.origin + gt.basis.get_column(i).normalized() * gizmo_scale * (GIZMO_ARROW_OFFSET + GIZMO_ARROW_SIZE * 0.5);
+			const real_t grabber_radius = gizmo_scale * GIZMO_ARROW_SIZE * 0.5;
 
 			Vector3 r;
 
-			if (Geometry3D::segment_intersects_sphere(ray_pos, ray_pos + ray * MAX_Z, grabber_pos, grabber_radius, &r)) {
-				const real_t d = r.distance_to(ray_pos);
-				if (d < col_d) {
-					col_d = d;
+			const real_t effective_radius = grabber_radius * 1.5;
+			if (Geometry3D::segment_intersects_sphere(ray_pos, ray_pos + ray * MAX_Z, grabber_pos, effective_radius, &r)) {
+				const real_t cost = _screen_space_selection_cost(grabber_pos, effective_radius, r);
+				if (cost < col_cost) {
+					col_cost = cost;
 					col_axis = i;
 				}
 			}
@@ -1521,28 +1523,40 @@ bool Node3DEditorViewport::_transform_gizmo_select(const Vector2 &p_screenpos, b
 
 		bool is_plane_translate = false;
 		// plane select
-		if (col_axis == -1) {
-			col_d = 1e20;
+		{
+			// Adjust transform planes.
+			Transform3D pt = Transform3D(gt);
+			if (camera->get_projection() != Camera3D::ProjectionType::PROJECTION_ORTHOGONAL) {
+				const Vector3 dir = camera->get_global_position().direction_to(pt.origin);
+				for (int j = 0; j < 3; j++) {
+					// If a transform gizmo axis points away from the camera,
+					// we simply mirror the transform plane along that axis by inverting the corresponding basis component.
+					int sign = pt.basis.get_column(j).normalized().dot(dir) > CMP_EPSILON ? -1 : 1;
+					pt.basis.set_column(j, sign * pt.basis.get_column(j));
+				}
+			}
 
 			for (int i = 0; i < 3; i++) {
-				Vector3 ivec2 = gt.basis.get_column((i + 1) % 3).normalized();
-				Vector3 ivec3 = gt.basis.get_column((i + 2) % 3).normalized();
+				Vector3 ivec2 = pt.basis.get_column((i + 1) % 3).normalized();
+				Vector3 ivec3 = pt.basis.get_column((i + 2) % 3).normalized();
 
 				// Allow some tolerance to make the plane easier to click,
 				// even if the click is actually slightly outside the plane.
-				const Vector3 grabber_pos = gt.origin + (ivec2 + ivec3) * gizmo_scale * (GIZMO_PLANE_SIZE + GIZMO_PLANE_DST * 0.6667);
+				const Vector3 grabber_pos = pt.origin + (ivec2 + ivec3) * gizmo_scale * (GIZMO_PLANE_DST + GIZMO_PLANE_SIZE * 0.5);
+				const real_t grabber_size = gizmo_scale * GIZMO_PLANE_SIZE * 0.5;
 
 				Vector3 r;
-				Plane plane(gt.basis.get_column(i).normalized(), gt.origin);
+				Plane plane(pt.basis.get_column(i).normalized(), pt.origin);
 
 				if (plane.intersects_ray(ray_pos, ray, &r)) {
 					const real_t dist = r.distance_to(grabber_pos);
 					// Allow some tolerance to make the plane easier to click,
 					// even if the click is actually slightly outside the plane.
-					if (dist < (gizmo_scale * GIZMO_PLANE_SIZE * 1.5)) {
-						const real_t d = ray_pos.distance_to(r);
-						if (d < col_d) {
-							col_d = d;
+					const real_t effective_size = grabber_size * 1.5;
+					if (dist < effective_size) {
+						const real_t cost = _screen_space_selection_cost(grabber_pos, effective_size, r);
+						if (cost < col_cost) {
+							col_cost = cost;
 							col_axis = i;
 
 							is_plane_translate = true;
@@ -1675,18 +1689,19 @@ bool Node3DEditorViewport::_transform_gizmo_select(const Vector2 &p_screenpos, b
 
 	if (spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_SCALE) {
 		int col_axis = -1;
-		float col_d = 1e20;
+		float col_cost = 1e20;
 
 		for (int i = 0; i < 3; i++) {
-			const Vector3 grabber_pos = gt.origin + gt.basis.get_column(i).normalized() * gizmo_scale * GIZMO_SCALE_OFFSET;
-			const real_t grabber_radius = gizmo_scale * GIZMO_ARROW_SIZE;
+			const Vector3 grabber_pos = gt.origin + gt.basis.get_column(i).normalized() * gizmo_scale * (GIZMO_SCALE_OFFSET + GIZMO_SCALE_SIZE * 0.5);
+			const real_t grabber_radius = gizmo_scale * GIZMO_SCALE_SIZE * 0.5;
 
 			Vector3 r;
 
-			if (Geometry3D::segment_intersects_sphere(ray_pos, ray_pos + ray * MAX_Z, grabber_pos, grabber_radius, &r)) {
-				const real_t d = r.distance_to(ray_pos);
-				if (d < col_d) {
-					col_d = d;
+			const real_t effective_radius = grabber_radius * 1.5;
+			if (Geometry3D::segment_intersects_sphere(ray_pos, ray_pos + ray * MAX_Z, grabber_pos, effective_radius, &r)) {
+				const real_t cost = _screen_space_selection_cost(grabber_pos, effective_radius, r);
+				if (cost < col_cost) {
+					col_cost = cost;
 					col_axis = i;
 				}
 			}
@@ -1694,28 +1709,38 @@ bool Node3DEditorViewport::_transform_gizmo_select(const Vector2 &p_screenpos, b
 
 		bool is_plane_scale = false;
 		// plane select
-		if (col_axis == -1) {
-			col_d = 1e20;
+		{
+			// Adjust transform planes.
+			Transform3D pt = Transform3D(gt);
+			if (camera->get_projection() != Camera3D::ProjectionType::PROJECTION_ORTHOGONAL) {
+				const Vector3 dir = camera->get_global_position().direction_to(pt.origin);
+				for (int j = 0; j < 3; j++) {
+					int sign = pt.basis.get_column(j).normalized().dot(dir) > CMP_EPSILON ? -1 : 1;
+					pt.basis.set_column(j, sign * pt.basis.get_column(j));
+				}
+			}
 
 			for (int i = 0; i < 3; i++) {
-				const Vector3 ivec2 = gt.basis.get_column((i + 1) % 3).normalized();
-				const Vector3 ivec3 = gt.basis.get_column((i + 2) % 3).normalized();
+				const Vector3 ivec2 = pt.basis.get_column((i + 1) % 3).normalized();
+				const Vector3 ivec3 = pt.basis.get_column((i + 2) % 3).normalized();
 
 				// Allow some tolerance to make the plane easier to click,
 				// even if the click is actually slightly outside the plane.
-				const Vector3 grabber_pos = gt.origin + (ivec2 + ivec3) * gizmo_scale * (GIZMO_PLANE_SIZE + GIZMO_PLANE_DST * 0.6667);
+				const Vector3 grabber_pos = pt.origin + (ivec2 + ivec3) * gizmo_scale * (GIZMO_PLANE_DST + GIZMO_PLANE_SIZE * 0.5);
+				const real_t grabber_size = gizmo_scale * GIZMO_PLANE_SIZE * 0.5;
 
 				Vector3 r;
-				Plane plane(gt.basis.get_column(i).normalized(), gt.origin);
+				Plane plane(pt.basis.get_column(i).normalized(), pt.origin);
 
 				if (plane.intersects_ray(ray_pos, ray, &r)) {
 					const real_t dist = r.distance_to(grabber_pos);
 					// Allow some tolerance to make the plane easier to click,
 					// even if the click is actually slightly outside the plane.
-					if (dist < (gizmo_scale * GIZMO_PLANE_SIZE * 1.5)) {
-						const real_t d = ray_pos.distance_to(r);
-						if (d < col_d) {
-							col_d = d;
+					const real_t effective_size = grabber_size * 1.5;
+					if (dist < effective_size) {
+						const real_t cost = _screen_space_selection_cost(grabber_pos, effective_size, r);
+						if (cost < col_cost) {
+							col_cost = cost;
 							col_axis = i;
 
 							is_plane_scale = true;
@@ -3161,30 +3186,31 @@ void Node3DEditorViewport::_project_settings_changed() {
 }
 
 static void override_label_colors(Control *p_control) {
+	const Ref<Theme> &editor_theme = EditorNode::get_singleton()->get_editor_theme();
 	p_control->begin_bulk_theme_override();
-	p_control->add_theme_color_override(SceneStringName(font_color), p_control->get_theme_color(SNAME("font_dark_background_color"), EditorStringName(Editor)));
-	p_control->add_theme_color_override("font_hover_color", p_control->get_theme_color(SNAME("font_dark_background_hover_color"), EditorStringName(Editor)));
-	p_control->add_theme_color_override("font_focus_color", p_control->get_theme_color(SNAME("font_dark_background_focus_color"), EditorStringName(Editor)));
-	p_control->add_theme_color_override("font_pressed_color", p_control->get_theme_color(SNAME("font_dark_background_pressed_color"), EditorStringName(Editor)));
-	p_control->add_theme_color_override("font_hover_pressed_color", p_control->get_theme_color(SNAME("font_dark_background_hover_pressed_color"), EditorStringName(Editor)));
+	p_control->add_theme_color_override(SceneStringName(font_color), editor_theme->get_color(SNAME("font_dark_background_color"), EditorStringName(Editor)));
+	p_control->add_theme_color_override("font_hover_color", editor_theme->get_color(SNAME("font_dark_background_hover_color"), EditorStringName(Editor)));
+	p_control->add_theme_color_override("font_focus_color", editor_theme->get_color(SNAME("font_dark_background_focus_color"), EditorStringName(Editor)));
+	p_control->add_theme_color_override("font_pressed_color", editor_theme->get_color(SNAME("font_dark_background_pressed_color"), EditorStringName(Editor)));
+	p_control->add_theme_color_override("font_hover_pressed_color", editor_theme->get_color(SNAME("font_dark_background_hover_pressed_color"), EditorStringName(Editor)));
 	p_control->end_bulk_theme_override();
 }
 
-static void override_button_stylebox(Button *p_button, const Ref<StyleBox> p_stylebox) {
-	p_button->begin_bulk_theme_override();
-	p_button->add_theme_style_override(CoreStringName(normal), p_stylebox);
-	p_button->add_theme_style_override("normal_mirrored", p_stylebox);
-	p_button->add_theme_style_override(SceneStringName(hover), p_stylebox);
-	p_button->add_theme_style_override("hover_mirrored", p_stylebox);
-	p_button->add_theme_style_override("hover_pressed", p_stylebox);
-	p_button->add_theme_style_override("hover_pressed_mirrored", p_stylebox);
-	p_button->add_theme_style_override(SceneStringName(pressed), p_stylebox);
-	p_button->add_theme_style_override("pressed_mirrored", p_stylebox);
-	p_button->add_theme_style_override("focus", p_stylebox);
-	p_button->add_theme_style_override("focus_mirrored", p_stylebox);
-	p_button->add_theme_style_override("disabled", p_stylebox);
-	p_button->add_theme_style_override("disabled_mirrored", p_stylebox);
-	p_button->end_bulk_theme_override();
+static void override_control_stylebox(Control *p_control, const Ref<StyleBox> p_stylebox) {
+	p_control->begin_bulk_theme_override();
+	p_control->add_theme_style_override(CoreStringName(normal), p_stylebox);
+	p_control->add_theme_style_override("normal_mirrored", p_stylebox);
+	p_control->add_theme_style_override(SceneStringName(hover), p_stylebox);
+	p_control->add_theme_style_override("hover_mirrored", p_stylebox);
+	p_control->add_theme_style_override("hover_pressed", p_stylebox);
+	p_control->add_theme_style_override("hover_pressed_mirrored", p_stylebox);
+	p_control->add_theme_style_override(SceneStringName(pressed), p_stylebox);
+	p_control->add_theme_style_override("pressed_mirrored", p_stylebox);
+	p_control->add_theme_style_override("focus", p_stylebox);
+	p_control->add_theme_style_override("focus_mirrored", p_stylebox);
+	p_control->add_theme_style_override("disabled", p_stylebox);
+	p_control->add_theme_style_override("disabled_mirrored", p_stylebox);
+	p_control->end_bulk_theme_override();
 }
 
 void Node3DEditorViewport::_notification(int p_what) {
@@ -3235,6 +3261,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 		case NOTIFICATION_READY: {
 			ProjectSettings::get_singleton()->connect("settings_changed", callable_mp(this, &Node3DEditorViewport::_project_settings_changed));
 			_update_navigation_controls_visibility();
+			_init_gizmo_instance(index);
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
@@ -3845,21 +3872,6 @@ void Node3DEditorViewport::_notification(int p_what) {
 			}
 		} break;
 
-		case NOTIFICATION_ENTER_TREE: {
-			surface->connect(SceneStringName(draw), callable_mp(this, &Node3DEditorViewport::_draw));
-			surface->connect(SceneStringName(gui_input), callable_mp(this, &Node3DEditorViewport::_sinput));
-			surface->connect(SceneStringName(mouse_entered), callable_mp(this, &Node3DEditorViewport::_surface_mouse_enter));
-			surface->connect(SceneStringName(mouse_exited), callable_mp(this, &Node3DEditorViewport::_surface_mouse_exit));
-			surface->connect(SceneStringName(focus_entered), callable_mp(this, &Node3DEditorViewport::_surface_focus_enter));
-			surface->connect(SceneStringName(focus_exited), callable_mp(this, &Node3DEditorViewport::_surface_focus_exit));
-
-			_init_gizmo_instance(index);
-		} break;
-
-		case NOTIFICATION_EXIT_TREE: {
-			_finish_gizmo_instances();
-		} break;
-
 		case NOTIFICATION_THEME_CHANGED: {
 			_update_centered_labels();
 
@@ -3870,20 +3882,20 @@ void Node3DEditorViewport::_notification(int p_what) {
 
 			const Ref<StyleBox> &information_3d_stylebox = gui_base->get_theme_stylebox(SNAME("Information3dViewport"), EditorStringName(EditorStyles));
 
-			override_button_stylebox(view_display_menu, information_3d_stylebox);
+			override_control_stylebox(view_display_menu, information_3d_stylebox);
 			override_label_colors(view_display_menu);
-			override_button_stylebox(translation_preview_button, information_3d_stylebox);
+			override_control_stylebox(translation_preview_button, information_3d_stylebox);
 			override_label_colors(translation_preview_button);
-			override_button_stylebox(follow_mode, information_3d_stylebox);
+			override_control_stylebox(follow_mode, information_3d_stylebox);
 			override_label_colors(follow_mode);
-			override_button_stylebox(preview_camera, information_3d_stylebox);
+			override_control_stylebox(preview_camera, information_3d_stylebox);
 			override_label_colors(preview_camera);
 
 			frame_time_gradient->set_color(0, get_theme_color(SNAME("success_color_dark_background"), EditorStringName(Editor)));
 			frame_time_gradient->set_color(1, get_theme_color(SNAME("warning_color_dark_background"), EditorStringName(Editor)));
 			frame_time_gradient->set_color(2, get_theme_color(SNAME("error_color_dark_background"), EditorStringName(Editor)));
 
-			override_button_stylebox(pilot_camera, information_3d_stylebox);
+			override_control_stylebox(pilot_camera, information_3d_stylebox);
 			override_label_colors(pilot_camera);
 
 			info_panel->add_theme_style_override(SceneStringName(panel), information_3d_stylebox);
@@ -3898,8 +3910,10 @@ void Node3DEditorViewport::_notification(int p_what) {
 			frame_time_panel->set_custom_minimum_size(Size2(min_width, 0) * EDSCALE);
 			frame_time_vbox->add_theme_constant_override("separation", Math::round(-1 * EDSCALE));
 
-			cinema_label->add_theme_style_override(CoreStringName(normal), information_3d_stylebox);
-			locked_label->add_theme_style_override(CoreStringName(normal), information_3d_stylebox);
+			override_control_stylebox(cinema_label, information_3d_stylebox);
+			override_label_colors(cinema_label);
+			override_control_stylebox(locked_label, information_3d_stylebox);
+			override_label_colors(locked_label);
 
 			ruler_label->add_theme_color_override(SceneStringName(font_color), Color(1.0, 0.9, 0.0, 1.0));
 			ruler_label->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
@@ -5085,15 +5099,28 @@ void Node3DEditorViewport::update_transform_gizmo_view() {
 		}
 		axis_angle.basis.scale(scale);
 		axis_angle.origin = xform.origin;
+
+		// Adjust transform planes.
+		Transform3D plane_angle = Transform3D(axis_angle);
+		if (camera->get_projection() != Camera3D::ProjectionType::PROJECTION_ORTHOGONAL) {
+			// When a transform operation is in progress, use the initial origin
+			// so the transform plane stays attached to the cursor.
+			const Vector3 dir = camera_xform.origin.direction_to(_edit.mode == TRANSFORM_NONE ? plane_angle.origin : _edit.original.origin);
+			for (int j = 0; j < 3; j++) {
+				int sign = plane_angle.basis.get_column(j).normalized().dot(dir) > CMP_EPSILON ? -1 : 1;
+				plane_angle.basis.set_column(j, sign * plane_angle.basis.get_column(j));
+			}
+		}
+
 		RenderingServer::get_singleton()->instance_set_transform(move_gizmo_instance[i], axis_angle);
 		RenderingServer::get_singleton()->instance_set_visible(move_gizmo_instance[i], show_gizmo && (spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_TRANSFORM || spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_MOVE));
-		RenderingServer::get_singleton()->instance_set_transform(move_plane_gizmo_instance[i], axis_angle);
+		RenderingServer::get_singleton()->instance_set_transform(move_plane_gizmo_instance[i], plane_angle);
 		RenderingServer::get_singleton()->instance_set_visible(move_plane_gizmo_instance[i], show_gizmo && (spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_TRANSFORM || spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_MOVE));
 		RenderingServer::get_singleton()->instance_set_transform(rotate_gizmo_instance[i], axis_angle);
 		RenderingServer::get_singleton()->instance_set_visible(rotate_gizmo_instance[i], show_rotate_gizmo && i != arc_replaces_ring);
 		RenderingServer::get_singleton()->instance_set_transform(scale_gizmo_instance[i], axis_angle);
 		RenderingServer::get_singleton()->instance_set_visible(scale_gizmo_instance[i], show_gizmo && (spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_SCALE));
-		RenderingServer::get_singleton()->instance_set_transform(scale_plane_gizmo_instance[i], axis_angle);
+		RenderingServer::get_singleton()->instance_set_transform(scale_plane_gizmo_instance[i], plane_angle);
 		RenderingServer::get_singleton()->instance_set_visible(scale_plane_gizmo_instance[i], show_gizmo && (spatial_editor->get_tool_mode() == Node3DEditor::TOOL_MODE_SCALE));
 		RenderingServer::get_singleton()->instance_set_transform(axis_gizmo_instance[i], xform);
 	}
@@ -6688,6 +6715,17 @@ void Node3DEditorViewport::_add_advanced_debug_draw_mode_item(PopupMenu *p_popup
 	display_submenu->set_item_metadata(-1, item_data); // Tooltip is assigned in NOTIFICATION_TRANSLATION_CHANGED.
 }
 
+real_t Node3DEditorViewport::_screen_space_selection_cost(const Vector3 &p_center, const float p_radius, const Vector3 &p_pos) {
+	const Vector3 cam_up = camera->get_transform().basis.get_column(1).normalized();
+
+	const Point2 screen_pos = point_to_screen(p_center);
+	const real_t screen_size = screen_pos.distance_to(point_to_screen(p_center + cam_up * p_radius));
+	const real_t screen_dist = screen_pos.distance_to(point_to_screen(p_pos));
+
+	real_t cost = Math::pow(screen_dist / MAX(screen_size, 1.0), 2.0);
+	return cost;
+}
+
 void Node3DEditorViewport::_load_viewport_inputs() {
 	// Registering with Key::NONE intentionally creates an empty Array.
 	register_shortcut_action("spatial_editor/viewport_orbit_modifier_1", TTRC("Viewport Orbit Modifier 1"), Key::NONE);
@@ -6739,7 +6777,6 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	c->add_child(viewport);
 	surface = memnew(Control);
 	SET_DRAG_FORWARDING_CD(surface, Node3DEditorViewport);
-	add_child(surface);
 	surface->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
 	surface->set_clip_contents(true);
 	camera = memnew(Camera3D);
@@ -6748,6 +6785,14 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	viewport->add_child(camera);
 	camera->make_current();
 	surface->set_focus_mode(FOCUS_ALL);
+	add_child(surface);
+
+	surface->connect(SceneStringName(draw), callable_mp(this, &Node3DEditorViewport::_draw));
+	surface->connect(SceneStringName(gui_input), callable_mp(this, &Node3DEditorViewport::_sinput));
+	surface->connect(SceneStringName(mouse_entered), callable_mp(this, &Node3DEditorViewport::_surface_mouse_enter));
+	surface->connect(SceneStringName(mouse_exited), callable_mp(this, &Node3DEditorViewport::_surface_mouse_exit));
+	surface->connect(SceneStringName(focus_entered), callable_mp(this, &Node3DEditorViewport::_surface_focus_enter));
+	surface->connect(SceneStringName(focus_exited), callable_mp(this, &Node3DEditorViewport::_surface_focus_exit));
 
 	VBoxContainer *vbox = memnew(VBoxContainer);
 	surface->add_child(vbox);
@@ -6759,7 +6804,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 
 	view_display_menu = memnew(MenuButton);
 	view_display_menu->set_flat(false);
-	view_display_menu->set_h_size_flags(0);
+	view_display_menu->set_h_size_flags(SIZE_SHRINK_BEGIN);
 	view_display_menu->set_shortcut_context(this);
 	view_display_menu->set_accessibility_name(TTRC("View"));
 	view_display_menu->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
@@ -6915,7 +6960,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	// Using Control even on macOS to avoid conflict with Quick Open shortcut.
 	preview_camera->set_shortcut(ED_SHORTCUT("spatial_editor/toggle_camera_preview", TTRC("Toggle Camera Preview"), KeyModifierMask::CTRL | Key::P));
 	vbox->add_child(preview_camera);
-	preview_camera->set_h_size_flags(0);
+	preview_camera->set_h_size_flags(SIZE_SHRINK_BEGIN);
 	preview_camera->set_theme_type_variation("CheckBoxNoIconTint");
 	preview_camera->hide();
 	preview_camera->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditorViewport::_toggle_camera_preview));
@@ -6925,7 +6970,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	pilot_camera->set_tooltip_text(TTRC("Enable pilot mode for the preview camera.\nAllows WASD movement and mouse look when in preview mode."));
 	pilot_camera->set_shortcut(ED_SHORTCUT("spatial_editor/toggle_pilot_preview", TTRC("Toggle Pilot Mode in Preview")));
 	vbox->add_child(pilot_camera);
-	pilot_camera->set_h_size_flags(0);
+	pilot_camera->set_h_size_flags(SIZE_SHRINK_BEGIN);
 	pilot_camera->set_theme_type_variation("CheckBoxNoIconTint");
 	pilot_camera->hide();
 	pilot_camera->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditorViewport::_toggle_pilot_preview));
@@ -7173,6 +7218,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 }
 
 Node3DEditorViewport::~Node3DEditorViewport() {
+	_finish_gizmo_instances();
 	memdelete(ruler);
 }
 

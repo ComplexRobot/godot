@@ -41,7 +41,6 @@
 #include "editor/doc/doc_tools.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/editor_interface.h"
-#include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -873,6 +872,9 @@ void EditorProperty::update_property() {
 	GDVIRTUAL_CALL(_update_property);
 }
 
+void EditorProperty::update_properties_recursive() {
+}
+
 void EditorProperty::_set_read_only(bool p_read_only) {
 }
 
@@ -1103,6 +1105,14 @@ void EditorProperty::_focusable_focused(int p_index) {
 	}
 }
 
+Dictionary EditorProperty::_get_context_data() {
+	EditorContextMenuPlugin::OptionsData context_data;
+	context_data["property"] = this;
+	context_data["object"] = get_edited_object();
+	context_data["property_name"] = get_edited_property();
+	return context_data;
+}
+
 void EditorProperty::add_focusable(Control *p_control) {
 	p_control->connect(SceneStringName(focus_entered), callable_mp(this, &EditorProperty::_focusable_focused).bind(focusables.size()));
 	focusables.push_back(p_control);
@@ -1329,7 +1339,14 @@ void EditorProperty::shortcut_input(const Ref<InputEvent> &p_event) {
 	} else {
 		const Callable custom_callback = EditorContextMenuPluginManager::get_singleton()->match_custom_shortcut(EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, p_event);
 		if (custom_callback.is_valid()) {
-			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, this);
+#ifndef DISABLE_DEPRECATED
+			if (p_event->get_meta("_legacy_shortcut", false)) {
+				EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, this);
+				accept_event();
+				return;
+			}
+#endif
+			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, _get_context_data());
 			accept_event();
 		}
 	}
@@ -1611,11 +1628,11 @@ void EditorProperty::menu_option(int p_option) {
 		} break;
 		case MENU_OPEN_DOCUMENTATION: {
 			ScriptEditor::get_singleton()->goto_help(doc_path);
-			EditorNode::get_singleton()->get_editor_main_screen()->select(EditorMainScreen::EDITOR_SCRIPT);
+			ScriptEditor::get_singleton()->focus_editor();
 		} break;
 		default: {
 			if (p_option >= EditorContextMenuPlugin::BASE_ID) {
-				EditorContextMenuPluginManager::get_singleton()->activate_custom_option(EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, p_option, this);
+				EditorContextMenuPluginManager::get_singleton()->activate_custom_option(EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, p_option);
 			}
 		}
 	}
@@ -1785,9 +1802,13 @@ void EditorProperty::_update_popup() {
 		menu->add_icon_item(theme_cache.help_icon, TTR("Open Documentation"), MENU_OPEN_DOCUMENTATION);
 	}
 
-	if (EditorContextMenuPluginManager::get_singleton()) {
+	if (EditorContextMenuPluginManager::get_singleton() && EditorContextMenuPluginManager::get_singleton()->has_plugins_for_slot(EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY)) {
+		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, _get_context_data());
+
+#ifndef DISABLE_DEPRECATED
 		Vector<String> property_paths = { String::num_int64(get_edited_object()->get_instance_id()), property_path };
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, property_paths);
+		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, property_paths, this, 500);
+#endif
 	}
 }
 
@@ -2079,7 +2100,7 @@ void EditorInspectorCategory::_handle_menu_option(int p_option) {
 
 		case MENU_OPEN_DOCS: {
 			ScriptEditor::get_singleton()->goto_help("class:" + doc_class_name);
-			EditorNode::get_singleton()->get_editor_main_screen()->select(EditorMainScreen::EDITOR_SCRIPT);
+			ScriptEditor::get_singleton()->focus_editor();
 		} break;
 
 		case MENU_UNFAVORITE_ALL: {
@@ -2958,7 +2979,7 @@ void EditorInspectorSection::menu_option(int p_option) {
 
 		case MENU_OPEN_DOCUMENTATION: {
 			ScriptEditor::get_singleton()->goto_help(doc_path);
-			EditorNode::get_singleton()->get_editor_main_screen()->select(EditorMainScreen::EDITOR_SCRIPT);
+			ScriptEditor::get_singleton()->focus_editor();
 		} break;
 	}
 }
@@ -5361,6 +5382,14 @@ void EditorInspector::update_property(const String &p_prop) {
 	for (EditorInspectorSection *S : sections) {
 		if (S->is_checkable()) {
 			S->_property_edited(p_prop);
+		}
+	}
+}
+
+void EditorInspector::update_properties_recursive() {
+	for (const KeyValue<StringName, List<EditorProperty *>> &F : editor_property_map) {
+		for (EditorProperty *E : F.value) {
+			E->update_properties_recursive();
 		}
 	}
 }

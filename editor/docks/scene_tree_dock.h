@@ -262,11 +262,10 @@ class SceneTreeDock : public EditorDock {
 	bool _has_tracks_to_delete(Node *p_node, List<Node *> &p_to_delete) const;
 
 	void _normalize_drop(Node *&to_node, int &to_pos, int p_type);
-	Array _get_selection_array();
 
-	void _nodes_dragged(const Array &p_nodes, NodePath p_to, int p_type);
-	void _files_dropped(const Vector<String> &p_files, NodePath p_to, int p_type);
-	void _script_dropped(const String &p_file, NodePath p_to);
+	void _nodes_dragged(const Array &p_nodes, Node *p_to_node, int p_type);
+	void _files_dropped(const Vector<String> &p_files, Node *p_to_node, int p_type);
+	void _script_dropped(const String &p_file, Node *p_to_node);
 	void _quick_open(const String &p_file_path);
 
 	void _tree_rmb(const Vector2 &p_menu_pos);
@@ -304,6 +303,7 @@ class SceneTreeDock : public EditorDock {
 	bool determine_path_automatically = true;
 
 	static void _update_configuration_warning();
+	static Dictionary _get_context_data(const List<Node *> &p_selected_nodes);
 
 	bool _update_node_path(Node *p_root_node, NodePath &r_node_path, HashMap<Node *, NodePath> *p_renames) const;
 	void _check_object_properties_recursive(Node *p_root_node, Object *p_obj, HashMap<Node *, NodePath> *p_renames, bool p_inside_resource = false) const;

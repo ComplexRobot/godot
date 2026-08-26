@@ -34,7 +34,6 @@
 #include "gdscript_cache.h"
 #include "gdscript_compiler.h"
 #include "gdscript_parser.h"
-#include "gdscript_rpc_callable.h"
 #include "gdscript_tokenizer_buffer.h"
 #include "gdscript_warning.h"
 
@@ -78,7 +77,7 @@ bool GDScriptNativeClass::_get(const StringName &p_name, Variant &r_ret) const {
 		return true;
 	}
 
-	MethodBind *method = ClassDB::get_method(name, p_name);
+	const MethodBind *method = ClassDB::get_method(name, p_name);
 	if (method && method->is_static()) {
 		// Native static method.
 		r_ret = Callable(this, p_name);
@@ -114,7 +113,7 @@ Variant GDScriptNativeClass::callp(const StringName &p_method, const Variant **p
 		return Object::callp(p_method, p_args, p_argcount, r_error);
 	}
 
-	MethodBind *method = ClassDB::get_method(name, p_method);
+	const MethodBind *method = ClassDB::get_method(name, p_method);
 	if (method && method->is_static()) {
 		// Native static method.
 		return method->call(nullptr, p_args, p_argcount, r_error);
@@ -161,12 +160,6 @@ GDScriptInstance *GDScript::_create_instance(const Variant **p_args, int p_argco
 	instance->script = Ref<GDScript>(this);
 	instance->owner = p_owner;
 	instance->owner_id = p_owner->get_instance_id();
-#ifdef DEBUG_ENABLED
-	//needed for hot reloading
-	for (const KeyValue<StringName, MemberInfo> &E : member_indices) {
-		instance->member_indices_cache[E.key] = E.value.index;
-	}
-#endif
 	instance->owner->set_script_instance(instance);
 
 	/* STEP 2, INITIALIZE AND CONSTRUCT */
@@ -561,9 +554,7 @@ bool GDScript::_update_exports(bool *r_err, bool p_recursive_call, PlaceHolderSc
 
 			members_cache.push_back(get_class_category());
 
-			for (int i = 0; i < c->members.size(); i++) {
-				const GDScriptParser::ClassNode::Member &member = c->members[i];
-
+			for (const GDScriptParser::ClassNode::Member &member : c->members) {
 				switch (member.type) {
 					case GDScriptParser::ClassNode::Member::VARIABLE: {
 						if (!member.variable->exported) {
@@ -1007,11 +998,7 @@ bool GDScript::_get(const StringName &p_name, Variant &r_ret) const {
 		if (likely(top->valid)) {
 			HashMap<StringName, GDScriptFunction *>::ConstIterator E = top->member_functions.find(p_name);
 			if (E && E->value->is_static()) {
-				if (top->rpc_config.has(p_name)) {
-					r_ret = Callable(memnew(GDScriptRPCCallable(const_cast<GDScript *>(top), E->key)));
-				} else {
-					r_ret = Callable(const_cast<GDScript *>(top), E->key);
-				}
+				r_ret = Callable(const_cast<GDScript *>(top), E->key);
 				return true;
 			}
 		}
@@ -1674,11 +1661,7 @@ bool GDScriptInstance::get(const StringName &p_name, Variant &r_ret) const {
 		if (likely(sptr->valid)) {
 			HashMap<StringName, GDScriptFunction *>::ConstIterator E = sptr->member_functions.find(p_name);
 			if (E) {
-				if (sptr->rpc_config.has(p_name)) {
-					r_ret = Callable(memnew(GDScriptRPCCallable(owner, E->key)));
-				} else {
-					r_ret = Callable(owner, E->key);
-				}
+				r_ret = Callable(owner, E->key);
 				return true;
 			}
 		}
@@ -2061,18 +2044,13 @@ void GDScriptInstance::reload_members() {
 
 	// Transfer the old members into their new position.
 	for (KeyValue<StringName, GDScript::MemberInfo> &E : script->member_indices) {
-		if (member_indices_cache.has(E.key)) {
-			Variant value = members[member_indices_cache[E.key]];
+		const GDScript::MemberInfo *old = script->old_member_indices.getptr(E.key);
+		if (old != nullptr) {
+			Variant value = members[old->index];
 			new_members[E.value.index] = value;
 		}
 	}
 	members = std::move(new_members);
-
-	// Cache the new indices.
-	member_indices_cache.clear();
-	for (const KeyValue<StringName, GDScript::MemberInfo> &E : script->member_indices) {
-		member_indices_cache[E.key] = E.value.index;
-	}
 
 #endif
 }
@@ -2791,7 +2769,7 @@ String GDScriptLanguage::_get_global_class_name(const String &p_path, String *r_
 
 						while (extend_classes.size() > 0) {
 							bool found = false;
-							for (int i = 0; i < subclass->members.size(); i++) {
+							for (uint32_t i = 0; i < subclass->members.size(); i++) {
 								if (subclass->members[i].type != GDScriptParser::ClassNode::Member::CLASS) {
 									continue;
 								}

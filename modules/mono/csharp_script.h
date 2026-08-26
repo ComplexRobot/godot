@@ -511,16 +511,11 @@ public:
 	bool is_using_templates() override;
 	virtual Ref<Script> make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const override;
 	virtual Vector<ScriptTemplate> get_built_in_templates(const StringName &p_object) override;
-	/* TODO */ bool validate(const String &p_script, const String &p_path, List<String> *r_functions,
-			List<ScriptLanguage::ScriptError> *r_errors = nullptr, List<ScriptLanguage::Warning> *r_warnings = nullptr, HashSet<int> *r_safe_lines = nullptr) const override {
-		return true;
-	}
 	String validate_path(const String &p_path) const override;
 	bool supports_builtin_mode() const override;
 	String make_function(const String &p_class, const String &p_name, const PackedStringArray &p_args) const override;
 	virtual bool can_make_function() const override { return false; }
-	virtual String _get_indentation() const;
-	/* TODO? */ void auto_indent_code(String &p_code, int p_from_line, int p_to_line) const override {}
+	String _get_indentation() const;
 	/* TODO */ void add_global_constant(const StringName &p_variable, const Variant &p_value) override {}
 	virtual ScriptNameCasing preferred_file_name_casing() const override;
 
@@ -562,9 +557,6 @@ public:
 	void reload_all_scripts() override;
 	void reload_scripts(const Array &p_scripts) override;
 	void reload_tool_script(const Ref<Script> &p_script) override;
-
-	/* LOADER FUNCTIONS */
-	void get_recognized_extensions(List<String> *p_extensions) const override;
 
 #ifdef TOOLS_ENABLED
 	Error open_in_external_editor(const Ref<Script> &p_script, int p_line, int p_col) override;

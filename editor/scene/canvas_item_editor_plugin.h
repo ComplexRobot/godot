@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 #include "scene/gui/box_container.h"
 
@@ -73,8 +74,8 @@ public:
 	Dictionary undo_state;
 };
 
-class CanvasItemEditor : public VBoxContainer {
-	GDCLASS(CanvasItemEditor, VBoxContainer);
+class CanvasItemEditor : public EditorDock {
+	GDCLASS(CanvasItemEditor, EditorDock);
 
 public:
 	enum Tool {
@@ -419,6 +420,7 @@ private:
 	bool _is_node_movable(const Node *p_node, bool p_popup_warning = false);
 	void _get_canvas_items_at_pos(const Point2 &p_pos, Vector<SelectResult> &r_items, bool p_allow_locked = false);
 	void _find_canvas_items_in_rect(const Rect2 &p_rect, Node *p_node, List<CanvasItem *> *r_items, const Transform2D &p_parent_xform = Transform2D(), const Transform2D &p_canvas_xform = Transform2D());
+	Dictionary _get_context_data();
 
 	bool _select_click_on_item(CanvasItem *item, Point2 p_click_pos, bool p_append);
 
@@ -648,7 +650,7 @@ protected:
 	void _notification(int p_what);
 
 public:
-	virtual String get_plugin_name() const override { return TTRC("2D"); }
+	virtual String get_plugin_name() const override { return "2D"; }
 	bool has_main_screen() const override { return true; }
 	virtual void edit(Object *p_object) override;
 	virtual bool handles(Object *p_object) const override;

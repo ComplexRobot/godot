@@ -638,6 +638,12 @@ void Control::_validate_property(PropertyInfo &p_property) const {
 				}
 				hint_string += "Shrink End:8";
 			}
+			if (size_flags.has(SIZE_MAXIMIZE)) {
+				if (!hint_string.is_empty()) {
+					hint_string += ",";
+				}
+				hint_string += "Maximize:16";
+			}
 
 			if (hint_string.is_empty()) {
 				p_property.hint_string = "";
@@ -4036,41 +4042,41 @@ bool Control::has_theme_constant(const StringName &p_name, const StringName &p_t
 
 /// Local property overrides.
 
-void Control::add_theme_icon_override(const StringName &p_name, RequiredParam<Texture2D> rp_icon) {
+void Control::add_theme_icon_override(const StringName &p_name, RequiredParam<Texture2D> p_icon) {
 	ERR_MAIN_THREAD_GUARD;
-	EXTRACT_PARAM_OR_FAIL(p_icon, rp_icon);
+	EXTRACT_PARAM_OR_FAIL(icon, p_icon);
 
 	if (data.theme_icon_override.has(p_name)) {
 		data.theme_icon_override[p_name]->disconnect_changed(callable_mp(this, &Control::_notify_theme_override_changed));
 	}
 
-	data.theme_icon_override[p_name] = p_icon;
+	data.theme_icon_override[p_name] = icon;
 	data.theme_icon_override[p_name]->connect_changed(callable_mp(this, &Control::_notify_theme_override_changed), CONNECT_REFERENCE_COUNTED);
 	_notify_theme_override_changed();
 }
 
-void Control::add_theme_style_override(const StringName &p_name, RequiredParam<StyleBox> rp_style) {
+void Control::add_theme_style_override(const StringName &p_name, RequiredParam<StyleBox> p_style) {
 	ERR_MAIN_THREAD_GUARD;
-	EXTRACT_PARAM_OR_FAIL(p_style, rp_style);
+	EXTRACT_PARAM_OR_FAIL(style, p_style);
 
 	if (data.theme_style_override.has(p_name)) {
 		data.theme_style_override[p_name]->disconnect_changed(callable_mp(this, &Control::_notify_theme_override_changed));
 	}
 
-	data.theme_style_override[p_name] = p_style;
+	data.theme_style_override[p_name] = style;
 	data.theme_style_override[p_name]->connect_changed(callable_mp(this, &Control::_notify_theme_override_changed), CONNECT_REFERENCE_COUNTED);
 	_notify_theme_override_changed();
 }
 
-void Control::add_theme_font_override(const StringName &p_name, RequiredParam<Font> rp_font) {
+void Control::add_theme_font_override(const StringName &p_name, RequiredParam<Font> p_font) {
 	ERR_MAIN_THREAD_GUARD;
-	EXTRACT_PARAM_OR_FAIL(p_font, rp_font);
+	EXTRACT_PARAM_OR_FAIL(font, p_font);
 
 	if (data.theme_font_override.has(p_name)) {
 		data.theme_font_override[p_name]->disconnect_changed(callable_mp(this, &Control::_notify_theme_override_changed));
 	}
 
-	data.theme_font_override[p_name] = p_font;
+	data.theme_font_override[p_name] = font;
 	data.theme_font_override[p_name]->connect_changed(callable_mp(this, &Control::_notify_theme_override_changed), CONNECT_REFERENCE_COUNTED);
 	_notify_theme_override_changed();
 }
@@ -5022,8 +5028,8 @@ void Control::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "pivot_offset_ratio"), "set_pivot_offset_ratio", "get_pivot_offset_ratio");
 
 	ADD_SUBGROUP("Container Sizing", "size_flags_");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_flags_horizontal", PROPERTY_HINT_FLAGS, "Fill:1,Expand:2,Shrink Center:4,Shrink End:8"), "set_h_size_flags", "get_h_size_flags");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_flags_vertical", PROPERTY_HINT_FLAGS, "Fill:1,Expand:2,Shrink Center:4,Shrink End:8"), "set_v_size_flags", "get_v_size_flags");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_flags_horizontal", PROPERTY_HINT_FLAGS, "Fill:1,Expand:2,Shrink Center:4,Shrink End:8,Maximize:16"), "set_h_size_flags", "get_h_size_flags");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_flags_vertical", PROPERTY_HINT_FLAGS, "Fill:1,Expand:2,Shrink Center:4,Shrink End:8,Maximize:16"), "set_v_size_flags", "get_v_size_flags");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "size_flags_stretch_ratio", PROPERTY_HINT_RANGE, "0,20,0.01,or_greater"), "set_stretch_ratio", "get_stretch_ratio");
 
 	ADD_GROUP("Offset Transform", "offset_transform_");
@@ -5152,6 +5158,7 @@ void Control::_bind_methods() {
 	BIND_BITFIELD_FLAG(SIZE_EXPAND_FILL);
 	BIND_BITFIELD_FLAG(SIZE_SHRINK_CENTER);
 	BIND_BITFIELD_FLAG(SIZE_SHRINK_END);
+	BIND_BITFIELD_FLAG(SIZE_MAXIMIZE);
 
 	BIND_ENUM_CONSTANT(MOUSE_FILTER_STOP);
 	BIND_ENUM_CONSTANT(MOUSE_FILTER_PASS);
