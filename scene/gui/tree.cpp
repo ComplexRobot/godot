@@ -3171,7 +3171,7 @@ int Tree::propagate_mouse_event(const Point2i &p_pos, int x_ofs, int y_ofs, int 
 			if (relative_pos.y > item->cached_label_height) {
 				continue;
 			}
-			int result = propagate_mouse_event(relative_pos, x_ofs, y_ofs, x_limit, p_double_click, item, p_button, p_mod, false, true);
+			int result = propagate_mouse_event(relative_pos, item->sticky_offset.x, item->sticky_offset.y, x_limit, p_double_click, item, p_button, p_mod, false, true);
 			if (result < 0) {
 				return result;
 			}
@@ -5758,6 +5758,7 @@ void Tree::set_self_modulate(const Color &p_self_modulate) {
 	RS::get_singleton()->canvas_item_set_self_modulate(content_ci, p_self_modulate);
 	RS::get_singleton()->canvas_item_set_self_modulate(custom_ci, p_self_modulate);
 	RS::get_singleton()->canvas_item_set_self_modulate(stylebox_ci, p_self_modulate);
+	RS::get_singleton()->canvas_item_set_self_modulate(drop_indicator_ci, p_self_modulate);
 }
 
 void Tree::_update_all() {

@@ -1053,6 +1053,7 @@ void EditorAssetLibrary::_notification(int p_what) {
 				EditorNode::get_singleton()->get_gui_base()->connect(SceneStringName(theme_changed), callable_mp(this, &EditorAssetLibrary::_update_margins));
 			} else if (ProjectManager::get_singleton()) {
 				ProjectManager::get_singleton()->connect(SceneStringName(theme_changed), callable_mp(this, &EditorAssetLibrary::_update_margins));
+				_update_margins();
 			}
 		} break;
 
@@ -1199,7 +1200,12 @@ void EditorAssetLibrary::update_layout(EditorDock::DockLayout p_layout, int p_sl
 		remove_theme_constant_override("margin_right");
 		remove_theme_constant_override("margin_bottom");
 	} else {
-		int margin = EditorNode::get_singleton()->get_editor_theme()->get_constant("base_margin", EditorStringName(Editor));
+		int margin;
+		if (EditorNode::get_singleton()) {
+			margin = EditorNode::get_singleton()->get_editor_theme()->get_constant("base_margin", EditorStringName(Editor));
+		} else {
+			margin = ProjectManager::get_singleton()->get_theme_constant("base_margin", EditorStringName(Editor));
+		}
 		add_theme_constant_override("margin_left", margin);
 		add_theme_constant_override("margin_right", margin);
 		add_theme_constant_override("margin_bottom", margin);
@@ -1751,9 +1757,7 @@ void EditorAssetLibrary::_http_request_completed(int p_status, int p_code, const
 
 	switch (requested) {
 		case REQUESTING_CHECK: {
-			if (!templates_only) {
-				_api_request("tags/?featured_only=true", REQUESTING_TAGS, true);
-			}
+			_api_request("tags/?featured_only=true", REQUESTING_TAGS, true);
 			_api_request("licenses/", REQUESTING_LICENSES, true);
 
 			filter->set_editable(true);
@@ -1765,12 +1769,8 @@ void EditorAssetLibrary::_http_request_completed(int p_status, int p_code, const
 		case REQUESTING_TAGS: {
 			categories->clear();
 
-			if (templates_only) {
-				categories->add_item(TTRC("Template"));
-			} else {
-				categories->add_item(TTRC("All"));
-				categories->set_disabled(false);
-			}
+			categories->add_item(TTRC("All"));
+			categories->set_disabled(false);
 
 			Array arr = dt;
 			for (int i = arr.size() - 1; i >= 0; i--) {
@@ -2199,7 +2199,7 @@ EditorAssetLibrary::EditorAssetLibrary(bool p_templates_only) {
 	filter->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	filter->connect(SceneStringName(text_changed), callable_mp(filter_debounce_timer, &Timer::start).bind(-1).unbind(1));
 
-	if (!p_templates_only) {
+	if (!templates_only) {
 		search_hb->add_child(memnew(VSeparator));
 	}
 
@@ -2213,7 +2213,7 @@ EditorAssetLibrary::EditorAssetLibrary(bool p_templates_only) {
 	search_hb->add_child(plugins);
 	plugins->connect(SceneStringName(pressed), callable_mp(this, &EditorAssetLibrary::_manage_plugins));
 
-	if (p_templates_only) {
+	if (templates_only) {
 		open_asset->hide();
 		plugins->hide();
 	}
@@ -2239,11 +2239,7 @@ EditorAssetLibrary::EditorAssetLibrary(bool p_templates_only) {
 
 	search_hb2->add_child(memnew(Label(TTRC("Category:"))));
 	categories = memnew(OptionButton);
-	if (p_templates_only) {
-		categories->add_item(TTRC("Template"));
-	} else {
-		categories->add_item(TTRC("All"));
-	}
+	categories->add_item(TTRC("All"));
 	categories->set_disabled(true);
 	categories->set_clip_text(true);
 	categories->set_fit_to_longest_item(false);
