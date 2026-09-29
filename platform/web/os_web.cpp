@@ -35,7 +35,9 @@
 #include "godot_js.h"
 #include "ip_web.h"
 #include "net_socket_web.h"
+#include "remote_debugger_peer_messageport.h"
 
+#include "core/debugger/engine_debugger.h"
 #include "core/io/file_access.h"
 #include "core/os/main_loop.h"
 #include "core/os/os.h"
@@ -57,6 +59,7 @@ void OS_Web::initialize() {
 	IPWeb::make_default();
 	NetSocketWeb::make_default();
 	DisplayServerWeb::register_web_driver();
+	EngineDebugger::register_uri_handler("messageport://", RemoteDebuggerPeerMessagePort::create);
 }
 
 void OS_Web::resume_audio() {
@@ -266,6 +269,18 @@ void OS_Web::force_fs_sync() {
 
 Error OS_Web::pwa_update() {
 	return godot_js_pwa_update() ? FAILED : OK;
+}
+
+Error OS_Web::move_to_trash(const String &p_path) {
+	if (DirAccess::dir_exists_absolute(p_path)) {
+		Ref<DirAccess> da = DirAccess::open(p_path);
+		ERR_FAIL_COND_V(da.is_null(), ERR_BUG);
+		Error err = da->erase_contents_recursive();
+		if (err) {
+			return err;
+		}
+	}
+	return DirAccess::remove_absolute(p_path);
 }
 
 bool OS_Web::is_userfs_persistent() const {

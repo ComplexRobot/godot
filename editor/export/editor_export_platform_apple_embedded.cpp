@@ -1920,6 +1920,24 @@ Error EditorExportPlatformAppleEmbedded::_export_project_helper(const Ref<Editor
 		return ERR_CANT_OPEN;
 	}
 
+	constexpr int ZIP_FNAME_MAX = 16384;
+
+	{
+		int scan_ret = unzGoToFirstFile(src_pkg_zip);
+		while (scan_ret == UNZ_OK) {
+			unz_file_info scan_info;
+			char scan_fname[ZIP_FNAME_MAX];
+			if (unzGetCurrentFileInfo(src_pkg_zip, &scan_info, scan_fname, ZIP_FNAME_MAX, nullptr, 0, nullptr, 0) != UNZ_OK) {
+				break;
+			}
+			if (String::utf8(scan_fname).begins_with("AccessKit.xcframework/")) {
+				config_data.has_accesskit = true;
+				break;
+			}
+			scan_ret = unzGoToNextFile(src_pkg_zip);
+		}
+	}
+
 	err = _export_apple_embedded_plugins(p_preset, config_data, binary_dir, module_libs, assets, p_debug);
 	if (err != OK) {
 		// TODO: Improve error reporting by using `add_message` throughout all methods called via `_export_apple_embedded_plugins`.
@@ -3098,10 +3116,10 @@ void EditorExportPlatformAppleEmbedded::_initialize(const char *p_platform_logo_
 	Ref<Image> img = memnew(Image);
 	const bool upsample = !Math::is_equal_approx(Math::round(EDSCALE), EDSCALE);
 
-	ImageLoaderSVG::create_image_from_string(img, p_platform_logo_svg, EDSCALE, upsample, false);
+	ImageLoaderSVG::create_image_from_string(img, p_platform_logo_svg, EDSCALE, upsample, HashMap<Color, Color>());
 	logo = ImageTexture::create_from_image(img);
 
-	ImageLoaderSVG::create_image_from_string(img, p_run_icon_svg, EDSCALE, upsample, false);
+	ImageLoaderSVG::create_image_from_string(img, p_run_icon_svg, EDSCALE, upsample, HashMap<Color, Color>());
 	run_icon = ImageTexture::create_from_image(img);
 
 	plugins_changed.set();

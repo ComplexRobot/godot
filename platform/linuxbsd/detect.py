@@ -153,7 +153,7 @@ def configure(env: "SConsEnvironment"):
             else:
                 env.Append(LINKFLAGS=["-fuse-ld=mold"])
         else:
-            env.Append(LINKFLAGS=["-fuse-ld=%s" % env["linker"]])
+            env.Append(LINKFLAGS=[f"-fuse-ld={env['linker']}"])
 
     if env["use_coverage"]:
         env.Append(CCFLAGS=["-ftest-coverage", "-fprofile-arcs"])
@@ -529,9 +529,9 @@ def configure(env: "SConsEnvironment"):
             print_warning(
                 "The screen reader support driver requires dependencies to be installed.\n"
                 f"You can install them by running `python {os.path.join('misc', 'scripts', 'install_accesskit.py')}`.\n"
-                "See the documentation for more information:\n\t"
-                "https://docs.godotengine.org/en/latest/engine_details/development/compiling/compiling_for_linuxbsd.html#compiling-with-accesskit-support"
-                "\nAlternatively, disable this driver by compiling with `accesskit=no` explicitly."
+                "See the documentation for more information:\n"
+                "\thttps://docs.godotengine.org/en/latest/engine_details/development/compiling/compiling_for_linuxbsd.html#compiling-with-accesskit-support\n"
+                "Alternatively, disable this driver by compiling with `accesskit=no` explicitly."
             )
             env["accesskit"] = False
 

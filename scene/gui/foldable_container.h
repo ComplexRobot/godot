@@ -86,6 +86,10 @@ private:
 
 		int h_separation = 0;
 		int icon_max_width = 0;
+
+		Ref<AudioStream> focus_sound;
+		Ref<AudioStream> expanded_sound;
+		Ref<AudioStream> folded_sound;
 	} theme_cache;
 
 	Ref<StyleBox> _get_title_style() const;
@@ -138,6 +142,8 @@ public:
 
 	void add_title_bar_control(Control *p_control);
 	void remove_title_bar_control(Control *p_control);
+	Control *get_title_bar_control(int64_t p_index) const;
+	int get_title_bar_control_count() const;
 
 	virtual Size2 get_minimum_size() const override;
 	virtual Size2 get_desired_size() const override;

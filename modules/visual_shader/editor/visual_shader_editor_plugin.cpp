@@ -56,6 +56,7 @@
 #include "editor/scene/material_editor_plugin.h"
 #include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
+#include "editor/shader/shader_editor_plugin.h"
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/animation/tween.h"
@@ -3302,13 +3303,6 @@ void VisualShaderEditor::_edit_group_ports_pressed(int p_group_input_node_id, Bu
 	group_ports_dialog->popup();
 }
 
-void VisualShaderEditor::update_toggle_files_button() {
-	ERR_FAIL_NULL(toggle_files_list);
-	bool forward = toggle_files_list->is_visible() == is_layout_rtl();
-	toggle_files_button->set_button_icon(get_editor_theme_icon(forward ? SNAME("Forward") : SNAME("Back")));
-	toggle_files_button->set_tooltip_text(vformat("%s (%s)", TTR("Toggle Files Panel"), ED_GET_SHORTCUT("script_editor/toggle_files_panel")->get_as_text()));
-}
-
 void VisualShaderEditor::_draw_color_over_button(Object *p_obj, Color p_color) {
 	Button *button = Object::cast_to<Button>(p_obj);
 	if (!button) {
@@ -6168,12 +6162,10 @@ void VisualShaderEditor::_notification(int p_what) {
 			} else {
 				theme_dirty = true;
 			}
-			update_toggle_files_button();
 			_update_options_menu();
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
-			update_toggle_files_button();
 			if (theme_dirty && is_visible_in_tree()) {
 				theme_dirty = false;
 				_update_graph();
@@ -7403,16 +7395,6 @@ void VisualShaderEditor::_show_shader_preview() {
 	}
 }
 
-void VisualShaderEditor::set_toggle_list_control(Control *p_toggle_list_control) {
-	toggle_files_list = p_toggle_list_control;
-}
-
-void VisualShaderEditor::_toggle_files_pressed() {
-	ERR_FAIL_NULL(toggle_files_list);
-	toggle_files_list->set_visible(!toggle_files_list->is_visible());
-	update_toggle_files_button();
-}
-
 void VisualShaderEditor::_bind_methods() {
 	ClassDB::bind_method("_update_available_nodes", &VisualShaderEditor::_update_available_nodes);
 	ClassDB::bind_method("_update_graph", &VisualShaderEditor::_update_graph);
@@ -7681,16 +7663,6 @@ VisualShaderEditor::VisualShaderEditor() {
 	exit_group_button->set_visible(false);
 	toolbar_hflow->add_child(exit_group_button);
 	exit_group_button->connect(SceneStringName(pressed), callable_mp(this, &VisualShaderEditor::_exit_group));
-
-	VSeparator *separator = memnew(VSeparator);
-	toolbar_hflow->add_child(separator);
-	toolbar_hflow->move_child(separator, 0);
-
-	toggle_files_button = memnew(Button);
-	toggle_files_button->set_theme_type_variation(SceneStringName(FlatButton));
-	toggle_files_button->connect(SceneStringName(pressed), callable_mp(this, &VisualShaderEditor::_toggle_files_pressed));
-	toolbar_hflow->add_child(toggle_files_button);
-	toolbar_hflow->move_child(toggle_files_button, 0);
 
 	///////////////////////////////////////
 	// CODE PREVIEW
@@ -9163,7 +9135,7 @@ void EditorPropertyVisualShaderMode::_option_selected(int p_which) {
 		return;
 	}
 
-	VisualShaderEditor *editor = Object::cast_to<VisualShaderEditor>(ScriptEditor::get_bottom_script_editor()->get_resource_editor(visual_shader));
+	VisualShaderEditor *editor = Object::cast_to<VisualShaderEditor>(ShaderEditorPlugin::get_singleton()->get_shader_container()->get_resource_editor(visual_shader));
 	if (!editor) {
 		return;
 	}

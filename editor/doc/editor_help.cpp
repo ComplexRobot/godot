@@ -76,7 +76,7 @@
 #include "modules/mono/csharp_script.h"
 #endif
 
-#define CONTRIBUTE_URL "https://contributing.godotengine.org/en/latest/documentation/class_reference.html"
+#define CONTRIBUTE_URL "https://contributing.godotengine.org/en/latest/development/documentation/class_reference.html"
 
 #ifdef MODULE_MONO_ENABLED
 // Sync with the types mentioned in https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_differences.html
@@ -389,9 +389,6 @@ void EditorHelp::_class_desc_select(const String &p_select) {
 		DisplayServer::get_singleton()->clipboard_set(p_select.substr(1));
 		EditorToaster::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToaster::SEVERITY_INFO);
 	}
-}
-
-void EditorHelp::_class_desc_input(const Ref<InputEvent> &p_input) {
 }
 
 void EditorHelp::_class_desc_resized(bool p_force_update_theme) {
@@ -1444,6 +1441,7 @@ void EditorHelp::_update_doc() {
 		data_type_names["font_size"] = TTR("Font Sizes");
 		data_type_names["icon"] = TTR("Icons");
 		data_type_names["style"] = TTR("Styles");
+		data_type_names["sound"] = TTR("Sounds");
 
 		for (const DocData::ThemeItemDoc &theme_item : cd.theme_properties) {
 			if (theme_data_type != theme_item.data_type) {
@@ -2211,64 +2209,66 @@ void EditorHelp::_update_doc() {
 			class_desc->pop(); // cell
 
 			// Script doc doesn't have setter, getter.
-			if (!cd.is_script_doc) {
-				HashMap<String, DocData::MethodDoc> method_map;
-				for (int j = 0; j < methods.size(); j++) {
-					method_map[methods[j].name] = methods[j];
-				}
-
-				if (!prop.setter.is_empty()) {
-					class_desc->push_cell();
-					class_desc->pop(); // cell
-
-					class_desc->push_cell();
-					_push_code_font();
-					class_desc->push_color(theme_cache.text_color);
-
-					if (method_map[prop.setter].arguments.size() > 1) {
-						// Setters with additional arguments are exposed in the method list, so we link them here for quick access.
-						class_desc->push_meta("@method " + prop.setter);
-						class_desc->add_text(prop.setter + TTR("(value)"));
-						class_desc->pop(); // meta
-					} else {
-						class_desc->add_text(prop.setter + TTR("(value)"));
+			if (EDITOR_GET("text_editor/help/show_property_setters_and_getters")) {
+				if (!cd.is_script_doc) {
+					HashMap<String, DocData::MethodDoc> method_map;
+					for (int j = 0; j < methods.size(); j++) {
+						method_map[methods[j].name] = methods[j];
 					}
 
-					class_desc->pop(); // color
-					class_desc->push_color(theme_cache.comment_color);
-					class_desc->add_text(" setter");
-					class_desc->pop(); // color
-					_pop_code_font();
-					class_desc->pop(); // cell
+					if (!prop.setter.is_empty()) {
+						class_desc->push_cell();
+						class_desc->pop(); // cell
 
-					method_line[prop.setter] = property_line[prop.name];
-				}
+						class_desc->push_cell();
+						_push_code_font();
+						class_desc->push_color(theme_cache.text_color);
 
-				if (!prop.getter.is_empty()) {
-					class_desc->push_cell();
-					class_desc->pop(); // cell
+						if (method_map[prop.setter].arguments.size() > 1) {
+							// Setters with additional arguments are exposed in the method list, so we link them here for quick access.
+							class_desc->push_meta("@method " + prop.setter);
+							class_desc->add_text(prop.setter + TTR("(value)"));
+							class_desc->pop(); // meta
+						} else {
+							class_desc->add_text(prop.setter + TTR("(value)"));
+						}
 
-					class_desc->push_cell();
-					_push_code_font();
-					class_desc->push_color(theme_cache.text_color);
+						class_desc->pop(); // color
+						class_desc->push_color(theme_cache.comment_color);
+						class_desc->add_text(" setter");
+						class_desc->pop(); // color
+						_pop_code_font();
+						class_desc->pop(); // cell
 
-					if (!method_map[prop.getter].arguments.is_empty()) {
-						// Getters with additional arguments are exposed in the method list, so we link them here for quick access.
-						class_desc->push_meta("@method " + prop.getter);
-						class_desc->add_text(prop.getter + "()");
-						class_desc->pop(); // meta
-					} else {
-						class_desc->add_text(prop.getter + "()");
+						method_line[prop.setter] = property_line[prop.name];
 					}
 
-					class_desc->pop(); // color
-					class_desc->push_color(theme_cache.comment_color);
-					class_desc->add_text(" getter");
-					class_desc->pop(); // color
-					_pop_code_font();
-					class_desc->pop(); // cell
+					if (!prop.getter.is_empty()) {
+						class_desc->push_cell();
+						class_desc->pop(); // cell
 
-					method_line[prop.getter] = property_line[prop.name];
+						class_desc->push_cell();
+						_push_code_font();
+						class_desc->push_color(theme_cache.text_color);
+
+						if (!method_map[prop.getter].arguments.is_empty()) {
+							// Getters with additional arguments are exposed in the method list, so we link them here for quick access.
+							class_desc->push_meta("@method " + prop.getter);
+							class_desc->add_text(prop.getter + "()");
+							class_desc->pop(); // meta
+						} else {
+							class_desc->add_text(prop.getter + "()");
+						}
+
+						class_desc->pop(); // color
+						class_desc->push_color(theme_cache.comment_color);
+						class_desc->add_text(" getter");
+						class_desc->pop(); // color
+						_pop_code_font();
+						class_desc->pop(); // cell
+
+						method_line[prop.getter] = property_line[prop.name];
+					}
 				}
 			}
 
@@ -3346,11 +3346,6 @@ void EditorHelp::generate_doc(bool p_use_cache, bool p_use_script_cache) {
 	}
 }
 
-void EditorHelp::_toggle_files_pressed() {
-	ScriptEditor::get_singleton()->toggle_files_panel();
-	update_toggle_files_button();
-}
-
 void EditorHelp::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_POSTINITIALIZE: {
@@ -3368,6 +3363,9 @@ void EditorHelp::_notification(int p_what) {
 				need_update = true;
 			}
 #endif
+			if (!need_update && EditorSettings::get_singleton()->check_changed_settings_in_group("text_editor/help/show_property_setters_and_getters")) {
+				need_update = true;
+			}
 			if (!need_update) {
 				break;
 			}
@@ -3388,14 +3386,12 @@ void EditorHelp::_notification(int p_what) {
 
 				_class_desc_resized(true);
 			}
-			update_toggle_files_button();
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
 			if (update_pending && is_visible_in_tree()) {
 				_update_doc();
 			}
-			update_toggle_files_button();
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED: {
@@ -3408,11 +3404,7 @@ void EditorHelp::_notification(int p_what) {
 			} else {
 				update_pending = true;
 			}
-			[[fallthrough]];
 		}
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			update_toggle_files_button();
-		} break;
 	}
 }
 
@@ -3498,15 +3490,6 @@ void EditorHelp::set_scroll(int p_scroll) {
 	class_desc->get_v_scroll_bar()->set_value(p_scroll);
 }
 
-void EditorHelp::update_toggle_files_button() {
-	if (is_layout_rtl()) {
-		toggle_files_button->set_button_icon(get_editor_theme_icon(ScriptEditor::get_singleton()->is_files_panel_toggled() ? SNAME("Forward") : SNAME("Back")));
-	} else {
-		toggle_files_button->set_button_icon(get_editor_theme_icon(ScriptEditor::get_singleton()->is_files_panel_toggled() ? SNAME("Back") : SNAME("Forward")));
-	}
-	toggle_files_button->set_tooltip_text(vformat("%s (%s)", TTR("Toggle Files Panel"), ED_GET_SHORTCUT("script_editor/toggle_files_panel")->get_as_text()));
-}
-
 void EditorHelp::_bind_methods() {
 	ClassDB::bind_method("_class_list_select", &EditorHelp::_class_list_select);
 	ClassDB::bind_method("_request_help", &EditorHelp::_request_help);
@@ -3535,7 +3518,6 @@ EditorHelp::EditorHelp() {
 
 	class_desc->connect(SceneStringName(finished), callable_mp(this, &EditorHelp::_class_desc_finished));
 	class_desc->connect("meta_clicked", callable_mp(this, &EditorHelp::_class_desc_select));
-	class_desc->connect(SceneStringName(gui_input), callable_mp(this, &EditorHelp::_class_desc_input));
 	class_desc->connect(SceneStringName(resized), callable_mp(this, &EditorHelp::_class_desc_resized).bind(false));
 
 	// Added second so it opens at the bottom so it won't offset the entire widget.
@@ -3543,18 +3525,6 @@ EditorHelp::EditorHelp() {
 	add_child(find_bar);
 	find_bar->hide();
 	find_bar->set_rich_text_label(class_desc);
-
-	status_bar = memnew(HBoxContainer);
-	add_child(status_bar);
-	status_bar->set_h_size_flags(SIZE_EXPAND_FILL);
-	status_bar->set_custom_minimum_size(Size2(0, 24 * EDSCALE));
-
-	toggle_files_button = memnew(Button);
-	toggle_files_button->set_theme_type_variation(SceneStringName(FlatButton));
-	toggle_files_button->set_accessibility_name(TTRC("Scripts"));
-	toggle_files_button->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	toggle_files_button->connect(SceneStringName(pressed), callable_mp(this, &EditorHelp::_toggle_files_pressed));
-	status_bar->add_child(toggle_files_button);
 
 	class_desc->set_selection_enabled(true);
 	class_desc->set_context_menu_enabled(true);
@@ -4942,6 +4912,11 @@ void EditorHelpBit::update_content_height() {
 		content_height += style->get_content_margin(SIDE_TOP) + style->get_content_margin(SIDE_BOTTOM);
 	}
 	content->set_custom_minimum_size(Size2(content->get_custom_minimum_size().x, CLAMP(content_height, content_min_height, content_max_height)));
+}
+
+void EditorHelpBit::override_custom_minimum_width(float p_min_width) {
+	title->set_custom_minimum_size(Size2(p_min_width, title->get_custom_minimum_size().y));
+	content->set_custom_minimum_size(Size2(p_min_width, content->get_custom_minimum_size().y));
 }
 
 EditorHelpBit::EditorHelpBit(

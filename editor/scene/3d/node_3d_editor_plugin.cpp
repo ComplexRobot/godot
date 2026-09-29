@@ -2338,9 +2338,10 @@ void Node3DEditor::_textures_button_pressed() {
 
 void Node3DEditor::_textures_button_update_state() {
 	const bool texture_streaming_enabled = GLOBAL_GET("rendering/textures/streaming/enabled");
-	textures_button->set_disabled(!texture_streaming_enabled);
 
 	if (!texture_streaming_enabled) {
+		textures_button->hide();
+		textures_button_separator->hide();
 		textures_popup->hide();
 	}
 }
@@ -3670,7 +3671,8 @@ Node3DEditor::Node3DEditor() {
 	ED_SHORTCUT("spatial_editor/switch_perspective_orthogonal", TTRC("Switch Perspective/Orthogonal View"), Key::KP_5);
 	ED_SHORTCUT("spatial_editor/insert_anim_key", TTRC("Insert Animation Key"), Key::K);
 	ED_SHORTCUT("spatial_editor/focus_origin", TTRC("Focus Origin"), Key::O);
-	ED_SHORTCUT("spatial_editor/focus_selection", TTRC("Focus Selection"), Key::F);
+	ED_SHORTCUT("spatial_editor/focus_selection", TTRC("Focus Selection"), KeyModifierMask::CMD_OR_CTRL + Key::F);
+	ED_SHORTCUT("spatial_editor/focus_aabb", TTRC("Focus and Frame Selection"), Key::F);
 	ED_SHORTCUT_ARRAY("spatial_editor/align_transform_with_view", TTRC("Align Transform with View"),
 			{ int32_t(KeyModifierMask::ALT | KeyModifierMask::CTRL | Key::KP_0),
 					int32_t(KeyModifierMask::ALT | KeyModifierMask::CTRL | Key::M),
@@ -3714,13 +3716,14 @@ Node3DEditor::Node3DEditor() {
 
 #ifdef MODULE_TEXTURE_STREAMING_ENABLED
 	textures_button = memnew(Button);
+	textures_button_separator = memnew(VSeparator);
 	textures_button->set_text(TTRC("Textures"));
 	textures_button->set_tooltip_text(TTRC("Edit texture streaming quality settings."));
 	textures_button->set_theme_type_variation(SceneStringName(FlatButton));
 	textures_button->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_textures_button_pressed));
 
 	main_flow->add_child(textures_button);
-	main_flow->add_child(memnew(VSeparator));
+	main_flow->add_child(textures_button_separator);
 #endif
 
 	context_toolbar_panel = memnew(PanelContainer);

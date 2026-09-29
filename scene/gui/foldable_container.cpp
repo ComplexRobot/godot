@@ -237,6 +237,15 @@ void FoldableContainer::remove_title_bar_control(Control *p_control) {
 	remove_child(p_control);
 }
 
+Control *FoldableContainer::get_title_bar_control(int64_t p_index) const {
+	ERR_FAIL_INDEX_V(p_index, title_controls.size(), nullptr);
+	return title_controls[p_index];
+}
+
+int FoldableContainer::get_title_bar_control_count() const {
+	return title_controls.size();
+}
+
 void FoldableContainer::gui_input(const Ref<InputEvent> &p_event) {
 	ERR_FAIL_COND(p_event.is_null());
 
@@ -255,7 +264,11 @@ void FoldableContainer::gui_input(const Ref<InputEvent> &p_event) {
 	}
 
 	if (p_event->is_action_pressed(SNAME("ui_accept"), false, true)) {
+		const bool previously_folded = folded;
 		set_folded(!folded);
+		if (previously_folded != folded) {
+			play_theme_sound(folded ? theme_cache.folded_sound : theme_cache.expanded_sound);
+		}
 		emit_signal(SNAME("folding_changed"), folded);
 		accept_event();
 		return;
@@ -264,7 +277,11 @@ void FoldableContainer::gui_input(const Ref<InputEvent> &p_event) {
 	Ref<InputEventMouseButton> b = p_event;
 	if (b.is_valid()) {
 		if (b->get_button_index() == MouseButton::LEFT && b->is_pressed() && _get_title_rect().has_point(b->get_position())) {
+			const bool previously_folded = folded;
 			set_folded(!folded);
+			if (previously_folded != folded) {
+				play_theme_sound(folded ? theme_cache.folded_sound : theme_cache.expanded_sound);
+			}
 			emit_signal(SNAME("folding_changed"), folded);
 			accept_event();
 		}
@@ -588,6 +605,8 @@ void FoldableContainer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_title_position", "title_position"), &FoldableContainer::set_title_position);
 	ClassDB::bind_method(D_METHOD("get_title_position"), &FoldableContainer::get_title_position);
 	ClassDB::bind_method(D_METHOD("add_title_bar_control", "control"), &FoldableContainer::add_title_bar_control);
+	ClassDB::bind_method(D_METHOD("get_title_bar_control", "index"), &FoldableContainer::get_title_bar_control);
+	ClassDB::bind_method(D_METHOD("get_title_bar_control_count"), &FoldableContainer::get_title_bar_control_count);
 	ClassDB::bind_method(D_METHOD("remove_title_bar_control", "control"), &FoldableContainer::remove_title_bar_control);
 
 	ADD_SIGNAL(MethodInfo("folding_changed", PropertyInfo(Variant::BOOL, "is_folded")));
@@ -629,6 +648,10 @@ void FoldableContainer::_bind_methods() {
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, FoldableContainer, icon_max_width);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, FoldableContainer, h_separation);
+
+	BIND_THEME_ITEM(Theme::DATA_TYPE_SOUND, FoldableContainer, focus_sound);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_SOUND, FoldableContainer, expanded_sound);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_SOUND, FoldableContainer, folded_sound);
 }
 
 FoldableContainer::FoldableContainer(const String &p_text) {

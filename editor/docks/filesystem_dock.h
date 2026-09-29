@@ -127,6 +127,7 @@ private:
 		FILE_MENU_SHOW_IN_EXPLORER,
 		FILE_MENU_OPEN_EXTERNAL,
 		FILE_MENU_OPEN_IN_TERMINAL,
+		FILE_MENU_DOWNLOAD, // Web editor only
 		FILE_MENU_COPY_PATH,
 		FILE_MENU_COPY_ABSOLUTE_PATH,
 		FILE_MENU_COPY_UID,
@@ -157,7 +158,6 @@ private:
 	ProgressBar *scanning_progress = nullptr;
 	SplitContainer *split_box = nullptr;
 	MarginContainer *tree_mc = nullptr;
-	MarginContainer *files_mc = nullptr;
 	VBoxContainer *file_list_vb = nullptr;
 
 	int split_box_offset_h = 0;
@@ -361,7 +361,7 @@ private:
 	void _file_sort_popup(int p_id);
 
 	void _folder_color_index_pressed(int p_index, PopupMenu *p_menu);
-	void _file_and_folders_fill_popup(PopupMenu *p_popup, const Vector<String> &p_paths, bool p_display_path_dependent_options = true);
+	void _file_and_folders_fill_popup(PopupMenu *p_popup, const Vector<String> &p_paths, bool p_display_path_dependent_options = true, bool p_show_expand_options = true);
 	void _add_create_options(PopupMenu *p_popup, const String &p_base_folder);
 	void _tree_rmb_select(const Vector2 &p_pos, MouseButton p_button);
 	void _file_list_item_clicked(int p_item, const Vector2 &p_pos, MouseButton p_mouse_button_index);
