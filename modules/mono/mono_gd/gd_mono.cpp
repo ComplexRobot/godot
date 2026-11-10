@@ -103,6 +103,17 @@ mono_assembly_load_from_full_fn mono_assembly_load_from_full = nullptr;
 extern "C" {
 void mono_wasm_load_runtime(int debug_level);
 }
+
+// Mono's debug level for the web runtime. Any value other than 0 turns on debugger support and
+// turns off every interpreter optimisation, which makes interpreted C# several times slower.
+// Nothing can attach a debugger to a Godot web export, so release templates use 0.
+#ifndef GD_MONO_WASM_DEBUG_LEVEL
+#ifdef DEBUG_ENABLED
+#define GD_MONO_WASM_DEBUG_LEVEL 1
+#else
+#define GD_MONO_WASM_DEBUG_LEVEL 0
+#endif
+#endif
 #endif
 #endif // !TOOLS_ENABLED
 
@@ -638,7 +649,7 @@ MonoMethod *_initialize_method;
 godot_plugins_initialize_fn initialize_monovm_and_godot_plugins(bool &r_runtime_initialized) {
 	mono_install_assembly_preload_hook(&load_assembly_from_pck, nullptr);
 
-	mono_wasm_load_runtime(1);
+	mono_wasm_load_runtime(GD_MONO_WASM_DEBUG_LEVEL);
 
 	r_runtime_initialized = true;
 
