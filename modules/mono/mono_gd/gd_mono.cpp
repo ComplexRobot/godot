@@ -70,6 +70,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
+#include <mono/utils/mono-logger.h>
 #endif
 
 GDMono *GDMono::singleton = nullptr;
@@ -113,6 +114,17 @@ void mono_wasm_load_runtime(int debug_level);
 #else
 #define GD_MONO_WASM_DEBUG_LEVEL 0
 #endif
+#endif
+
+#ifdef GD_MONO_WASM_AOT
+// Templates built with AOT-compiled assemblies (mono_wasm_aot_dir) log what Mono's AOT loader
+// does with each assembly, so a mismatch that silently falls back to the interpreter shows up.
+void gd_mono_wasm_log(const char *p_log_domain, const char *p_log_level, const char *p_message, mono_bool p_fatal, void *p_user_data) {
+	print_line(vformat(".NET: Mono %s: %s", p_log_level, String::utf8(p_message).strip_edges()));
+	if (p_fatal) {
+		CRASH_NOW();
+	}
+}
 #endif
 #endif
 #endif // !TOOLS_ENABLED
@@ -650,6 +662,12 @@ godot_plugins_initialize_fn initialize_monovm_and_godot_plugins(bool &r_runtime_
 	mono_install_assembly_preload_hook(&load_assembly_from_pck, nullptr);
 
 	mono_wasm_load_runtime(GD_MONO_WASM_DEBUG_LEVEL);
+
+#ifdef GD_MONO_WASM_AOT
+	mono_trace_set_log_handler(gd_mono_wasm_log, nullptr);
+	mono_trace_set_level_string("info");
+	mono_trace_set_mask_string("aot");
+#endif
 
 	r_runtime_initialized = true;
 

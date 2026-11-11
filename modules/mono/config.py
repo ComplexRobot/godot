@@ -5,6 +5,19 @@ def can_build(env, platform):
     return True
 
 
+def get_opts(platform):
+    if platform != "web":
+        return []
+    return [
+        (
+            "mono_wasm_aot_dir",
+            "Web only: the wasm/for-publish folder of a game's AOT publish (RunAOTCompilation=true). "
+            + "Its AOT objects and generated tables are linked into the template, which then only suits that build.",
+            "",
+        ),
+    ]
+
+
 def configure(env):
     # Check if the platform has marked mono as supported.
     supported = env.get("supported", [])

@@ -106,6 +106,8 @@ sys_env.Depends(build[0], sys_env["JS_LIBS"])
 sys_env.Depends(build[0], sys_env["JS_PRE"])
 sys_env.Depends(build[0], sys_env["JS_POST"])
 sys_env.Depends(build[0], sys_env["JS_EXTERNS"])
+# Objects passed straight to the linker (the mono module's AOT-compiled assemblies).
+sys_env.Depends(build[0], sys_env.get("WEB_LINK_DEPENDS", []))
 
 # erase "DOTNET.setup();" call for correct web behavior
 js_fixed = env.NoCache(env.EraseDotnetSetup("#bin/godot${PROGSUFFIX}.fixed.js", build[0]))
