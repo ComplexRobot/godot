@@ -1,3 +1,4 @@
+import glob
 import os
 import os.path
 import shutil
@@ -90,6 +91,29 @@ def configure(env, env_mono):
             env_thirdparty.Append(CPPDEFINES=["WASM_SUPPORTS_DLOPEN"])
         env_thirdparty.Prepend(CPPPATH=os.path.join(mono_runtime_path, "include", "wasm"))
         get_runtime_pack_project_includes = os.path.join(get_runtime_pack_project_path, "obj", "Release", "net9.0", rid, "wasm", "for-publish")
+
+        aot_dir = env.get("mono_wasm_aot_dir", "")
+        if aot_dir:
+            # Link a game's AOT-compiled assemblies into the template. The game's publish generated
+            # the tables runtime.c and pinvoke.c include (driver-gen.c registers the AOT modules and
+            # selects llvmonly+interpreter mode), so use its folder instead of GetRuntimePack's.
+            aot_dir = os.path.abspath(os.path.expanduser(aot_dir))
+            if not os.path.isfile(os.path.join(aot_dir, "driver-gen.c")):
+                raise RuntimeError(
+                    "mono_wasm_aot_dir '" + aot_dir + "' has no driver-gen.c. Publish the game with RunAOTCompilation=true first."
+                )
+            aot_objects = sorted(glob.glob(os.path.join(aot_dir, "*.dll.o")))
+            if not aot_objects:
+                raise RuntimeError("mono_wasm_aot_dir '" + aot_dir + "' has no AOT objects (*.dll.o).")
+            print("Linking " + str(len(aot_objects)) + " AOT-compiled assemblies from '" + aot_dir + "'.")
+            get_runtime_pack_project_includes = aot_dir
+            env_thirdparty.Append(CPPDEFINES=["ENABLE_AOT", "DRIVER_GEN"])
+            env_mono.Append(CPPDEFINES=["GD_MONO_WASM_AOT"])
+            env.Append(LINKFLAGS=aot_objects)
+            # SCons doesn't treat files in LINKFLAGS as inputs; platform/web/SCsub makes the program
+            # depend on these, so a new AOT compile relinks the template.
+            env.Append(WEB_LINK_DEPENDS=aot_objects)
+
         env_thirdparty.Prepend(CPPPATH=os.path.join(get_runtime_pack_project_includes))
         env_thirdparty.add_source_files(
             env.modules_sources,
