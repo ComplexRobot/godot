@@ -36,7 +36,6 @@
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/scene_tree_dock.h"
-#include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/scene/canvas_item_editor_plugin.h"
@@ -885,6 +884,7 @@ void ScenePaint2DEditor::forward_canvas_draw_over_viewport(Control *p_overlay) {
 }
 
 void ScenePaint2DEditor::register_scene_provider(Control *p_control, const Callable &p_callback) {
+	ERR_FAIL_NULL_MSG(p_control, "Provider cannot be null.");
 	ERR_FAIL_COND_MSG(custom_sources.has(p_control), "Provider already registered.");
 	custom_sources[p_control] = p_callback;
 	p_control->connect(SceneStringName(gui_input), callable_mp(this, &ScenePaint2DEditor::_custom_source_input).bind(p_control));

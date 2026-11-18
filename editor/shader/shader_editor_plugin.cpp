@@ -30,6 +30,7 @@
 
 #include "shader_editor_plugin.h"
 
+#include "core/object/callable_mp.h"
 #include "core/variant/variant.h"
 #include "editor/docks/editor_dock.h"
 #include "editor/docks/editor_dock_manager.h"
@@ -39,7 +40,6 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/shader/editor_shader_language_plugin.h"
 #include "editor/shader/text_shader_language_plugin.h"
-#include "editor/themes/editor_scale.h"
 #include "scene/resources/shader.h"
 
 void ShaderEditorPlugin::shortcut_input(const Ref<InputEvent> &p_event) {
@@ -166,6 +166,7 @@ ShaderEditorPlugin::ShaderEditorPlugin() {
 	shader_container->set_handled_resource_types({ "Shader", "VisualShader", "ShaderInclude" });
 
 	shader_dock->add_child(shader_container);
+	shader_dock->connect("_focused", callable_mp(shader_container, &DocumentEditorContainer::focus_active_editor));
 }
 
 ShaderEditorPlugin::~ShaderEditorPlugin() {
